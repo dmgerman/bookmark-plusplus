@@ -995,7 +995,6 @@ Returns nil if neither is available."
 (defvar w3m-current-title)              ; In `w3m.el'
 (defvar w3m-current-url)                ; In `w3m.el'
 (defvar w3m-mode-map)                   ; In `w3m.el'
-(defvar zz-izones)                      ; In `zones.el'
 (defvar zz-izones-var)                  ; In `zones.el'
 (defvar woman-last-file-name)           ; In `woman.el'
 
@@ -7437,8 +7436,7 @@ Invoke `bmkp-completing-read-file-name' repeatedly till input is empty."
   (while (and list  (funcall predicate (car list)))  (setq list  (cdr list)))
   (null list))
 
-;; Same as `zz-some' in `zones.el'.
-;; This is NOT the same as `some' in `cl-extra.el', even without non-list sequences and multiple sequences.
+;; NOT the same as `some' in `cl-extra.el', even without non-list sequences and multiple sequences:
 ;;
 ;; If PREDICATE is satisfied by a list element ELEMENT, so that it returns a non-nil value VALUE for ELEMENT,
 ;; then this returns the cons (ELEMENT . VALUE).  It does not return just VALUE.
@@ -10301,6 +10299,25 @@ searched correspond to the recorded search hits."
       (handler     . bmkp-jump-icicle-search-hits)))
 
 ;; Variable-list bookmarks
+
+(defun bmkp-read-any-variable (prompt &optional default)
+  "Read the name of any bound variable.  PROMPT is the prompt string.
+Optional DEFAULT is a symbol used as the default value."
+  (intern (completing-read prompt obarray #'boundp t nil nil
+                           (and default  (symbol-name default)))))
+
+(defun bmkp-readable-marker (object)
+  "Return a portable representation of marker OBJECT.
+Returns a cons (BUFFER-NAME . POSITION).  The format matches the
+\"readable marker\" representation that `zones.el' reads back, so a
+bookmark saved through `bmkp-set-izones-bookmark' is interop-compatible
+with `zones.el'.  Non-markers are returned unchanged."
+  (if (markerp object)
+      (cons (or (and (marker-buffer object)  (buffer-name (marker-buffer object)))
+                "*orphan*")
+            (marker-position object))
+    object))
+
 (when (boundp 'zz-izones-var)           ; In `zones.el'.
   (defun bmkp-set-izones-bookmark (&optional variable msgp)
     "Save a ring of buffer zones as a bookmark.
@@ -10312,7 +10329,7 @@ current value of `zz-izones-var', which defaults to `zz-izones'.  With
 a prefix arg you are prompted for a different variable to use.
 
 Non-interactively, VARIABLE is the restrictions variable to use."
-    (interactive (let ((var  (or (and current-prefix-arg  (zz-read-any-variable "Variable: " zz-izones-var))
+    (interactive (let ((var  (or (and current-prefix-arg  (bmkp-read-any-variable "Variable: " zz-izones-var))
                                  zz-izones-var)))
                    (list var t)))
     (unless variable (setq variable  zz-izones-var))
@@ -10325,12 +10342,10 @@ Non-interactively, VARIABLE is the restrictions variable to use."
                                     (beg    (nth 1 xx))
                                     (end    (nth 2 xx))
                                     (extra  (nthcdr 3 xx)))
-                                `(,id ,(zz-readable-marker beg) ,(zz-readable-marker end) ,@extra)))
+                                `(,id ,(bmkp-readable-marker beg) ,(bmkp-readable-marker end) ,@extra)))
                             (symbol-value variable))))))))
       (call-interactively #'bookmark-set)
-      (and msgp  (not (featurep 'zones))  (message "Bookmark created, but you need `zones.el' to use it"))))
-
-  )
+      (and msgp  (not (featurep 'zones))  (message "Bookmark created, but you need `zones.el' to use it")))))
 
 ;;;###autoload (autoload 'bmkp-wrap-bookmark-with-last-kbd-macro "bookmark+")
 (defun bmkp-wrap-bookmark-with-last-kbd-macro (sequence bookmark &optional arg msgp)
