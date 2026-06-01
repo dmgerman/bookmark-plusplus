@@ -1032,6 +1032,10 @@ Returns nil if neither is available."
 (declare-function mailcap-file-default-commands  "mailcap")
 (declare-function org-link-store-props           "ol")
 
+;; dired+ is an optional Drew Adams package, still maintained.
+(declare-function diredp-dired-union-interactive-spec "dired+")
+(declare-function diredp-live-dired-buffers           "dired+")
+
 ;;(@* "User Options (Customizable)")
 ;;; User Options (Customizable) --------------------------------------
 
