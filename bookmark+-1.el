@@ -21,7 +21,7 @@
 ;;   `cconv', `cl-lib', `font-lock',
 ;;   `font-lock+', `help-mode', `hl-line', `hl-line+', `kmacro',
 ;;   `macroexp', `pp', `replace', `syntax', `text-mode', `thingatpt',
-;;   `thingatpt+', `vline'.
+;;   `thingatpt', `vline'.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -812,11 +812,46 @@
                      (defalias 'cl-multiple-value-bind 'multiple-value-bind)
                      (defalias 'cl-typecase            'typecase)))
 
-(when (and (require 'thingatpt+ nil t) ;; (no error if not found):
-           (fboundp 'tap-put-thing-at-point-props)) ; >= 2012-08-21
-  (tap-define-aliases-wo-prefix)
-  (tap-put-thing-at-point-props))
-;; region-or-non-nil-symbol-name-nearest-point, symbol-nearest-point
+;; Replacements for the few `thingatpt+.el' helpers bookmark+ relied on.
+;; The originals scanned outward from point for the nearest symbol; vanilla
+;; `symbol-at-point' returns nil if the cursor is not literally on one.
+
+(defcustom bmkp-near-point-distance 2000
+  "Max number of characters to search away from point for the nearest symbol.
+Used by `bmkp-symbol-nearest-point' and
+`bmkp-region-or-symbol-name-nearest-point'."
+  :type 'integer :group 'bookmark-plus)
+
+(defun bmkp-symbol-nearest-point ()
+  "Return the symbol nearest to point, or nil if none within range.
+The symbol at point is preferred.  Otherwise scan up to
+`bmkp-near-point-distance' characters in either direction and return
+whichever symbol is closer."
+  (or (symbol-at-point)
+      (let* ((p       (point))
+             (lo      (max (point-min) (- p bmkp-near-point-distance)))
+             (hi      (min (point-max) (+ p bmkp-near-point-distance)))
+             (rx      "\\_<\\(?:\\sw\\|\\s_\\)+\\_>")
+             (before  (save-excursion
+                        (and (re-search-backward rx lo t)
+                             (cons (- p (match-end 0))
+                                   (intern-soft (match-string-no-properties 0))))))
+             (after   (save-excursion
+                        (and (re-search-forward rx hi t)
+                             (cons (- (match-beginning 0) p)
+                                   (intern-soft (match-string-no-properties 0)))))))
+        (cond ((and before after) (if (< (car before) (car after)) (cdr before) (cdr after)))
+              (before              (cdr before))
+              (after               (cdr after))))))
+
+(defun bmkp-region-or-symbol-name-nearest-point ()
+  "Return active region content (if non-empty) or nearest symbol's name.
+Returns nil if neither is available."
+  (if (use-region-p)
+      (let ((s  (buffer-substring-no-properties (region-beginning) (region-end))))
+        (and (not (string-empty-p s)) s))
+    (let ((sym  (bmkp-symbol-nearest-point)))
+      (and sym (symbol-name sym)))))
 
 (when (> emacs-major-version 21) (require 'font-lock+ nil t)) ;; font-lock-ignore (text property)
 
@@ -1412,11 +1447,9 @@ If an integer, then use a menu only if there are fewer bookmark
 
 ;;;###autoload (autoload 'bmkp-new-bookmark-default-names "bookmark+")
 (defcustom bmkp-new-bookmark-default-names
-  (let ((fns  '((lambda () (let ((ff  (function-called-at-point)))
-                        (and ff  (symbolp ff)  (symbol-name ff)))))))
-    (when (fboundp 'region-or-non-nil-symbol-name-nearest-point) ; Defined in `thingatpt+.el'.
-      (setq fns  (cons 'region-or-non-nil-symbol-name-nearest-point fns)))
-    fns)
+  (list 'bmkp-region-or-symbol-name-nearest-point
+        (lambda () (let ((ff  (function-called-at-point)))
+                     (and ff  (symbolp ff)  (symbol-name ff)))))
   "Functions to produce the default name for a new bookmark.
 \(The default name for an *existing* bookmark is obtained using
 `bmkp-default-bookmark-name'.)
@@ -1439,7 +1472,7 @@ name is used.
 
 Some functions you might want to use in the option value:
 
- * `region-or-non-nil-symbol-name-nearest-point'
+ * `bmkp-region-or-symbol-name-nearest-point'
  * (lambda () (let ((ff  (function-called-at-point)))
       (and (symbolp ff)  (symbol-name ff))))
  * (lambda () (let ((vv  (variable-at-point))) ; `variable-at-point'
@@ -1448,11 +1481,9 @@ Some functions you might want to use in the option value:
  * (lambda () (let ((ss  (symbol-at-point)))
      (and ss  (symbol-name ss))))
 
-The first of these is defined in library `thingatpt+.el'.  It returns
-the text in the region, if it is active and not empty.  Otherwise it
-returns the name of the (non-`nil') symbol nearest point, within
-maximum search distances `tap-near-point-x-distance' (left and right)
-and `tap-near-point-y-distance' (up and down)."
+The first of these returns the text in the region, if it is active
+and non-empty.  Otherwise it returns the name of the symbol nearest
+point, searching up to `bmkp-near-point-distance' characters away."
   :type '(repeat function) :group 'bookmark-plus)
 
 ;;;###autoload (autoload 'bmkp-other-window-pop-to-flag "bookmark+")
@@ -10538,10 +10569,7 @@ With non-nil OPTION, read the name of a user option.
 The default value is DEFAULT-VALUE if non-nil, or the nearest symbol
 to the cursor if it is a variable."
   (setq option  (if option 'user-variable-p 'boundp))
-  (let ((symb                                        (cond ((fboundp 'symbol-nearest-point)
-                                                            (symbol-nearest-point)) ; In `thingatpt+.el'.
-                                                           ((fboundp 'symbol-at-point) (symbol-at-point))
-                                                           (t nil)))
+  (let ((symb                                        (bmkp-symbol-nearest-point))
         (enable-recursive-minibuffers                t)
         (icicle-unpropertize-completion-result-flag  t))
     (when (and default-value  (symbolp default-value))
@@ -14050,16 +14078,11 @@ See command `bmkp-store-org-link'."
        (let ((mark-active  (and mark-active  (< (buffer-size) bmkp-ffap-max-region-size))))
          (ffap-guesser))))
 
-;; Same as `icicle-thing-at-point'.
 (defun bmkp-thing-at-point (thing &optional syntax-table)
-  "`thingatpt+.el' version of `thing-at-point', if possible.
-`tap-thing-at-point' if defined, else `thing-at-point'.
-if non-nil, set SYNTAX-TABLE for the duration."
-  (if (fboundp 'tap-thing-at-point)
-      (tap-thing-at-point thing syntax-table)
-    (if (and (syntax-table-p syntax-table)  (fboundp 'with-syntax-table)) ; Emacs 21+.
-        (with-syntax-table syntax-table (thing-at-point thing))
-      (thing-at-point thing))))         ; Ignore any SYNTAX-TABLE arg for Emacs 20, for vanilla.
+  "Like `thing-at-point' but use SYNTAX-TABLE for the lookup when given."
+  (if (syntax-table-p syntax-table)
+      (with-syntax-table syntax-table (thing-at-point thing))
+    (thing-at-point thing)))         ; Ignore any SYNTAX-TABLE arg for Emacs 20, for vanilla.
 
 (defun bmkp-get-external-annotation (annotation)
   "Return a cons (DESTINATION . TYPE) for ANNOTATION.

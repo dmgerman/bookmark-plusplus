@@ -29,7 +29,7 @@
 ;;   `misc-cmds', `misc-fns', `naked', `package', `password-cache',
 ;;   `pp', `pp+', `radix-tree', `rect', `replace', `second-sel',
 ;;   `seq', `strings', `syntax', `tabulated-list', `text-mode',
-;;   `thingatpt', `thingatpt+', `url-handlers', `url-parse',
+;;   `thingatpt', `url-handlers', `url-parse',
 ;;   `url-vars', `vline', `w32browser-dlgopen', `wid-edit',
 ;;   `wid-edit+'.
 ;;
@@ -531,14 +531,8 @@ Elements of ALIST that are not conses are ignored."
 ;;(@* "Utility Functions")
 ;;; Utility Functions ------------------------------------------------
 
-;; Same as `tap-string-match-p' in `thingatpt+.el' and `icicle-string-match-p' in `icicles-fn.el'.
-(if (fboundp 'string-match-p)
-    (defalias 'bmkp-string-match-p 'string-match-p) ; Emacs 23+
-  (defun bmkp-string-match-p (regexp string &optional start)
-    "Like `string-match', but this saves and restores the match data."
-    (save-match-data (string-match regexp string start))))
+(defalias 'bmkp-string-match-p 'string-match-p) ; Built in since Emacs 23.
 
-;; Same as `tap-looking-at-p' in `thingatpt+.el' and `icicle-looking-at-p' in `icicles-mcmd.el'.
 ;; Do not `defalias' to Emacs `looking-at-p' because that is a `defsubst'.
 (defun bmkp-looking-at-p (regexp)
   "Like `looking-at', but this saves and restores the match data."

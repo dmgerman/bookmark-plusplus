@@ -30,7 +30,7 @@
 ;;   `misc-cmds', `misc-fns', `naked', `package', `password-cache',
 ;;   `pp', `pp+', `radix-tree', `rect', `replace', `second-sel',
 ;;   `seq', `strings', `syntax', `tabulated-list', `text-mode',
-;;   `thingatpt', `thingatpt+', `url-handlers', `url-parse',
+;;   `thingatpt', `url-handlers', `url-parse',
 ;;   `url-vars', `vline', `w32browser-dlgopen', `wid-edit',
 ;;   `wid-edit+'.
 ;;

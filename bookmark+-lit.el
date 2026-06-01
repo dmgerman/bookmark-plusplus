@@ -20,7 +20,7 @@
 ;;   `cconv', `cl-lib', `font-lock',
 ;;   `font-lock+', `help-mode', `hl-line', `hl-line+', `kmacro',
 ;;   `macroexp', `pp', `pp+', `replace', `syntax', `text-mode',
-;;   `thingatpt', `thingatpt+', `vline'.
+;;   `thingatpt', `vline'.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
