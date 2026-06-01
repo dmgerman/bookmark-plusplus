@@ -12,7 +12,7 @@
 ;; URL: https://www.emacswiki.org/emacs/download/bookmark%2b-lit.el
 ;; Doc URL: https://www.emacswiki.org/emacs/BookmarkPlus
 ;; Keywords: bookmarks, highlighting, bookmark+
-;; Compatibility: GNU Emacs: 20.x, 21.x, 22.x, 23.x, 24.x, 25.x, 26.x
+;; Compatibility: GNU Emacs: 30.x and later
 ;;
 ;; Features that might be required by this library:
 ;;
@@ -1398,9 +1398,9 @@ The non-nil value returned is in fact the full bookmark."
 
 (defun bmkp-default-lighted ()
   "Return a highlighted bookmark at point or on this line, or nil if none.
-For Emacs 23+, if there is a highlighted bookmark at point, return a
- list of all such."
-  (or (if (> emacs-major-version 22) (bmkp-bookmarks-lighted-at-point) (bmkp-a-bookmark-lighted-at-pos))
+If there is at least one highlighted bookmark at point, return a list
+of all such."
+  (or (bmkp-bookmarks-lighted-at-point)
       (bmkp-a-bookmark-lighted-on-this-line)))
 
 (defun bmkp-a-bookmark-lighted-on-this-line (&optional fullp)
@@ -1515,9 +1515,6 @@ If OVERLAY is non-nil:
 If STYLE is `none' then:
   If OVERLAY is non-nil, delete it and return nil."
   (let ((ov  overlay))
-    (when (and (< emacs-major-version 22)  (not (rassq style bmkp-light-styles-alist)))
-      (message "Fringe styles not supported before Emacs 22 - changing to `line' style")
-      (setq style 'line))
     (cl-case style
       (region        (and (bmkp-region-bookmark-p bookmark)
                           (let ((end  (bmkp-get-end-position bookmark)))
@@ -1572,7 +1569,6 @@ AUTONAMEDP: non-nil means use face `bmkp-light-fringe-autonamed'.
 If OVERLAY is non-nil it is the overlay to use.
  Otherwise, create a new overlay.
 Non-nil LINEP means also highlight the line containing POS."
-  (unless (> emacs-major-version 21) (error "Fringe styles not supported before Emacs 22"))
   (let ((ov  overlay))
     (if ov
         (save-excursion (move-overlay overlay (progn (goto-char pos)
@@ -1590,13 +1586,11 @@ Non-nil LINEP means also highlight the line containing POS."
       (overlay-put ov 'face nil))       ; Remove any non-fringe highlighting.
     ov))
 
-;; Not used for Emacs 20-21.
 (defun bmkp-fringe-string (side autonamedp)
   "Return a fringe string for a bookmark overlay.
 If SIDE is `right' then use the right fringe, otherwise left.
 AUTONAMEDP: non-nil means use face `bmkp-light-fringe-autonamed'.
             nil means use face `bmkp-light-fringe-non-autonamed'."
-  (unless (> emacs-major-version 21) (error "Fringe styles not supported before Emacs 22"))
   (let ((fringe-string  (copy-sequence (if autonamedp "*AUTO*" "*NONAUTO*"))))
     (put-text-property 0         (length fringe-string)
                        'display  (if (eq side 'right)
