@@ -33,7 +33,7 @@
 ;;    `bookmark+.el'     - main code library
 ;;    `bookmark+-mac.el' - Lisp macros
 ;;    `bookmark+-lit.el' - code for highlighting bookmarks (this file)
-;;    `bookmark+-bmu.el' - code for the `*Bookmark List*'
+;;    `bookmark+-bmu.el' - code for the `*Bmkp List*'
 ;;    `bookmark+-1.el'   - other required code (non-bmenu)
 ;;    `bookmark+-key.el' - key and menu bindings
 ;;
@@ -188,7 +188,7 @@
                      (defalias 'cl-case 'case)))
 
 (require 'bookmark)
-;; bookmark-alist, bookmark-bmenu-bookmark, bmkp-completing-read, bmkp-get-bookmark,
+;; bookmark-alist, bmkp-list-bookmark, bmkp-completing-read, bmkp-get-bookmark,
 ;; bookmark-get-position, bmkp-handle-bookmark, bmkp-maybe-load-default-file,
 ;; bookmark-name-from-full-record, bookmark-name-from-record, bookmark-prop-get, bmkp-prop-set
 ;; (Note: bmkp-prop-set is provided by bookmark+-1.el.)
@@ -476,7 +476,7 @@ To prevent showing any tooltip you can use a function, such as
   "Highlight the location of this line's bookmark."
   (interactive)
   (bmkp-bmenu-barf-if-not-in-menu-list)
-  (bmkp-light-bookmark (bookmark-bmenu-bookmark) nil nil 'MSG))
+  (bmkp-light-bookmark (bmkp-list-bookmark) nil nil 'MSG))
 
 ;;;###autoload (autoload 'bmkp-bmenu-light-marked "bookmark+")
 (defun bmkp-bmenu-light-marked (&optional msgp) ; `H > H' in bookmark list
@@ -495,7 +495,7 @@ When called from Lisp, non-nil MSGP means echo status messages."
   "Unhighlight the location of this line's bookmark."
   (interactive)
   (bmkp-bmenu-barf-if-not-in-menu-list)
-  (bmkp-unlight-bookmark (bookmark-bmenu-bookmark) 'NOERROR))
+  (bmkp-unlight-bookmark (bmkp-list-bookmark) 'NOERROR))
 
 ;;;###autoload (autoload 'bmkp-bmenu-unlight-marked "bookmark+")
 (defun bmkp-bmenu-unlight-marked (&optional msgp) ; `H > U' in bookmark list
@@ -518,7 +518,7 @@ that make up the property-list value of the `lighting' entry.
 When called from Lisp, the arguments are passed to
 `bmkp-set-lighting-for-bookmark' for the current line's bookmark."
   (interactive
-   (let* ((bmk        (bookmark-bmenu-bookmark))
+   (let* ((bmk        (bmkp-list-bookmark))
           (bmk-style  (bmkp-lighting-style bmk))
           (bmk-face   (bmkp-lighting-face bmk))
           (bmk-when   (bmkp-lighting-when bmk)))
@@ -528,7 +528,7 @@ When called from Lisp, the arguments are passed to
               (and bmk-when   (format "%S" bmk-when)))
              '(MSG))))
   (bmkp-bmenu-barf-if-not-in-menu-list)
-  (bmkp-set-lighting-for-bookmark (bookmark-bmenu-bookmark) style face when msgp))
+  (bmkp-set-lighting-for-bookmark (bmkp-list-bookmark) style face when msgp))
 
 ;;;###autoload (autoload 'bmkp-bmenu-set-lighting-for-marked "bookmark+")
 (defun bmkp-bmenu-set-lighting-for-marked (style face when &optional msgp) ; `H > +' in bookmark list
@@ -542,7 +542,7 @@ the current line's bookmark."
   (bmkp-bmenu-barf-if-not-in-menu-list)
   (when msgp (message "Setting highlighting..."))
   (let ((marked    (bmkp-marked-bookmarks-only))
-        (curr-bmk  (bookmark-bmenu-bookmark)))
+        (curr-bmk  (bmkp-list-bookmark)))
     (unless marked (error "No marked bookmarks"))
     (dolist (bmk  marked)
       (bmkp-prop-set bmk 'lighting (if (or face  style  when)
@@ -629,13 +629,13 @@ See `bmkp-lighted-jump'."
 
 ;;;###autoload (autoload 'bmkp-lighted-here-jump-to-list "bookmark+")
 (defun bmkp-lighted-here-jump-to-list (bookmark) ; Not bound.
-  "Jump to location in `*Bookmark List*' for a lighted BOOKMARK at point.
+  "Jump to location in `*Bmkp List*' for a lighted BOOKMARK at point.
 If there's more than one such bookmark then you're prompted for the
 bookmark name.  Completion candidates are the names of the lighted
 bookmarks at point."
   (interactive (list (bmkp-choose-bookmark-lighted-at-point)))
   (pop-to-buffer (get-buffer-create bmkp-bmenu-buffer))
-  (bookmark-bmenu-list)
+  (bmkp-list)
   (bmkp-bmenu-goto-bookmark-named (setq bmkp-last-bmenu-bookmark  bookmark)))
 
 (defun bmkp-choose-bookmark-lighted-at-point (&optional position noerrorp)
@@ -1193,9 +1193,9 @@ Interactively, the prefix arg determines INCREMENT:
  Plain `C-u': 1
  otherwise: the numeric prefix arg value
 
-To change the sort order, you can filter the `*Bookmark List*' to show
+To change the sort order, you can filter the `*Bmkp List*' to show
 only highlighted bookmarks for this buffer, sort the bookmarks there,
-and use `\\[bmkp-choose-navlist-from-bookmark-list]', choosing `CURRENT *Bookmark List*' as the
+and use `\\[bmkp-choose-navlist-from-bookmark-list]', choosing `CURRENT *Bmkp List*' as the
 navigation list.
 
 Then you can cycle the bookmarks using `bookmark-cycle'

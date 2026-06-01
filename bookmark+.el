@@ -45,7 +45,7 @@
 ;;    `bookmark+.el'     - main (driver) library (this file)
 ;;    `bookmark+-mac.el' - Lisp macros
 ;;    `bookmark+-lit.el' - (optional) code for highlighting bookmarks
-;;    `bookmark+-bmu.el' - code for the `*Bookmark List*' (bmenu)
+;;    `bookmark+-bmu.el' - code for the `*Bmkp List*' (bmenu)
 ;;    `bookmark+-1.el'   - other required code (non-bmenu)
 ;;    `bookmark+-key.el' - key and menu bindings
 ;;
@@ -115,10 +115,10 @@
 ;;         (`~/.emacs.bmk'), and in any other bookmark files you might
 ;;         have.
 ;;
-;;      3. In your `*Bookmark List*' state file,
+;;      3. In your `*Bmkp List*' state file,
 ;;         `bmkp-bmenu-state-file' (`~/.emacs-bmk-bmenu-state.el').
 ;;
-;;      4. In your `*Bookmark List*' commands file,
+;;      4. In your `*Bmkp List*' commands file,
 ;;         `bmkp-bmenu-commands-file' (`~/.emacs-bmk-bmenu-commands.el'),
 ;;         if you have one.
 ;;
@@ -128,11 +128,11 @@
 ;;      Alternatively, you can do this editing in an Emacs session
 ;;      where Bookmark+ has been loaded, but in that case you must
 ;;      TURN OFF AUTOMATIC SAVING of both your default bookmark file
-;;      and your `*Bookmark List*' state file.  Otherwise, when you
+;;      and your `*Bmkp List*' state file.  Otherwise, when you
 ;;      quit Emacs your manually edits will be overwritten.
 ;;
 ;;      To turn off this automatic saving, you can use `M-~' and `M-l'
-;;      in buffer `*Bookmark List*' (commands
+;;      in buffer `*Bmkp List*' (commands
 ;;      `bmkp-toggle-saving-bookmark-file' and
 ;;      `bmkp-toggle-saving-menu-list-state' - they are also in the
 ;;      `Bookmark+' menu).
@@ -192,7 +192,7 @@
 
 ;;;###autoload (autoload 'bookmark-bmenu-buffer "bookmark+")
 ;; This was added for vanilla Emacs 28.  Add it here for older releases.
-(defconst bookmark-bmenu-buffer "*Bookmark List*"
+(defconst bookmark-bmenu-buffer "*Bmkp List*"
   "Name of buffer used by vanilla Emacs for the bookmark-list display.")
 
 ;;;###autoload (autoload 'bookmark-plus "bookmark+")
@@ -234,7 +234,7 @@ The default value is that of vanilla Emacs constant `bookmark-bmenu-buffer'."
 (require 'bookmark+-lit nil t)          ; Optional (soft require) - no error if not found.  If you do
                                         ; not want to use `bookmark+-lit.el' then simply do not put
                                         ; that file in your `load-path'.
-(require 'bookmark+-bmu)                ; `*Bookmark List*' (aka "menu list") stuff.
+(require 'bookmark+-bmu)                ; `*Bmkp List*' (aka "menu list") stuff.
 (require 'bookmark+-1)                  ; Rest of Bookmark+, except keys & menus.
 (require 'bookmark+-key)                ; Keys & menus.
 

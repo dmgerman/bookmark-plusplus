@@ -27,7 +27,7 @@
 ;;    `bookmark+.el'     - main (driver) library
 ;;    `bookmark+-mac.el' - Lisp macros
 ;;    `bookmark+-lit.el' - (optional) code for highlighting bookmarks
-;;    `bookmark+-bmu.el' - code for the `*Bookmark List*' (bmenu)
+;;    `bookmark+-bmu.el' - code for the `*Bmkp List*' (bmenu)
 ;;    `bookmark+-1.el'   - other (non-bmenu) required code
 ;;    `bookmark+-key.el' - key and menu bindings (this file)
 ;;
@@ -237,7 +237,7 @@ there are such bookmarks can take a little time."
 (define-key bookmark-map "2"      'bmkp-clone-bookmark)                               ; `C-x x 2'
 (define-key bookmark-map "5"      'bmkp-jump-other-frame)                         ; `C-x x 5'
 (define-key bookmark-map "B"      'bmkp-choose-navlist-from-bookmark-list)            ; `C-x x B'
-;; `e' is `edit-bookmarks' (aka `bookmark-bmenu-list', from vanilla Emacs.
+;; `e' is `edit-bookmarks' (aka `bmkp-list', from vanilla Emacs.
 (define-key bookmark-map "E"      'bmkp-edit-bookmark-record)                         ; `C-x x E'
 ;; The original `bmkp-insert-location' in `bookmark.el' was `f'.
 (define-key bookmark-map "I"      'bmkp-insert-location)                          ; `C-x x I'
@@ -444,11 +444,11 @@ there are such bookmarks can take a little time."
 (define-prefix-command 'bmkp-jump-other-window-map)
 ;; (define-key ctl-x-map   "j" bmkp-jump-map)
 ;; (define-key ctl-x-4-map "j" bmkp-jump-other-window-map)
-(define-key bookmark-bmenu-mode-map "j"  nil) ; For Emacs 20
-(define-key bookmark-bmenu-mode-map "J"  nil) ; For Emacs 20
-(define-key bookmark-bmenu-mode-map "J"  bmkp-jump-map)
-(define-key bookmark-bmenu-mode-map "j"  bmkp-jump-other-window-map)
-(define-key bookmark-bmenu-mode-map "j>" 'bmkp-bmenu-jump-to-marked)                           ; `j >'
+(define-key bmkp-list-mode-map "j"  nil) ; For Emacs 20
+(define-key bmkp-list-mode-map "J"  nil) ; For Emacs 20
+(define-key bmkp-list-mode-map "J"  bmkp-jump-map)
+(define-key bmkp-list-mode-map "j"  bmkp-jump-other-window-map)
+(define-key bmkp-list-mode-map "j>" 'bmkp-bmenu-jump-to-marked)                           ; `j >'
 
 (define-key ctl-x-5-map                "B"    'bmkp-jump-other-frame)       ; `C-x j 5', `C-x 5 B'
 (define-key bmkp-jump-map              "5"    'bmkp-jump-other-frame )                     ; `J 5'
@@ -490,7 +490,7 @@ there are such bookmarks can take a little time."
   '(when (> emacs-major-version 24)     ; Emacs 25+
     (when bmkp-eww-replace-keys-flag
       (bmkp-remap 'eww-add-bookmark       'bmkp-set                eww-mode-map)
-      (bmkp-remap 'eww-list-bookmarks     'bookmark-bmenu-list         eww-mode-map)
+      (bmkp-remap 'eww-list-bookmarks     'bmkp-list         eww-mode-map)
       (bmkp-remap 'eww-next-bookmark      'bmkp-next-url-bookmark  eww-mode-map)
       (bmkp-remap 'eww-previous-bookmark  'bmkp-previous-url-bookmark  eww-mode-map))
     (define-key bmkp-jump-map              "e"  'bmkp-eww-jump)                             ; `C-x j e'
@@ -870,16 +870,16 @@ Menu for bookmarks that target this file or buffer.")
 (define-key-after menu-bar-bookmark-map [separator-show] '("--") ;-------------------------------------
                   'bmkp-edit-bookmark-record)
 (define-key-after menu-bar-bookmark-map [edit]
-  '(menu-item "Show Bookmark List" bookmark-bmenu-list
-    :help "Open the list of bookmarks in buffer `*Bookmark List*'")
+  '(menu-item "Show Bookmark List" bmkp-list
+    :help "Open the list of bookmarks in buffer `*Bmkp List*'")
   'separator-show)
 (define-key-after menu-bar-bookmark-map [bmkp-this-file/buffer-bmenu-list]
   '(menu-item "Show Bookmark List for This File/Buffer" bmkp-this-file/buffer-bmenu-list
-    :help "Open `*Bookmark List*' for the bookmarks in the current buffer (only)")
+    :help "Open `*Bmkp List*' for the bookmarks in the current buffer (only)")
   'edit)
 (define-key-after menu-bar-bookmark-map [bmkp-navlist-bmenu-list]
   '(menu-item "Show Bookmark List for Navlist" bmkp-navlist-bmenu-list
-    :help "Open `*Bookmark List*' for bookmarks in navlist (only)")
+    :help "Open `*Bmkp List*' for bookmarks in navlist (only)")
   'bmkp-this-file/buffer-bmenu-list)
 
 (define-key-after menu-bar-bookmark-map [separator-2] '("--") ;-------------------------------------

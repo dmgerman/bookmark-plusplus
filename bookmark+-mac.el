@@ -28,7 +28,7 @@
 ;;
 ;;    `bookmark+.el'     - main (driver) library
 ;;    `bookmark+-mac.el' - Lisp macros (this file)
-;;    `bookmark+-bmu.el' - code for the `*Bookmark List*' (bmenu)
+;;    `bookmark+-bmu.el' - code for the `*Bmkp List*' (bmenu)
 ;;    `bookmark+-1.el'   - other (non-bmenu) required code
 ;;    `bookmark+-lit.el' - (optional) code for highlighting bookmarks
 ;;    `bookmark+-key.el' - key and menu bindings
@@ -134,8 +134,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;
 
 (require 'bookmark)
-;; bookmark-bmenu-bookmark, bookmark-bmenu-ensure-position,
-;; bookmark-bmenu-surreptitiously-rebuild-list, bmkp-get-bookmark,
+;; bmkp-list-bookmark, bmkp-list-ensure-position,
+;; bmkp-list-surreptitiously-rebuild-list, bmkp-get-bookmark,
 ;; bookmark-get-filename
 
  
@@ -305,7 +305,7 @@ See `bmkp-next-%s-bookmark-repeat'." type type))
 ;; We don't bother making this hygienic.  Presumably only the Bookmark+ code will call it.
 ;;;###autoload (autoload 'bmkp-define-show-only-command "bookmark+")
 (defmacro bmkp-define-show-only-command (type doc-string filter-function)
-  "Define a command to show only bookmarks of TYPE in *Bookmark List*.
+  "Define a command to show only bookmarks of TYPE in *Bmkp List*.
 TYPE is a short string or symbol describing the type of bookmarks.
 
 The new command is named `bmkp-bmenu-show-only-TYPED-bookmarks', where
@@ -335,7 +335,7 @@ their values before the command was invoked."
                            bmkp-bmenu-title            ,(format "%s Bookmarks" (capitalize type)))
                      (let ((bookmark-alist  (funcall bmkp-bmenu-filter-function)))
                        (setq bmkp-latest-bookmark-alist  bookmark-alist)
-                       (bookmark-bmenu-list 'filteredp))
+                       (bmkp-list 'filteredp))
                      (when (called-interactively-p 'interactive)
                        (bmkp-msg-about-sort-order (bmkp-current-sort-order)
                                                   ,(format "Only %s bookmarks are shown" type))))
@@ -383,9 +383,9 @@ sort, and unsorted.")
               (t;; This sort order reversed.  Change to unsorted.
                (setq bmkp-sort-comparer   nil)))
         (message "Sorting...")
-        (bookmark-bmenu-ensure-position)
-        (let ((current-bmk  (bookmark-bmenu-bookmark)))
-          (bookmark-bmenu-surreptitiously-rebuild-list)
+        (bmkp-list-ensure-position)
+        (let ((current-bmk  (bmkp-list-bookmark)))
+          (bmkp-list-surreptitiously-rebuild-list)
           (when current-bmk             ; Should be non-nil, but play safe.
             (bmkp-bmenu-goto-bookmark-named current-bmk))) ; Put cursor back on right line.
         (when (called-interactively-p 'interactive)
