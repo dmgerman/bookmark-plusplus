@@ -720,7 +720,7 @@
 ;;    `bookmark-default-annotation-text', `bookmark-delete',
 ;;    `bookmark-edit-annotation-mode', `bookmark-insert',
 ;;    `bookmark-insert-annotation',
-;;    `bookmark-insert-current-bookmark', `bookmark-insert-location',
+;;    `bmkp-insert-current-bookmark', `bookmark-insert-location',
 ;;    `bookmark-jump', `bookmark-jump-other-frame',
 ;;    `bookmark-jump-other-window', `bookmark-load',
 ;;    `bookmark-relocate', `bookmark-rename', `bookmark-save',
@@ -2080,50 +2080,6 @@ the state of buffer `*Bookmark List*' at the time it is created:
      "Ignored by Bookmark+, which uses option `bmkp-sort-comparer' instead.")
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
-;;
-;; Changed default value to t.
-;; Added `:tag' strings for clarity.
-;; Doc string says that it applies to all Bookmark+ files, and recommends that you back up your files.
-;;
-(defcustom bookmark-version-control t
-  "Whether to make numbered backups of your bookmarking files.
-This includes bookmark files such as `bookmark-default-file' and also
-Bookmark+ files `bmkp-bmenu-commands-file' and
-`bmkp-bmenu-state-file'.
-
-The option can have value `nospecial', `t', `nil', or `never' .  Value
-`nospecial' means to use the `version-control' value.  The others have
-the same meanings as for option `version-control'.
-
-Use value `t' if your bookmarks are important to you.  Consider also
-using numeric backups.  See also nodes `Backup Names' and `Backup
-Deletion' in the Emacs manual."
-  :type '(choice :tag "When to make numbered backups"
-          (const :tag "Use value of option `version-control'" nospecial)
-          (const :tag "Never"                                 never)
-          (const :tag "If existing already"                   nil)
-          (other :tag "Always"                                t))
-  :group 'bookmark :group 'bookmark-plus)
-
-
-;; REPLACES ORIGINAL in `bookmark.el'.
-;;
-;; Added value `edit'.
-;;
-(defcustom bookmark-automatically-show-annotations t
-  "*Non-nil means show annotations when jumping to a bookmark.
-If the value is `edit' then open the annotation buffer in edit mode.
- This has the same effect as using command `bookmark-edit-annotation'.
-Any other non-nil value opens it in read-only mode.
- This has the same effect as using command `bookmark-show-annotation'."
-  :type '(choice
-          (const :tag "Show annotation read-only"               t)
-          (const :tag "Edit annotation"                         edit)
-          (const :tag "Do not show annotation automatically"    nil))
-  :group 'bookmark :group 'bookmark-plus)
-
-
 (defun bmkp-get-bookmark (bookmark &optional noerror _no-name-check-p)
   "Return the full bookmark record for BOOKMARK, or nil / error.
 BOOKMARK is a bookmark name (a string) or a full bookmark record.
@@ -3075,20 +3031,17 @@ Useful when a file has been renamed after a bookmark was set in it."
       (bmkp-refresh-menu-list bookmark-name)))) ; So display new location and `*' marker.
 
 
-;; REPLACES ORIGINAL in `bookmark.el' (it was removed from `bookmark.el' in Emacs 24.3 - Emacs bug #19838).
-;;
-;; No change from original, except provide a better doc string.
-;;
-;;;###autoload (autoload 'bookmark-insert-current-bookmark "bookmark+")
-(unless (fboundp 'bookmark-insert-current-bookmark)
-  (defun bookmark-insert-current-bookmark () ; Emacs 24.3+
-    "Insert current-bookmark name or buffer file name, if none.
-That is, if `bookmark-current-bookmark' in `bookmark-current-buffer'
-is not nil then insert that."
-    (interactive)
-    (let ((str  (with-current-buffer bookmark-current-buffer
-                  (or bookmark-current-bookmark  (bookmark-buffer-name)))))
-      (insert str))))
+;; Vanilla `bookmark.el' removed this command in Emacs 24.3 (Emacs bug #19838)
+;; and has not restored it.  Bookmark+ provides it under its own name.
+;;;###autoload (autoload 'bmkp-insert-current-bookmark "bookmark+")
+(defun bmkp-insert-current-bookmark ()
+  "Insert current-bookmark name, or buffer file name if none.
+If `bookmark-current-bookmark' in `bookmark-current-buffer' is non-nil,
+insert that; otherwise insert the buffer's file name."
+  (interactive)
+  (let ((str  (with-current-buffer bookmark-current-buffer
+                (or bookmark-current-bookmark  (bookmark-buffer-name)))))
+    (insert str)))
 
 
 ;; REPLACES ORIGINAL in `bookmark.el'.
@@ -4724,7 +4677,7 @@ In addition:
         (orig-qmark  (lookup-key minibuffer-local-completion-map (kbd "?"))))
     (unwind-protect
         (progn (define-key minibuffer-local-completion-map (kbd "C-M-w") 'bookmark-yank-word)
-               (define-key minibuffer-local-completion-map (kbd "C-M-u") 'bookmark-insert-current-bookmark)
+               (define-key minibuffer-local-completion-map (kbd "C-M-u") 'bmkp-insert-current-bookmark)
                (define-key minibuffer-local-completion-map (kbd "SPC")   'self-insert-command)
                (define-key minibuffer-local-completion-map (kbd "?")     'self-insert-command)
                (bmkp-completing-read-1 prompt default alist pred hist 'LAX use-nil-alist-p))
