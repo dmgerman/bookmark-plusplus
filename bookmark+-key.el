@@ -12,7 +12,7 @@
 ;; URL: https://www.emacswiki.org/emacs/download/bookmark%2b-key.el
 ;; Doc URL: https://www.emacswiki.org/emacs/BookmarkPlus
 ;; Keywords: bookmarks, bookmark+, placeholders, annotations, search, info, url, eww, w3m, gnus
-;; Compatibility: GNU Emacs: 20.x, 21.x, 22.x, 23.x, 24.x, 25.x, 26.x
+;; Compatibility: GNU Emacs: 30.x and later
 ;;
 ;; Features that might be required by this library:
 ;;
@@ -143,12 +143,7 @@
 (defcustom bmkp-bookmark-map-prefix-keys (list (kbd "C-x x"))
   "Prefix keys for `bookmark-map' in `current-global-map'.
 Each value of the list is a prefix key bound to keymap `bookmark-map'."
-  :type (if (> emacs-major-version 21)
-            '(repeat (key-sequence :tag "Key" :value [ignore]))
-          '(repeat (restricted-sexp
-                    :tag "Key"
-                    :match-alternatives ((lambda (x) (or (stringp x)  (vectorp x))))
-                    :value [ignore])))
+  :type '(repeat (key-sequence :tag "Key" :value [ignore]))
   :set 'bmkp-set-map-prefix-key
   :group 'bookmark-plus)
 
@@ -156,12 +151,7 @@ Each value of the list is a prefix key bound to keymap `bookmark-map'."
   "Prefix keys for `bmkp-jump-map' in `current-global-map'.
 Each value of the list is a prefix key bound to keymap
 `bmkp-jump-map'."
-  :type (if (> emacs-major-version 21)
-            '(repeat (key-sequence :tag "Key" :value [ignore]))
-          '(repeat (restricted-sexp
-                    :tag "Key"
-                    :match-alternatives ((lambda (x) (or (stringp x)  (vectorp x))))
-                    :value [ignore])))
+  :type '(repeat (key-sequence :tag "Key" :value [ignore]))
   :set 'bmkp-set-map-prefix-key
   :group 'bookmark-plus)
 
@@ -169,12 +159,7 @@ Each value of the list is a prefix key bound to keymap
   "Prefix keys for `bmkp-jump-other-window-map' in `current-global-map'.
 Each value of the list is a prefix key bound to keymap
 `bmkp-jump-other-window-map'."
-  :type (if (> emacs-major-version 21)
-            '(repeat (key-sequence :tag "Key" :value [ignore]))
-          '(repeat (restricted-sexp
-                    :tag "Key"
-                    :match-alternatives ((lambda (x) (or (stringp x)  (vectorp x))))
-                    :value [ignore])))
+  :type '(repeat (key-sequence :tag "Key" :value [ignore]))
   :set 'bmkp-set-map-prefix-key
   :group 'bookmark-plus)
 
@@ -273,51 +258,37 @@ there are such bookmarks can take a little time."
 ;; For Mac Book:
 (define-key bookmark-map [kp-delete] 'bmkp-delete-bookmarks)                        ; `C-x x kp-delete'
 
-;; If you use Emacs before Emacs 22, then you will want to bind the commands
-;; whose names do *not* end in `-repeat' to keys that are easily repeatable.
-;; For example, you might want to bind `bmkp-next-bookmark-this-file/buffer'
-;; (not `bmkp-next-bookmark-this-file/buffer-repeat') to a key such as [f2].
-;;
-(when (> emacs-major-version 21)
-  (define-key bookmark-map "n"          'bmkp-next-bookmark-this-file/buffer-repeat) ; `C-x x n'
-  (define-key bookmark-map "\C-n"       'bmkp-next-bookmark-this-file/buffer-repeat) ; `C-x x C-n'
-  (define-key bookmark-map [down]       'bmkp-next-bookmark-this-file/buffer-repeat) ; `C-x x down'
-  (put 'bmkp-next-bookmark-this-file/buffer-repeat :advertised-binding (kbd "C-x x <down>"))
+(define-key bookmark-map "n"          'bmkp-next-bookmark-this-file/buffer-repeat) ; `C-x x n'
+(define-key bookmark-map "\C-n"       'bmkp-next-bookmark-this-file/buffer-repeat) ; `C-x x C-n'
+(define-key bookmark-map [down]       'bmkp-next-bookmark-this-file/buffer-repeat) ; `C-x x down'
+(put 'bmkp-next-bookmark-this-file/buffer-repeat :advertised-binding (kbd "C-x x <down>"))
 
-  ;; This requires the fix for Emacs bug #6256, which is in Emacs 23.3 (presumably).
-  ;; For older Emacs versions you can bind the wheel event to `bmkp-next-bookmark-this-file/buffer'
-  ;; in the global map.  IOW, prior to Emacs 23.3 a mouse event won't work with `repeat'.
-  (when (and (boundp 'mouse-wheel-up-event)
-             (or (> emacs-major-version 23)
-                 (and (= emacs-major-version 23)  (> emacs-minor-version 2))))
-    (define-key bookmark-map (vector (list mouse-wheel-up-event))
-      'bmkp-next-bookmark-this-file/buffer-repeat))                            ; `C-x x mouse-wheel-up'
-  (define-key bookmark-map "p"          'bmkp-previous-bookmark-this-file/buffer-repeat) ; `C-x x p'
-  (define-key bookmark-map "\C-p"       'bmkp-previous-bookmark-this-file/buffer-repeat) ; `C-x x C-p'
-  (define-key bookmark-map [up]         'bmkp-previous-bookmark-this-file/buffer-repeat) ; `C-x x up'
-  (put 'bmkp-previous-bookmark-this-file/buffer-repeat :advertised-binding (kbd "C-x x <up>"))
+(when (boundp 'mouse-wheel-up-event)
+  (define-key bookmark-map (vector (list mouse-wheel-up-event))
+    'bmkp-next-bookmark-this-file/buffer-repeat))                              ; `C-x x mouse-wheel-up'
 
-  ;; This requires the fix for Emacs bug #6256, which is in Emacs 23.3 (presumably).
-  ;; For older Emacs versions you can bind the wheel event to `bmkp-previous-bookmark-this-file/buffer'
-  ;; in the global map.  IOW, prior to Emacs 23.3 a mouse event won't work with `repeat'.
-  (when (and (boundp 'mouse-wheel-down-event)
-             (or (> emacs-major-version 23)
-                 (and (= emacs-major-version 23)  (> emacs-minor-version 2))))
-    (define-key bookmark-map (vector (list mouse-wheel-down-event))
-      'bmkp-previous-bookmark-this-file/buffer-repeat))                      ; `C-x x mouse-wheel-down'
-  (define-key bookmark-map "f"          'bmkp-next-bookmark-repeat)                  ; `C-x x f'
-  (define-key bookmark-map "\C-f"       'bmkp-next-bookmark-repeat)                  ; `C-x x C-f'
-  (define-key bookmark-map [right]      'bmkp-next-bookmark-repeat)                  ; `C-x x right'
-  (put 'bmkp-next-bookmark-repeat :advertised-binding (kbd "C-x x <right>"))
-  (define-key bookmark-map "b"          'bmkp-previous-bookmark-repeat)              ; `C-x x b'
-  (define-key bookmark-map "\C-b"       'bmkp-previous-bookmark-repeat)              ; `C-x x C-b'
-  (define-key bookmark-map [left]       'bmkp-previous-bookmark-repeat)              ; `C-x x left'
-  (put 'bmkp-previous-bookmark-repeat :advertised-binding (kbd "C-x x <left>"))
-  (define-key bookmark-map [next]       'bmkp-next-bookmark-w32-repeat)              ; `C-x x next'
-  (define-key bookmark-map [prior]      'bmkp-previous-bookmark-w32-repeat)          ; `C-x x prior'
-  (when (featurep 'bookmark+-lit)
-    (define-key bookmark-map [C-down]   'bmkp-next-lighted-this-buffer-repeat)       ; `C-x x C-down'
-    (define-key bookmark-map [C-up]     'bmkp-previous-lighted-this-buffer-repeat))) ; `C-x x C-up'
+(define-key bookmark-map "p"          'bmkp-previous-bookmark-this-file/buffer-repeat) ; `C-x x p'
+(define-key bookmark-map "\C-p"       'bmkp-previous-bookmark-this-file/buffer-repeat) ; `C-x x C-p'
+(define-key bookmark-map [up]         'bmkp-previous-bookmark-this-file/buffer-repeat) ; `C-x x up'
+(put 'bmkp-previous-bookmark-this-file/buffer-repeat :advertised-binding (kbd "C-x x <up>"))
+
+(when (boundp 'mouse-wheel-down-event)
+  (define-key bookmark-map (vector (list mouse-wheel-down-event))
+    'bmkp-previous-bookmark-this-file/buffer-repeat))                          ; `C-x x mouse-wheel-down'
+
+(define-key bookmark-map "f"          'bmkp-next-bookmark-repeat)              ; `C-x x f'
+(define-key bookmark-map "\C-f"       'bmkp-next-bookmark-repeat)              ; `C-x x C-f'
+(define-key bookmark-map [right]      'bmkp-next-bookmark-repeat)              ; `C-x x right'
+(put 'bmkp-next-bookmark-repeat :advertised-binding (kbd "C-x x <right>"))
+(define-key bookmark-map "b"          'bmkp-previous-bookmark-repeat)          ; `C-x x b'
+(define-key bookmark-map "\C-b"       'bmkp-previous-bookmark-repeat)          ; `C-x x C-b'
+(define-key bookmark-map [left]       'bmkp-previous-bookmark-repeat)          ; `C-x x left'
+(put 'bmkp-previous-bookmark-repeat :advertised-binding (kbd "C-x x <left>"))
+(define-key bookmark-map [next]       'bmkp-next-bookmark-w32-repeat)          ; `C-x x next'
+(define-key bookmark-map [prior]      'bmkp-previous-bookmark-w32-repeat)      ; `C-x x prior'
+(when (featurep 'bookmark+-lit)
+  (define-key bookmark-map [C-down]   'bmkp-next-lighted-this-buffer-repeat)   ; `C-x x C-down'
+  (define-key bookmark-map [C-up]     'bmkp-previous-lighted-this-buffer-repeat)) ; `C-x x C-up'
 
 
 ;; `bmkp-annotate-map': prefix `C-x x a'
@@ -487,14 +458,14 @@ there are such bookmarks can take a little time."
 (define-key bmkp-jump-other-window-map "d"    'bmkp-dired-jump-other-window)              ; `C-x 4 j d'
 
 (eval-after-load "eww"
-  '(when (> emacs-major-version 24)     ; Emacs 25+
-    (when bmkp-eww-replace-keys-flag
-      (bmkp-remap 'eww-add-bookmark       'bmkp-set                eww-mode-map)
-      (bmkp-remap 'eww-list-bookmarks     'bmkp-list         eww-mode-map)
-      (bmkp-remap 'eww-next-bookmark      'bmkp-next-url-bookmark  eww-mode-map)
-      (bmkp-remap 'eww-previous-bookmark  'bmkp-previous-url-bookmark  eww-mode-map))
-    (define-key bmkp-jump-map              "e"  'bmkp-eww-jump)                             ; `C-x j e'
-    (define-key bmkp-jump-other-window-map "e"  'bmkp-eww-jump-other-window)))            ; `C-x 4 j e'
+  '(progn
+     (when bmkp-eww-replace-keys-flag
+       (bmkp-remap 'eww-add-bookmark       'bmkp-set                eww-mode-map)
+       (bmkp-remap 'eww-list-bookmarks     'bmkp-list               eww-mode-map)
+       (bmkp-remap 'eww-next-bookmark      'bmkp-next-url-bookmark  eww-mode-map)
+       (bmkp-remap 'eww-previous-bookmark  'bmkp-previous-url-bookmark eww-mode-map))
+     (define-key bmkp-jump-map              "e"  'bmkp-eww-jump)            ; `C-x j e'
+     (define-key bmkp-jump-other-window-map "e"  'bmkp-eww-jump-other-window))) ; `C-x 4 j e'
 
 (define-key bmkp-jump-map              "f"    'bmkp-file-jump)                              ; `C-x j f'
 (define-key bmkp-jump-other-window-map "f"    'bmkp-file-jump-other-window)               ; `C-x 4 j f'
@@ -602,20 +573,19 @@ there are such bookmarks can take a little time."
 (define-key bmkp-jump-other-window-map "tf%+"
   'bmkp-file-some-tags-regexp-jump-other-window)                                    ; `C-x 4 j t f % +'
 
-(when (> emacs-major-version 21)        ; Needs `read-file-name' with a PREDICATE arg.
-  (define-key bmkp-jump-map              "t\C-f*" 'bmkp-find-file-all-tags)           ; `C-x j t C-f *'
-  (define-key bmkp-jump-other-window-map "t\C-f*"
-    'bmkp-find-file-all-tags-other-window)                                          ; `C-x 4 j t C-f *'
-  (define-key bmkp-jump-map              "t\C-f+" 'bmkp-find-file-some-tags)          ; `C-x j t C-f +'
-  (define-key bmkp-jump-other-window-map "t\C-f+"
-    'bmkp-find-file-some-tags-other-window)                                         ; `C-x 4 j t C-f +'
-  (define-key bmkp-jump-map              "t\C-f%*" 'bmkp-find-file-all-tags-regexp) ; `C-x j t C-f % *'
-  (define-key bmkp-jump-other-window-map "t\C-f%*"
-    'bmkp-find-file-all-tags-regexp-other-window)                                 ; `C-x 4 j t C-f % *'
-  (define-key bmkp-jump-map              "t\C-f%+"
-    'bmkp-find-file-some-tags-regexp)                                               ; `C-x j t C-f % +'
-  (define-key bmkp-jump-other-window-map "t\C-f%+"
-    'bmkp-find-file-some-tags-regexp-other-window))                               ; `C-x 4 j t C-f % +'
+(define-key bmkp-jump-map              "t\C-f*" 'bmkp-find-file-all-tags)             ; `C-x j t C-f *'
+(define-key bmkp-jump-other-window-map "t\C-f*"
+  'bmkp-find-file-all-tags-other-window)                                              ; `C-x 4 j t C-f *'
+(define-key bmkp-jump-map              "t\C-f+" 'bmkp-find-file-some-tags)            ; `C-x j t C-f +'
+(define-key bmkp-jump-other-window-map "t\C-f+"
+  'bmkp-find-file-some-tags-other-window)                                             ; `C-x 4 j t C-f +'
+(define-key bmkp-jump-map              "t\C-f%*" 'bmkp-find-file-all-tags-regexp)     ; `C-x j t C-f % *'
+(define-key bmkp-jump-other-window-map "t\C-f%*"
+  'bmkp-find-file-all-tags-regexp-other-window)                                       ; `C-x 4 j t C-f % *'
+(define-key bmkp-jump-map              "t\C-f%+"
+  'bmkp-find-file-some-tags-regexp)                                                   ; `C-x j t C-f % +'
+(define-key bmkp-jump-other-window-map "t\C-f%+"
+  'bmkp-find-file-some-tags-regexp-other-window)                                      ; `C-x 4 j t C-f % +'
 
 (define-key bmkp-jump-map              "u"    'bmkp-url-jump)                               ; `C-x j u'
 (define-key bmkp-jump-other-window-map "u"    'bmkp-url-jump-other-window)                ; `C-x 4 j u'
