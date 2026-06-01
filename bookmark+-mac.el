@@ -340,7 +340,7 @@ their values before the command was invoked."
                      (let ((bookmark-alist  (funcall bmkp-bmenu-filter-function)))
                        (setq bmkp-latest-bookmark-alist  bookmark-alist)
                        (bookmark-bmenu-list 'filteredp))
-                     (when (interactive-p)
+                     (when (called-interactively-p 'interactive)
                        (bmkp-msg-about-sort-order (bmkp-current-sort-order)
                                                   ,(format "Only %s bookmarks are shown" type))))
             (error (progn (setq bmkp-bmenu-filter-function  orig-filter-fn
@@ -392,7 +392,7 @@ sort, and unsorted.")
           (bookmark-bmenu-surreptitiously-rebuild-list)
           (when current-bmk             ; Should be non-nil, but play safe.
             (bmkp-bmenu-goto-bookmark-named current-bmk))) ; Put cursor back on right line.
-        (when (interactive-p)
+        (when (called-interactively-p 'interactive)
           (bmkp-msg-about-sort-order
            ,sort-order
            nil

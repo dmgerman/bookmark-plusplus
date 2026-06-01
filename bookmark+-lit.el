@@ -200,13 +200,9 @@
 ;; Just repeat definition of `bmkp-make-obsolete', to make requires less complicated.
 ;;   (require 'bookmark+-1) ;; bmkp-make-obsolete
 ;;
-;; Do this up front.  Emacs 23 made incompatible change to require all args.
-;;
 (defun bmkp-make-obsolete (obsolete-name current-name &optional when)
-  "Same as `make-obsolete', but usable also for Emacs prior to Emacs 23."
-  (if (< emacs-major-version 23)
-      (make-obsolete obsolete-name current-name)
-    (make-obsolete obsolete-name current-name when)))
+  "Same as `make-obsolete'."
+  (make-obsolete obsolete-name current-name when))
 
 
 ;; Some general Renamings.
@@ -233,11 +229,11 @@
 ;; bmkp-define-show-only-command
 
 
-;; (eval-when-compile (require 'bookmark+-bmu))
+(require 'bookmark+-bmu)
 ;; bmkp-bmenu-barf-if-not-in-menu-list, bmkp-bmenu-filter-function,
 ;; bmkp-bmenu-title
 
-;; (eval-when-compile (require 'bookmark+-1))
+(require 'bookmark+-1)
 ;; bmkp-autonamed-bookmark-p, bmkp-autonamed-this-buffer-alist-only,
 ;; bmkp-autoname-format, bmkp-current-nav-bookmark,
 ;; bmkp-current-sort-order, bmkp-cycle-1, bmkp-default-bookmark-name,

@@ -440,7 +440,7 @@ Elements of ALIST that are not conses are ignored."
   alist)
 
 
-;; (eval-when-compile (require 'bookmark+-1))
+(require 'bookmark+-1)
 
 ;; bmkp-add-tags, bmkp-alpha-p, bmkp-bookmark-creation-cp,
 ;; bmkp-bookmark-description, bmkp-bookmark-file-bookmark-p,
@@ -478,8 +478,11 @@ Elements of ALIST that are not conses are ignored."
 ;; bmkp-url-bookmark-p, bmkp-url-cp, bmkp-unmarked-bookmarks-only,
 ;; bmkp-variable-list-bookmark-p, bmkp-visited-more-cp
 
-;; (eval-when-compile (require 'bookmark+-lit nil t))
-;; bmkp-get-lighting
+;; bookmark+-lit.el is an optional dependency.  We cannot (require) it
+;; here because it (require)s us, so use declare-function instead.
+(declare-function bmkp-get-lighting                "bookmark+-lit")
+(declare-function bmkp-toggle-auto-light-when-jump "bookmark+-lit")
+(declare-function bmkp-toggle-auto-light-when-set  "bookmark+-lit")
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -2398,7 +2401,7 @@ To revert the list and display from the bookmark file, use `C-u \\[bmkp-bmenu-re
         bmkp-bmenu-title            "All Bookmarks"
         bmkp-latest-bookmark-alist  bookmark-alist)
   (bookmark-bmenu-list)
-  (when (interactive-p) (bmkp-msg-about-sort-order (bmkp-current-sort-order) "All bookmarks are shown")))
+  (when (called-interactively-p 'interactive) (bmkp-msg-about-sort-order (bmkp-current-sort-order) "All bookmarks are shown")))
 
 ;;;###autoload (autoload 'bmkp-bmenu-show-only-autofile-bookmarks "bookmark+")
 (defun bmkp-bmenu-show-only-autofile-bookmarks (&optional arg) ; Bound to `A S' in bookmark list
@@ -2419,7 +2422,7 @@ name must have."
   (let ((bookmark-alist  (funcall bmkp-bmenu-filter-function)))
     (setq bmkp-latest-bookmark-alist  bookmark-alist)
     (bookmark-bmenu-list 'filteredp))
-  (when (interactive-p)
+  (when (called-interactively-p 'interactive)
     (bmkp-msg-about-sort-order (bmkp-current-sort-order) "Only autofile bookmarks are shown")))
 
 ;;;###autoload (autoload 'bmkp-bmenu-show-only-file-bookmarks "bookmark+")
@@ -2435,7 +2438,7 @@ With a prefix argument, do not include remote files or directories."
   (let ((bookmark-alist  (funcall bmkp-bmenu-filter-function)))
     (setq bmkp-latest-bookmark-alist  bookmark-alist)
     (bookmark-bmenu-list 'filteredp))
-  (when (interactive-p)
+  (when (called-interactively-p 'interactive)
     (bmkp-msg-about-sort-order (bmkp-current-sort-order) "Only file bookmarks are shown")))
 
 ;;;###autoload (autoload 'bmkp-bmenu-show-only-orphaned-local-file-bookmarks "bookmark+")
@@ -2453,7 +2456,7 @@ With a prefix argument, include remote orphans as well."
   (let ((bookmark-alist  (funcall bmkp-bmenu-filter-function)))
     (setq bmkp-latest-bookmark-alist  bookmark-alist)
     (bookmark-bmenu-list 'filteredp))
-  (when (interactive-p)
+  (when (called-interactively-p 'interactive)
     (bmkp-msg-about-sort-order (bmkp-current-sort-order) "Only orphaned file bookmarks are shown")))
 
 ;;;###autoload (autoload 'bmkp-bmenu-show-only-specific-buffer-bookmarks "bookmark+")
@@ -2469,7 +2472,7 @@ If BUFFER is non-nil, set `bmkp-last-specific-buffer' to it."
   (let ((bookmark-alist  (funcall bmkp-bmenu-filter-function)))
     (setq bmkp-latest-bookmark-alist  bookmark-alist)
     (bookmark-bmenu-list 'filteredp))
-  (when (interactive-p)
+  (when (called-interactively-p 'interactive)
     (bmkp-msg-about-sort-order (bmkp-current-sort-order)
                                (format "Only bookmarks for buffer `%s' are shown"
                                        bmkp-last-specific-buffer))))
@@ -2494,7 +2497,7 @@ If FILE is non-nil, set `bmkp-last-specific-file' to it."
                 (bmkp-bmenu-state-file  nil)) ; Prevent restoring saved state.
             (setq bmkp-latest-bookmark-alist  bookmark-alist)
             (bookmark-bmenu-list 'filteredp))
-          (when (interactive-p)
+          (when (called-interactively-p 'interactive)
             (bmkp-msg-about-sort-order (bmkp-current-sort-order)
                                        (format "Only bookmarks for file `%s' are shown"
                                                bmkp-last-specific-file)))
@@ -2777,7 +2780,7 @@ If any bookmark was marked before, and if the sort order is marked
 first or last (`s >'), then re-sort.
 
 Non-interactively:
-* MARK is the mark character or a carriage-return character (`?\r').
+* MARK is the mark character or a carriage-return character (`?\\r').
 * Non-nil ARG (prefix arg) means query.
 * Non-nil optional arg NO-RE-SORT-P inhibits re-sorting.
 * Non-nil optional arg MSG-P means display a status message."
@@ -3605,7 +3608,7 @@ You can then mark some of them and use `\\<bookmark-bmenu-mode-map>\\[bmkp-bmenu
   (let ((bookmark-alist  (funcall bmkp-bmenu-filter-function)))
     (setq bmkp-latest-bookmark-alist  bookmark-alist)
     (bookmark-bmenu-list 'filteredp))
-  (when (interactive-p)
+  (when (called-interactively-p 'interactive)
     (bmkp-msg-about-sort-order (bmkp-current-sort-order) "Only omitted bookmarks are shown now")))
 
 
@@ -4371,7 +4374,7 @@ Unlike `bookmark-bmenu-select', this command:
              (if (> emacs-major-version 21)
                  (describe-function-1 'bookmark-bmenu-mode)
                (describe-function-1 'bookmark-bmenu-mode nil t)))
-           (help-setup-xref (list #'bmkp-bmenu-mode-status-help) (interactive-p))
+           (help-setup-xref (list #'bmkp-bmenu-mode-status-help) (called-interactively-p 'interactive))
            (goto-char (point-min))
            (search-forward ; This depends on the text written by `bookmark-bmenu-mode'.
             "More bookmarking help below." nil t)
@@ -4630,7 +4633,7 @@ Use the command at any time to restore them."
                        bmkp-bmenu-title                 ',bmkp-bmenu-title
                        bookmark-bmenu-toggle-filenames  ',bookmark-bmenu-toggle-filenames)
                       (bmkp-bmenu-refresh-menu-list)
-                      (when (interactive-p)
+                      (when (called-interactively-p 'interactive)
                         (bmkp-msg-about-sort-order
                          (car (rassoc bmkp-sort-comparer bmkp-sort-orders-alist)))))))
     (eval def)
@@ -4730,11 +4733,11 @@ the omit list and the sort & filter information."
                       ;;   (let ((bookmark-alist  (bmkp-refresh-latest-bookmark-list)))
                       (let ((bookmark-alist  (or bmkp-latest-bookmark-alist
                                                  (bmkp-refresh-latest-bookmark-list)))) ; Sets *-latest-* also.
-                        (bmkp-bmenu-list-1 'filteredp nil (interactive-p)))
+                        (bmkp-bmenu-list-1 'filteredp nil (called-interactively-p 'interactive)))
                       (when bmkp-last-bmenu-bookmark
                         (with-current-buffer (get-buffer bmkp-bmenu-buffer)
                           (bmkp-bmenu-goto-bookmark-named bmkp-last-bmenu-bookmark)))
-                      (when (interactive-p)
+                      (when (called-interactively-p 'interactive)
                         (bmkp-msg-about-sort-order
                          (car (rassoc bmkp-sort-comparer bmkp-sort-orders-alist)))))))
     (eval def)
@@ -5170,9 +5173,9 @@ the internal lists that record menu-list markings."
       (setq bmkp-bmenu-marked-bookmarks            ()
             bmkp-bmenu-before-hide-marked-alist    ()
             bmkp-bmenu-before-hide-unmarked-alist  ())
-    (when (interactive-p) (message "Saving bookmark-list display state..."))
+    (when (called-interactively-p 'interactive) (message "Saving bookmark-list display state..."))
     (bmkp-save-menu-list-state)
-    (when (interactive-p) (message "Saving bookmark-list display state...done"))
+    (when (called-interactively-p 'interactive) (message "Saving bookmark-list display state...done"))
     (setq bmkp-bmenu-first-time-p  t))
   (quit-window))
 
@@ -5322,7 +5325,7 @@ With a prefix arg, reverse the current sort order."
       (bookmark-bmenu-surreptitiously-rebuild-list 'NO-MSG-P)
       (when curr-bmk                 ; Put cursor back on the right line.
         (bmkp-bmenu-goto-bookmark-named curr-bmk))
-      (when (interactive-p) (bmkp-msg-about-sort-order next-order)))))
+      (when (called-interactively-p 'interactive) (bmkp-msg-about-sort-order next-order)))))
 
 ;; This is a general command.  It is in this file because it is used only by the bmenu code.
 ;;;###autoload (autoload 'bmkp-reverse-sort-order "bookmark+")
@@ -5337,7 +5340,7 @@ If you combine this with \\<bookmark-bmenu-mode-map>\
     (bookmark-bmenu-surreptitiously-rebuild-list 'NO-MSG-P)
     (when curr-bmk                   ; Put cursor back on the right line.
       (bmkp-bmenu-goto-bookmark-named curr-bmk)))
-  (when (interactive-p) (bmkp-msg-about-sort-order (bmkp-current-sort-order))))
+  (when (called-interactively-p 'interactive) (bmkp-msg-about-sort-order (bmkp-current-sort-order))))
 
 ;; This is a general command.  It is in this file because it is used only by the bmenu code.
 ;;;###autoload (autoload 'bmkp-reverse-multi-sort-order "bookmark+")
@@ -5381,7 +5384,7 @@ use it."
     (bookmark-bmenu-surreptitiously-rebuild-list 'NO-MSG-P)
     (when curr-bmk                   ; Put cursor back on the right line.
       (bmkp-bmenu-goto-bookmark-named curr-bmk)))
-  (when (interactive-p) (bmkp-msg-about-sort-order (bmkp-current-sort-order))))
+  (when (called-interactively-p 'interactive) (bmkp-msg-about-sort-order (bmkp-current-sort-order))))
 
 
 
@@ -5655,7 +5658,7 @@ prefix arg, any that are marked are included."
   (interactive (list (and current-prefix-arg  (>= (prefix-numeric-value current-prefix-arg) 0))
                      (and current-prefix-arg  (<= (prefix-numeric-value current-prefix-arg) 0))))
   (bmkp-bmenu-barf-if-not-in-menu-list)
-  (help-setup-xref (list #'bmkp-bmenu-describe-marked) (interactive-p))
+  (help-setup-xref (list #'bmkp-bmenu-describe-marked) (called-interactively-p 'interactive))
   (bmkp-with-help-window "*Help*"
     (dolist (bmk  (bmkp-sort-omit (bmkp-bmenu-marked-or-this-or-all nil include-omitted-p)))
       (if defn
