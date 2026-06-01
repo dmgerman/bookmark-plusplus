@@ -5562,8 +5562,8 @@ are marked or ALLP is non-nil."
 ;; `e' is `bookmark-bmenu-edit-annotation' in vanilla Emacs.
 (define-key bmkp-list-mode-map "a"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "aa"                   'bmkp-list-show-annotation)
-(define-key bmkp-list-mode-map "aA"                   'bookmark-bmenu-show-all-annotations)
-(define-key bmkp-list-mode-map "ae"                   'bookmark-bmenu-edit-annotation)
+(define-key bmkp-list-mode-map "aA"                   'bmkp-show-all-annotations)
+(define-key bmkp-list-mode-map "ae"                   'bmkp-edit-annotation)
 (define-key bmkp-list-mode-map "a>"                   'bmkp-bmenu-edit-annotations-for-marked)
 (define-key bmkp-list-mode-map "A"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "AM"                   'bmkp-bmenu-mark-autofile-bookmarks)
@@ -5659,7 +5659,7 @@ are marked or ALLP is non-nil."
 (define-key bmkp-list-mode-map "RS"                   'bmkp-bmenu-show-only-region-bookmarks)
 (define-key bmkp-list-mode-map "\M-r"                 'bookmark-bmenu-relocate) ; `R' in Emacs
 (define-key bmkp-list-mode-map "\M-R"                 'bmkp-bmenu-relocate-marked)
-(define-key bmkp-list-mode-map "S"                    'bookmark-bmenu-save) ; `s' in Emacs
+(define-key bmkp-list-mode-map "S"                    'bmkp-save) ; `s' in Emacs
 (define-key bmkp-list-mode-map "s"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "s>"                   'bmkp-bmenu-sort-marked-before-unmarked)
 (define-key bmkp-list-mode-map "s*"                   'bmkp-bmenu-sort-modified-before-unmodified)
@@ -5729,7 +5729,7 @@ are marked or ALLP is non-nil."
 (define-key bmkp-list-mode-map "Tv"                   'bmkp-bmenu-set-tag-value)
 (define-key bmkp-list-mode-map "T\M-w"                'bmkp-bmenu-copy-tags)
 (define-key bmkp-list-mode-map "T\C-y"                'bmkp-bmenu-paste-add-tags)
-(define-key bmkp-list-mode-map "\M-t"                 'bookmark-bmenu-toggle-filenames) ; `t' in Emacs
+(define-key bmkp-list-mode-map "\M-t"                 'bmkp-list-toggle-filenames) ; `t' in Emacs
 (define-key bmkp-list-mode-map "t"                    'bmkp-bmenu-toggle-marks)
 (define-key bmkp-list-mode-map "U"                    'bmkp-bmenu-unmark-all)
 (define-key bmkp-list-mode-map "\M-u"                 nil) ; For Emacs 20

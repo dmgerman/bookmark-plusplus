@@ -264,3 +264,27 @@ clean commit and reconsider.
 The reversal of the whole refactor is `git revert` of the phase
 commits. The text-property trick code is preserved in history
 unchanged for as long as we want to be able to recover it.
+
+## Status
+
+- **Phase 1 (id field + migration code)** — done.
+- **Phase 2 (name uniqueness)** — done.  `bookmark-store`
+  auto-disambiguates; `bmkp-deduplicate-bookmark-names` runs on load.
+- **Phase 3 (drop `bmkp-full-record` machinery)** — done.  All setter
+  sites removed; `bmkp-get-bookmark` is a plain `assoc`; the
+  `print-circle`/`print-gensym` write binding is gone; the
+  `bmkp-propertize-bookmark-names-flag` defcustom is gone.
+- **Phase 4 (rename `bookmark-*` redefinitions to `bmkp-*`)** — done.
+- **Phase 5 (extract `*Bmkp List*`)** — done.  New major mode
+  `bmkp-list-mode` (derived from `special-mode`) in its own buffer
+  `*Bmkp List*`.  The built-in `bookmark-bmenu-list` /
+  `*Bookmark List*` is untouched.
+- **Phase 6 (optional advice integration)** — *dropped*.  Wiring
+  `define-key` on `bookmark-map` or `advice-add` on `bookmark-jump`
+  is a two-line user-init snippet; shipping a `bmkp-install-builtin-advice`
+  helper added surface area without enough payoff.  The relevant
+  snippets live in `readme.org` → "Binding bmkp commands to standard
+  keys".
+- **Phase 7 (docs)** — done.  `readme.org`, `doc/reference.org`, and
+  `CLAUDE.md` reflect the sibling design.  `bookmark+-doc.el` (the
+  upstream comment-only manual) is left for a later pass.

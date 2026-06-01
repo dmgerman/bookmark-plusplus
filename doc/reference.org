@@ -44,9 +44,9 @@ can still discover them with =M-x bmkp-= =TAB=.
 
 | Command                              | Default key | Notes                                  |
 |--------------------------------------+-------------+----------------------------------------|
-| =bookmark-jump=                        | =C-x j j=, =C-x r b= | All bookmarks; same window.            |
-| =bookmark-jump-other-window=           | =C-x 4 j j=, =C-x x o/q= | Other window.                          |
-| =bookmark-jump-other-frame=            | =C-x j 5=, =C-x 5 B=, =C-x x 5= | Other frame.                           |
+| =bmkp-jump=                        | =C-x j j=, =C-x r b= | All bookmarks; same window.            |
+| =bmkp-jump-other-window=           | =C-x 4 j j=, =C-x x o/q= | Other window.                          |
+| =bmkp-jump-other-frame=            | =C-x j 5=, =C-x 5 B=, =C-x x 5= | Other frame.                           |
 | =bmkp-jump-to-type=                    | =C-x j :=    | Pick type, then bookmark.              |
 | =bmkp-jump-to-type-other-window=       | =C-x 4 j :=  |                                        |
 | =bmkp-jump-to-list= (jump to a bookmark-list bookmark) | =C-x j C-j=, =C-x x C-j= | |
@@ -98,11 +98,11 @@ commands.  Additional commands include =bmkp-copy-tags=,
 =bmkp-untag-a-file=, =bmkp-autofile-add-tags=, and
 =bmkp-autofile-remove-tags=.
 
-* =*Bookmark List*= mode
+* =*Bmkp List*= mode
 
 | Command                                          | Key            | Meaning                                  |
 |--------------------------------------------------+----------------+------------------------------------------|
-| =bookmark-bmenu-list=                              | =C-x x e=, =C-x r l= | Open =*Bookmark List*=.                   |
+| =bmkp-list=                              | =C-x x e=, =C-x r l= | Open =*Bmkp List*=.                   |
 | =bmkp-this-file/buffer-bmenu-list=                 | =C-x x ,=        | Open it filtered to this file/buffer.     |
 | =bmkp-navlist-bmenu-list=                          | =C-x x N=        | Open it for the navigation list.          |
 | =bmkp-bmenu-w32-open=                              | =M-RET=          | Open with MS-Windows file association.    |
@@ -132,7 +132,7 @@ and =bmkp-unlight-bookmark=.
 |--------------------------------------+----------------------------------------------|
 | =bmkp-describe-bookmark=               | =C-x h M=                                     |
 | =bmkp-describe-bookmark-lighted-here=  | =C-x x ?=                                      |
-| =bmkp-bmenu-mode-status-help=           | =?=, =C-h m= (in =*Bookmark List*=)            |
+| =bmkp-bmenu-mode-status-help=           | =?=, =C-h m= (in =*Bmkp List*=)            |
 | =bmkp-bmenu-describe-this-bookmark=    | =C-h RET=, =C-h C-RET=                          |
 | =bmkp-bmenu-describe-marked=           | =C-h >=                                         |
 | =bmkp-bmenu-describe-this+move-{down,up}= | =C-down=, =C-up=                              |
