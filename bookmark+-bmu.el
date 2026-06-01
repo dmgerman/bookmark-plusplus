@@ -491,6 +491,9 @@ Elements of ALIST that are not conses are ignored."
 (declare-function bmkp-toggle-auto-light-when-jump "bookmark+-lit")
 (declare-function bmkp-toggle-auto-light-when-set  "bookmark+-lit")
 
+;; Org integration (declared so byte-compile doesn't warn; loaded lazily).
+(declare-function org-link-store-props "ol")
+
 ;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Quiet the byte-compiler

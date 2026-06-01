@@ -1013,6 +1013,25 @@ Returns nil if neither is available."
 (declare-function bmkp-eww-alist-only                     "bookmark+-1")
 (declare-function bmkp-find-tag-default-as-regexp         "bookmark+-1")
 
+;; Built-in libraries we touch lazily (only inside specific bookmark handlers
+;; or rarely-exercised code paths).  Declare instead of require to avoid
+;; pulling them in at load time.
+(declare-function ffap-guesser                   "ffap")
+(declare-function ffap-read-file-or-url          "ffap")
+(declare-function ffap-url-p                     "ffap")
+(declare-function Man-getpage-in-background      "man")
+(declare-function Info-find-node                 "info")
+(declare-function eww-current-url                "eww")
+(declare-function gnus-article-show-summary      "gnus-art")
+(declare-function gnus-summary-goto-article      "gnus-sum")
+(declare-function gnus-summary-insert-cached-articles "gnus-sum")
+(declare-function gnus-data-find-in              "gnus-sum")
+(declare-function dired-guess-default            "dired-x")
+(declare-function compilation-next-error         "compile")
+(declare-function image-dired-get-thumbnail-image "image-dired")
+(declare-function mailcap-file-default-commands  "mailcap")
+(declare-function org-link-store-props           "ol")
+
 ;;(@* "User Options (Customizable)")
 ;;; User Options (Customizable) --------------------------------------
 
