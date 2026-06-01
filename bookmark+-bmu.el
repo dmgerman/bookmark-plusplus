@@ -933,7 +933,7 @@ prompting with completion for the new path."
     (interactive)
     (let ((bmk        (bookmark-bmenu-bookmark))
           (thispoint  (point)))
-      (when bmk (bookmark-relocate bmk))
+      (when bmk (bmkp-relocate bmk))
       (goto-char thispoint))))
  
 ;;(@* "Menu List Replacements (`bookmark-bmenu-*')")
@@ -1917,7 +1917,7 @@ Non-nil optional arg NO-MSG-P means do not show progress messages."
                   (move-to-column bookmark-bmenu-file-column t)
                   (delete-region (point) (line-end-position))
                   (insert "  ")
-                  (bookmark-insert-location bmk t) ; Pass the NO-HISTORY arg.
+                  (bmkp-insert-location bmk t) ; Pass the NO-HISTORY arg.
                   (when (if (fboundp 'display-color-p) ; Emacs 21+.
                             (and (display-color-p)  (display-mouse-p))
                           window-system)
@@ -2163,7 +2163,7 @@ for confirmation when deleting marked (not flagged) bookmarks."
                                                               '(face bmkp-*-mark))))
                    (ding) (ding)
                    (yes-or-no-p "DELETE THIS bookmark ")))
-          (bookmark-delete (bookmark-bmenu-bookmark))
+          (bmkp-delete (bookmark-bmenu-bookmark))
         (message "OK, not deleted"))
     (if (or (not markedp)
             no-confirm-p
@@ -2179,7 +2179,7 @@ for confirmation when deleting marked (not flagged) bookmarks."
                    (bmk       (bmkp-get-bookmark bmk-name nil 'NO-NAME-CHECK-P)))
               ;; Inhibit saving until all are deleted, then do it once.  Otherwise, some might not be
               ;; deleted, because `bmkp-save' refreshes the list, which removes `D' flags.
-              (let ((bookmark-save-flag  nil))  (bookmark-delete bmk-name 'BATCHP))
+              (let ((bookmark-save-flag  nil))  (bmkp-delete bmk-name 'BATCHP))
               ;; Count is misleading if the bookmark is not really in `bookmark-alist'.
               (setq count                       (1+ count)
                     bmkp-latest-bookmark-alist  (delete bmk bmkp-latest-bookmark-alist))))
@@ -2208,7 +2208,7 @@ for confirmation when deleting marked (not flagged) bookmarks."
   (interactive)
   (bmkp-bmenu-barf-if-not-in-menu-list)
   (bookmark-bmenu-ensure-position)
-  (let ((newname  (bookmark-rename (bookmark-bmenu-bookmark)))) (bmkp-bmenu-goto-bookmark-named newname)))
+  (let ((newname  (bmkp-rename (bookmark-bmenu-bookmark)))) (bmkp-bmenu-goto-bookmark-named newname)))
  
 ;;(@* "Bookmark+ Functions (`bmkp-*')")
 ;;; Bookmark+ Functions (`bmkp-*') -----------------------------------
@@ -3212,7 +3212,7 @@ Non-interactively:
     ;; (Exit `let', to restore `bookmark-alist'.)
     (cond (movep
            ;; Moved.  Delete moved bookmarks.  Refresh from memory w/o asking.
-           (dolist (bmk  (nth 2 imported)) (bookmark-delete bmk 'BATCHP))
+           (dolist (bmk  (nth 2 imported)) (bmkp-delete bmk 'BATCHP))
            (bmkp-bmenu-refresh-menu-list nil 'MSGP))
           ((not (zerop (nth 0 imported)))
            ;; Copied, and some were renamed.  Refresh from file w/o asking.

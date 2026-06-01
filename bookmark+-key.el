@@ -239,8 +239,8 @@ there are such bookmarks can take a little time."
 (define-key bookmark-map "B"      'bmkp-choose-navlist-from-bookmark-list)            ; `C-x x B'
 ;; `e' is `edit-bookmarks' (aka `bookmark-bmenu-list', from vanilla Emacs.
 (define-key bookmark-map "E"      'bmkp-edit-bookmark-record)                         ; `C-x x E'
-;; The original `bookmark-insert-location' in `bookmark.el' was `f'.
-(define-key bookmark-map "I"      'bookmark-insert-location)                          ; `C-x x I'
+;; The original `bmkp-insert-location' in `bookmark.el' was `f'.
+(define-key bookmark-map "I"      'bmkp-insert-location)                          ; `C-x x I'
 (define-key bookmark-map "\C-j"   'bmkp-jump-to-list)                                 ; `C-x x C-j'
 (define-key bookmark-map "K"      'bmkp-set-desktop-bookmark) ; `C-x x K' (also `C-x r K', `C-x x c K')
 (define-key bookmark-map "L"      'bmkp-switch-bookmark-file-create)                  ; `C-x x L'
@@ -898,10 +898,10 @@ Menu for bookmarks that target this file or buffer.")
     :enable (and bmkp-bmenu-commands-file  (file-readable-p bmkp-bmenu-commands-file)))
   'bmkp-choose-navlist-from-bookmark-list)
 (define-key-after menu-bar-bookmark-map [insert]
-  '(menu-item "Insert Bookmark Contents..." bookmark-insert :help "Insert bookmarked text")
+  '(menu-item "Insert Bookmark Contents..." bmkp-insert :help "Insert bookmarked text")
   'bmkp-list-defuns-in-commands-file)
 (define-key-after menu-bar-bookmark-map [locate]
-  '(menu-item "Insert Bookmark Location..." bookmark-locate ; Alias for `bookmark-insert-location'.
+  '(menu-item "Insert Bookmark Location..." bookmark-locate ; Alias for `bmkp-insert-location'.
     :help "Insert a bookmark's file or buffer name")
   'insert)
 (when (fboundp 'advice-add)             ; Emacs 24.4+.
@@ -1088,7 +1088,7 @@ Menu for bookmarks that target this file or buffer.")
   '(menu-item "Delete All Autonamed Bookmarks Here..."
     bmkp-delete-all-autonamed-for-this-buffer
     :help "Delete all autonamed bookmarks for the current buffer"))
-(define-key bmkp-delete-menu [bmkp-toggle-autoname-bookmark-delete]
+(define-key bmkp-delete-menu [bmkp-toggle-autoname-bmkp-delete]
   '(menu-item "Delete Autonamed Bookmark" bmkp-toggle-autonamed-bookmark-set/delete
     :help "Delete the autonamed bookmark at point"
     :visible (bmkp-get-bookmark-in-alist (funcall bmkp-autoname-bookmark-function (point))
@@ -1101,12 +1101,12 @@ Menu for bookmarks that target this file or buffer.")
   '(menu-item "Delete Bookmarks Here..." bmkp-delete-bookmarks
     :help "Delete some bookmarks at point or, with `C-u', all bookmarks in the buffer"))
 (define-key bmkp-delete-menu [delete]
-  '(menu-item "Delete Bookmark..." bookmark-delete :help "Delete the bookmark you choose by name"))
+  '(menu-item "Delete Bookmark..." bmkp-delete :help "Delete the bookmark you choose by name"))
 (define-key bmkp-delete-menu [bmkp-purge-notags-autofiles]
   '(menu-item "Purge Autofiles with No Tags..." bmkp-purge-notags-autofiles
     :help "Delete all autofile bookmarks that have no tags"))
 
-;; Remove vanilla `bookmark-delete' entry from main `Bookmarks' menu.
+;; Remove vanilla `bmkp-delete' entry from main `Bookmarks' menu.
 (define-key menu-bar-bookmark-map [delete] nil)
 
 

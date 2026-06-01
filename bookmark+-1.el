@@ -290,7 +290,7 @@
 ;;    `bmkp-non-dir-file-jump-other-window', `bmkp-non-file-jump',
 ;;    `bmkp-non-file-jump-other-window',
 ;;    `bmkp-occur-create-autonamed-bookmarks',
-;;    `bmkp-ORIG-bookmark-insert', `bmkp-occur-target-set',
+;;    `bmkp-occur-target-set',
 ;;    `bmkp-occur-target-set-all', `bmkp-paste-add-tags',
 ;;    `bmkp-paste-replace-tags', `bmkp-previous-autonamed-bookmark',
 ;;    `bmkp-previous-autonamed-bookmark-other-window',
@@ -717,13 +717,13 @@
 ;;  ***** NOTE: The following commands defined in `bookmark.el'
 ;;              have been REDEFINED HERE:
 ;;
-;;    `bmkp-default-annotation-text', `bookmark-delete',
-;;    `bmkp-edit-annotation-mode', `bookmark-insert',
+;;    `bmkp-default-annotation-text', `bmkp-delete',
+;;    `bmkp-edit-annotation-mode', `bmkp-insert',
 ;;    `bmkp-insert-annotation',
-;;    `bmkp-insert-current-bookmark', `bookmark-insert-location',
+;;    `bmkp-insert-current-bookmark', `bmkp-insert-location',
 ;;    `bmkp-jump', `bmkp-jump-other-frame',
 ;;    `bmkp-jump-other-window', `bmkp-load',
-;;    `bookmark-relocate', `bookmark-rename', `bmkp-save',
+;;    `bmkp-relocate', `bmkp-rename', `bmkp-save',
 ;;    `bmkp-send-edited-annotation', `bookmark-set',
 ;;    `bmkp-set-name', `bmkp-yank-word'.
 ;;
@@ -745,7 +745,7 @@
 ;;    `bookmark-get-bookmark-record' (Emacs 20-22),
 ;;    `bookmark-get-handler' (Emacs 20-22),
 ;;    `bmkp-handle-bookmark', `bmkp-import-new-list',
-;;    `bookmark-jump-noselect' (Emacs 20-22), `bookmark-location',
+;;    `bookmark-jump-noselect' (Emacs 20-22), `bmkp-location',
 ;;    `bmkp-make-record', `bmkp-make-record-default',
 ;;    `bmkp-maybe-load-default-file', `bmkp-maybe-rename',
 ;;    `bookmark-prop-get' (Emacs 20-22), `bmkp-prop-set',
@@ -2325,7 +2325,7 @@ Calls `bmkp-maybe-load-default-file' first.  Like the built-in
 ;;
 ;; 1. Added optional args ALIST, PRED, and HIST.
 ;; 2. Use helper function `bmkp-completing-read-1', which does this:
-;;    (a) binds `icicle-delete-candidate-object' to (essentially) `bookmark-delete'.
+;;    (a) binds `icicle-delete-candidate-object' to (essentially) `bmkp-delete'.
 ;;    (b) forces you to enter a non-empty name, if DEFAULT is nil or "".
 ;;
 (defun bmkp-completing-read (prompt &optional default alist pred hist use-nil-alist-p)
@@ -2522,7 +2522,7 @@ are kept.  Other properties may be updated.  Properties such as
 `position' and `visits' are typically updated, for example, to record
 the new position and the number of visits.
 
-Use `\\[bookmark-delete]' to remove bookmarks (you give it a name, and it removes
+Use `\\[bmkp-delete]' to remove bookmarks (you give it a name, and it removes
 only the first instance of a bookmark with that name from the list of
 bookmarks).
 
@@ -2873,7 +2873,7 @@ is handled as follows:
                              ;; This is probably not the right way to get the correct buffer, but it's
                              ;; better than nothing, and it gives the user a chance to DTRT.
                              (pop-to-buffer (bmkp-get-buffer-name bookmark)) ; Create buffer.
-                           (bookmark-relocate bookmark)) ; Relocate to file.
+                           (bmkp-relocate bookmark)) ; Relocate to file.
                          (funcall (or (bookmark-get-handler bookmark)  'bmkp-default-handler)
                                   (bmkp-get-bookmark bookmark))) ; Try again
                         (t
@@ -2967,8 +2967,8 @@ Otherwise, call `bmkp-goto-position' to go to the recorded position."
 ;; 5. Update Dired location too, for Dired bookmark.
 ;; 6. Refresh menu list, to show new location.
 ;;
-;;;###autoload (autoload 'bookmark-relocate "bookmark+")
-(defun bookmark-relocate (bookmark-name &optional no-refresh-p) ; Not bound
+;;;###autoload (autoload 'bmkp-relocate "bookmark+")
+(defun bmkp-relocate (bookmark-name &optional no-refresh-p) ; Not bound
   "Relocate the bookmark named BOOKMARK-NAME to another file.
 You are prompted for the new file name.
 Non-nil optional arg NO-REFRESH-P means do not refresh/rebuild the
@@ -3019,8 +3019,8 @@ insert that; otherwise insert the buffer's file name."
 ;; 3. Added note about `S-delete' to doc string.
 ;; 4. Changed arg name: BOOKMARK -> BOOKMARK-NAME.
 ;;
-;;;###autoload (autoload 'bookmark-insert-location "bookmark+")
-(defun bookmark-insert-location (bookmark-name &optional no-history) ; `C-x x I' (original: `C-x x f')
+;;;###autoload (autoload 'bmkp-insert-location "bookmark+")
+(defun bmkp-insert-location (bookmark-name &optional no-history) ; `C-x x I' (original: `C-x x f')
   "Insert file or buffer name for the bookmark named BOOKMARK-NAME.
 If a file is bookmarked, insert the recorded file name.
 If a non-file buffer is bookmarked, insert the recorded buffer name.
@@ -3031,7 +3031,7 @@ Optional arg NO-HISTORY means do not record BOOKMARK-NAME in
    (let ((bmk  (bmkp-completing-read "Insert bookmark location" (bmkp-default-bookmark-name))))
      (if (> emacs-major-version 21) (list bmk) bmk)))
   (unless no-history (bookmark-maybe-historicize-string bookmark-name))
-  (insert (bookmark-location bookmark-name))) ; Return the line inserted.
+  (insert (bmkp-location bookmark-name))) ; Return the line inserted.
 
 
 ;; REPLACES ORIGINAL in `bookmark.el'.
@@ -3043,7 +3043,7 @@ Optional arg NO-HISTORY means do not record BOOKMARK-NAME in
 ;; 3. Location returned can be a buffer name.
 ;; 4. If both file and buffer names are recorded, respect option `bmkp-bmenu-show-file-not-buffer-flag'.
 ;;
-(defun bookmark-location (bookmark)
+(defun bmkp-location (bookmark)
   "Return a description of the location of BOOKMARK.
 BOOKMARK is a bookmark name or a bookmark record.
 If it is a name with text property `bmkp-full-record', or if it is a
@@ -3084,8 +3084,8 @@ Unknown location --\"."
 ;; 5. Added note about `S-delete' to doc string.
 ;; 6. Refresh menu list, to show new name.
 ;;
-;;;###autoload (autoload 'bookmark-rename "bookmark+")
-(defun bookmark-rename (old &optional new batchp) ; Not bound in Bookmark+
+;;;###autoload (autoload 'bmkp-rename "bookmark+")
+(defun bmkp-rename (old &optional new batchp) ; Not bound in Bookmark+
   "Change bookmark's name from OLD to NEW.
 Interactively:
  If called from the keyboard, then prompt for OLD.
@@ -3125,24 +3125,13 @@ should be non-nil if BATCH is non-nil.)"
     (or newname  old)))                 ; NEWNAME is nil only if BATCHP is non-nil and NEW was nil.
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
-;;
-;; 1. Added bookmark default for interactive use.
-;; 2. Added note about `S-delete' to doc string.
-;; 3. Changed arg name: BOOKMARK -> BOOKMARK-NAME.
-;;
-(or (fboundp 'bmkp-ORIG-bookmark-insert)
-(fset 'bmkp-ORIG-bookmark-insert (symbol-function 'bookmark-insert)))
-
-;;;###autoload (autoload 'bookmark-insert "bookmark+")
-(defun bookmark-insert (bookmark-name)  ; Bound to `C-x x i'
+;;;###autoload (autoload 'bmkp-insert "bookmark+")
+(defun bmkp-insert (bookmark-name)       ; Bound to `C-x x i'
   "Insert the text of a bookmarked file.
-BOOKMARK-NAME is the name of the bookmark.
-You may have a problem using this function if the value of variable
-`bookmark-alist' is nil.  If that happens, you need to load in some
-bookmarks.  See function `bmkp-load' for more about this."
+BOOKMARK-NAME is the name of the bookmark.  Interactively, prompt
+with completion (default: `bmkp-default-bookmark-name')."
   (interactive (list (bmkp-completing-read "Insert bookmark contents" (bmkp-default-bookmark-name))))
-  (bmkp-ORIG-bookmark-insert bookmark-name))
+  (bookmark-insert bookmark-name))
 
 
 ;; REPLACES ORIGINAL in `bookmark.el'.
@@ -3157,8 +3146,8 @@ bookmarks.  See function `bmkp-load' for more about this."
 ;; 7. Update `bmkp-latest-bookmark-alist', `bmkp-bmenu-omitted-bookmarks', and `bmkp-automatic-bookmarks'.
 ;; 8. Increment `bookmark-alist-modification-count' even when BATCHP is non-nil.
 ;;
-;;;###autoload (autoload 'bookmark-delete "bookmark+")
-(defun bookmark-delete (bookmark &optional batchp) ; Bound to `C-x x d'
+;;;###autoload (autoload 'bmkp-delete "bookmark+")
+(defun bmkp-delete (bookmark &optional batchp) ; Bound to `C-x x d'
   "Delete the BOOKMARK from the bookmark list.
 BOOKMARK is a bookmark name or a bookmark record.
 Interactively, default to the \"current\" bookmark (that is, the one
@@ -4910,7 +4899,7 @@ With a prefix arg, edit the complete bookmark record (the
                                                              (not (and (fboundp 'bmkp-eww-bookmark-p)
                                                                        (bmkp-eww-bookmark-p bookmark))))))
       (when (or changed-bmk-name-p  changed-location-p  changed-filename-p  changed-buffname-p)
-        (when changed-bmk-name-p (bookmark-rename bmk-name new-bmk-name 'BATCHP))
+        (when changed-bmk-name-p (bmkp-rename bmk-name new-bmk-name 'BATCHP))
         (when changed-location-p (bmkp-prop-set new-bmk-name 'location new-location))
         (when changed-filename-p (bookmark-set-filename new-bmk-name new-location))
         (when changed-buffname-p (bmkp-prop-set new-bmk-name 'buffer-name new-location))
@@ -5890,7 +5879,7 @@ BOOKMARK is a bookmark name or a bookmark record."
     (when (bmkp-get-end-position bookmark)
       (bmkp-prop-set bookmark 'end-position (point)))
     (let ((newname  (funcall bmkp-autoname-bookmark-function (point))))
-      (bookmark-rename (bmkp-bookmark-name-from-record bookmark) newname 'BATCHP)
+      (bmkp-rename (bmkp-bookmark-name-from-record bookmark) newname 'BATCHP)
       (bmkp-refresh/rebuild-menu-list (bmkp-bookmark-name-from-record bookmark)) ; So display new name.
       (bmkp-maybe-save-bookmarks))
     (if namep (bmkp-bookmark-name-from-record bookmark) bookmark))) ; Return updated bookmark or name.
@@ -6926,7 +6915,7 @@ If it is a record then it need not belong to `bookmark-alist'."
              (and this-file  bmk-file  (bmkp-same-file-p this-file bmk-file))))
        ;; If the buffer to check is from EWW, the buffer URL must match the bookmark URL.
        (or (not (eq major-mode 'eww-mode))
-           (and (fboundp 'bmkp-eww-url)  (equal (bookmark-location bookmark) (bmkp-eww-url)))) ; Emacs 25+
+           (and (fboundp 'bmkp-eww-url)  (equal (bmkp-location bookmark) (bmkp-eww-url)))) ; Emacs 25+
        (not (bmkp-desktop-bookmark-p        bookmark))
        (not (bmkp-bookmark-file-bookmark-p  bookmark))
        (not (bmkp-sequence-bookmark-p       bookmark))
@@ -8566,11 +8555,11 @@ Non-interactively, non-nil MSG-P means display a status message."
         (bookmark-save-flag  (and (not bmkp-count-multi-mods-as-one-flag)
                                   bookmark-save-flag)) ; Save only after `dolist'.
         tags)
-    ;; Needs Bookmark+ version of `bookmark-delete', which accepts a bookmark, not just its name.
+    ;; Needs Bookmark+ version of `bmkp-delete', which accepts a bookmark, not just its name.
     (dolist (bmk  bmks)
       (when (and (setq tags  (assq 'tags (bmkp-bookmark-data-from-record bmk)))
                  (or (not tags)  (null (cdr tags))))
-        (bookmark-delete bmk 'BATCHP)))) ; Do not refresh list here - do it after iterate.
+        (bmkp-delete bmk 'BATCHP)))) ; Do not refresh list here - do it after iterate.
   (bmkp-tags-list)         ; Update the tags cache now, after iterate.
   (bmkp-maybe-save-bookmarks) ; Increments `bookmark-alist-modification-count'.
   (bmkp-refresh/rebuild-menu-list nil (not msg-p))) ; Refresh now, after iterate.
@@ -9862,7 +9851,7 @@ BOOKMARK is a bookmark name or a bookmark record."
     (let ((desktop-dirname  (file-name-directory desktop-file)))
       (when (fboundp 'desktop-release-lock) (desktop-release-lock))) ; Not defined for Emacs 20.
     (when (file-exists-p desktop-file) (delete-file desktop-file)))
-  (bookmark-delete bookmark))
+  (bmkp-delete bookmark))
 
 ;; Variable-list bookmarks
 
@@ -10360,7 +10349,7 @@ BOOKMARK is a bookmark name or a bookmark record."
       (with-current-buffer buffer
         (eww-mode)
         (save-window-excursion ; Save window because it calls `pop-to-buffer-same-window'.
-          (eww (bookmark-location bookmark)))
+          (eww (bmkp-location bookmark)))
         (add-hook 'eww-after-render-hook after-render-function 'APPEND 'LOCAL))))
 
   (defun bmkp-eww-rename-buffer (&rest _ignored)
@@ -12935,7 +12924,7 @@ Non-interactively, act at POSITION, not point.  If nil, act at point."
           (let ((mark-active  nil))     ; Do not set a region bookmark.
             (bookmark-set bmk-name)
             (message "Set bookmark `%s'" bmk-name))
-        (bookmark-delete bmk-name)
+        (bmkp-delete bmk-name)
         (message "Deleted bookmark `%s'" bmk-name)))))
 
 ;;;###autoload (autoload 'bmkp-set-autonamed-bookmark "bookmark+")
@@ -13032,7 +13021,7 @@ buffer part names the current buffer."
                 (y-or-n-p (format "Delete ALL autonamed bookmarks for buffer `%s'? " (buffer-name))))
         (let ((bookmark-save-flag   (and (not bmkp-count-multi-mods-as-one-flag)
                                          bookmark-save-flag))) ; Save at most once, after `dolist'.
-          (dolist (bmk  bmks-to-delete)  (bookmark-delete bmk 'BATCHP))) ; No refresh yet.
+          (dolist (bmk  bmks-to-delete)  (bmkp-delete bmk 'BATCHP))) ; No refresh yet.
         (bmkp-refresh/rebuild-menu-list nil (not msg-p)) ; Now refresh, after iterate.
         (when msg-p (message "Deleted all bookmarks for buffer `%s'" (buffer-name)))))))
 
@@ -13046,7 +13035,7 @@ bookmark-list."
                                        (bmkp-autonamed-this-buffer-alist-only)))
           (bookmark-save-flag  (and (not bmkp-count-multi-mods-as-one-flag)
                                     bookmark-save-flag))) ; Save at most once, after `dolist'.
-      (dolist (bmk  bmks-to-delete)  (bookmark-delete bmk 'BATCHP))) ; No refresh yet.
+      (dolist (bmk  bmks-to-delete)  (bmkp-delete bmk 'BATCHP))) ; No refresh yet.
     (unless no-refresh-p
       (bmkp-refresh/rebuild-menu-list nil 'BATCHP)))) ; Now refresh, after iterate.
 
@@ -13457,7 +13446,7 @@ Non-interactively, non-nil MSG-P means display a status message."
         (error "OK - delete canceled"))
       (let ((bookmark-save-flag  (and (not bmkp-count-multi-mods-as-one-flag)
                                       bookmark-save-flag))) ; Save at most once, after `dolist'.
-        (dolist (bmk  bmks-to-delete)  (bookmark-delete bmk 'BATCHP))) ; No refresh yet.
+        (dolist (bmk  bmks-to-delete)  (bmkp-delete bmk 'BATCHP))) ; No refresh yet.
       (bmkp-refresh/rebuild-menu-list nil (not msg-p)) ; Now refresh, after iterate.
       (when msg-p (message "Deleted all temporary bookmarks")))))
 
@@ -13468,7 +13457,7 @@ Non-interactively, non-nil MSG-P means display a status message."
     (let ((bmks-to-delete  (mapcar #'bmkp-bookmark-name-from-record (bmkp-temporary-alist-only)))
           (bookmark-save-flag  (and (not bmkp-count-multi-mods-as-one-flag)
                                     bookmark-save-flag))) ; Save at most once, after `dolist'.
-      (dolist (bmk  bmks-to-delete)  (bookmark-delete bmk 'BATCHP))) ; No refresh yet.
+      (dolist (bmk  bmks-to-delete)  (bmkp-delete bmk 'BATCHP))) ; No refresh yet.
     (bmkp-refresh/rebuild-menu-list nil 'BATCHP))) ; Now refresh, after iterate.
 
 ;;;###autoload (autoload 'bmkp-delete-bookmarks "bookmark+")
@@ -13495,7 +13484,7 @@ Non-interactively:
     (cond (bmks-to-delete               ; Delete all.
            (let ((bookmark-save-flag  (and (not bmkp-count-multi-mods-as-one-flag)
                                            bookmark-save-flag))) ; Save at most once, after `dolist'.
-             (dolist (bname  bmks-to-delete) (bookmark-delete bname 'BATCHP))) ; No refresh yet.
+             (dolist (bname  bmks-to-delete) (bmkp-delete bname 'BATCHP))) ; No refresh yet.
            (bmkp-refresh/rebuild-menu-list nil (not msg-p)) ; Refresh now, after iterate.
            (when msg-p (message "Deleted all bookmarks in buffer `%s'" (buffer-name))))
 
@@ -13515,7 +13504,7 @@ Non-interactively:
                                                     bookmark-save-flag))) ; Save at most once, after `dolist'.
                       (dolist (bname  bmks-to-delete)
                         (when (or (not msg-p)  (y-or-n-p (format "Delete bookmark `%s'? " bname)))
-                          (bookmark-delete bname 'BATCHP) ; No refresh yet.
+                          (bmkp-delete bname 'BATCHP) ; No refresh yet.
                           ;; This is the same as `add-to-list' with `EQ' (not available for Emacs 20-21).
                           (unless (memq bname bmks-deleted) (setq bmks-deleted  (cons bname bmks-deleted))))))
                     (bmkp-refresh/rebuild-menu-list nil (not msg-p)) ; Refresh now.
@@ -13526,7 +13515,7 @@ Non-interactively:
                                                       ", "))
                                  "No bookmarks deleted"))))
                    (bmks-to-delete      ; Only one bookmark at point.
-                    (bookmark-delete (car bmks-to-delete))
+                    (bmkp-delete (car bmks-to-delete))
                     (when msg-p (message "Deleted bookmark `%s'" (car bmks-to-delete))))
                    (t
                     (when msg-p (message "No bookmarks at point to delete")))))))))

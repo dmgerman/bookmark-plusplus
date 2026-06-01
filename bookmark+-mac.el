@@ -589,7 +589,7 @@ by \"Save Options\" in Custom buffers.")
 (defmacro bmkp-with-bookmark-dir (bookmark &rest body)
   "Evaluate BODY forms with BOOKMARK location as `default-directory'.
 If BOOKMARK has no location then use nil as `default-directory'."
-  `(let* ((loc                (bookmark-location ,bookmark))
+  `(let* ((loc                (bmkp-location ,bookmark))
           (default-directory  (and (stringp loc)  (not (member loc (list bmkp-non-file-filename
                                                                     "-- Unknown location --")))
                                (if (file-directory-p loc) loc (file-name-directory loc)))))
