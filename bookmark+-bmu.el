@@ -146,7 +146,6 @@
 ;;    `bmkp-bmenu-mark-file-bookmarks',
 ;;    `bmkp-bmenu-mark-function-bookmarks',
 ;;    `bmkp-bmenu-mark-gnus-bookmarks',
-;;    `bmkp-bmenu-mark-icicles-search-hits-bookmarks',
 ;;    `bmkp-bmenu-mark-image-bookmarks',
 ;;    `bmkp-bmenu-mark-info-bookmarks',
 ;;    `bmkp-bmenu-mark-lighted-bookmarks',
@@ -188,7 +187,6 @@
 ;;    `bmkp-bmenu-show-only-file-bookmarks',
 ;;    `bmkp-bmenu-show-only-function-bookmarks',
 ;;    `bmkp-bmenu-show-only-gnus-bookmarks',
-;;    `bmkp-bmenu-show-only-icicles-search-hits-bookmarks.',
 ;;    `bmkp-bmenu-show-only-image-bookmarks',
 ;;    `bmkp-bmenu-show-only-info-bookmarks',
 ;;    `bmkp-bmenu-show-only-man-bookmarks',
@@ -522,7 +520,6 @@ Elements of ALIST that are not conses are ignored."
 (defvar bmkp-temporary-bookmarking-mode) ; In `bookmark+-1.el'.
 (defvar describe-function-orig-buffer)  ; In `help-fns.el' (Emacs 28+).
 (defvar dired-re-mark)                  ; In `dired.el'.
-(defvar icicle-candidate-properties-alist) ; In `icicles-var.el'.
 (defvar minibuffer-prompt-properties)   ; Emacs 22+.
 (defvar tramp-file-name-regexp)         ; In `tramp.el'.
 
@@ -1668,7 +1665,6 @@ Mark/Unmark Bookmarks
 `\\[bmkp-bmenu-mark-file-bookmarks]'\t- Mark file & directory bookmarks          (`C-u': local only)
 `\\[bmkp-bmenu-mark-gnus-bookmarks]'\t- Mark Gnus bookmarks
 `\\[bmkp-bmenu-mark-info-bookmarks]'\t- Mark Info bookmarks
-`\\[bmkp-bmenu-mark-icicles-search-hits-bookmarks]'\t- Mark Icicles search-hits bookmarks
 `\\[bmkp-bmenu-mark-non-invokable-bookmarks]'\t- Mark non-invokable bookmarks
 `\\[bmkp-bmenu-mark-image-bookmarks]'\t- Mark image-file bookmarks
 `\\[bmkp-bmenu-mark-desktop-bookmarks]'\t- Mark desktop bookmarks
@@ -1846,7 +1842,6 @@ Hide/Show (Filtering `*Bookmark List*')
 `\\[bmkp-bmenu-show-only-file-bookmarks]'\t- Show only file & directory bookmarks     (`C-u': local only)
 `\\[bmkp-bmenu-show-only-gnus-bookmarks]'\t- Show only Gnus bookmarks
 `\\[bmkp-bmenu-show-only-info-bookmarks]'\t- Show only Info bookmarks
-`\\[bmkp-bmenu-show-only-icicles-search-hits-bookmarks]'\t- Show only Icicles search-hits bookmarks
 `\\[bmkp-bmenu-show-only-non-invokable-bookmarks]'\t- Show only non-invokable bookmarks
 `\\[bmkp-bmenu-show-only-image-bookmarks]'\t- Show only image-file bookmarks
 `\\[bmkp-bmenu-show-only-orphaned-local-file-bookmarks]'\t- Show only orphaned local file \
@@ -2295,7 +2290,6 @@ for confirmation when deleting marked (not flagged) bookmarks."
 ;; `bmkp-bmenu-show-only-eww-bookmarks' (Emacs 25+),
 ;; `bmkp-bmenu-show-only-function-bookmarks',
 ;; `bmkp-bmenu-show-only-gnus-bookmarks',
-;; `bmkp-bmenu-show-only-icicles-search-hits-bookmarks',
 ;; `bmkp-bmenu-show-only-non-invokable-bookmarks',
 ;; `bmkp-bmenu-show-only-image-bookmarks',
 ;; `bmkp-bmenu-show-only-info-bookmarks',
@@ -2323,7 +2317,6 @@ for confirmation when deleting marked (not flagged) bookmarks."
 
 ;;;###autoload (autoload 'bmkp-bmenu-show-only-function-bookmarks "bookmark+")
 ;;;###autoload (autoload 'bmkp-bmenu-show-only-gnus-bookmarks "bookmark+")
-;;;###autoload (autoload 'bmkp-bmenu-show-only-icicles-search-hits-bookmarks "bookmark+")
 ;;;###autoload (autoload 'bmkp-bmenu-show-only-non-invokable-bookmarks "bookmark+")
 ;;;###autoload (autoload 'bmkp-bmenu-show-only-image-bookmarks "bookmark+")
 ;;;###autoload (autoload 'bmkp-bmenu-show-only-info-bookmarks "bookmark+")
@@ -2349,8 +2342,6 @@ for confirmation when deleting marked (not flagged) bookmarks."
                                bmkp-dired-alist-only)                                         ; `M-d M-s'
 (bmkp-define-show-only-command gnus "Display (only) the gnus bookmarks."
                                bmkp-gnus-alist-only)                                          ; `G S'
-(bmkp-define-show-only-command "icicles search-hits" "Display (only) the Icicles search-hits bookmarks."
-                               bmkp-icicles-search-hits-alist-only)                           ; `i S'
 (bmkp-define-show-only-command image "Display (only) the image-file bookmarks."
                                bmkp-image-alist-only)                                         ; `M-I M-S'
 (bmkp-define-show-only-command info "Display (only) the Info bookmarks."
@@ -2914,12 +2905,6 @@ With a prefix argument, do not mark remote files or directories."
   "Mark Gnus bookmarks."
   (interactive "p")
   (bmkp-bmenu-mark-bookmarks-satisfying 'bmkp-gnus-bookmark-p nil msgp))
-
-;;;###autoload (autoload 'bmkp-bmenu-mark-icicles-search-hits-bookmarks "bookmark+")
-(defun bmkp-bmenu-mark-icicles-search-hits-bookmarks (&optional msgp) ; Bound to `i M' in bookmark list
-  "Mark Icicles search-hit bookmarks."
-  (interactive "p")
-  (bmkp-bmenu-mark-bookmarks-satisfying 'bmkp-icicles-search-hits-bookmark-p nil msgp))
 
 ;;;###autoload (autoload 'bmkp-bmenu-mark-image-bookmarks "bookmark+")
 (defun bmkp-bmenu-mark-image-bookmarks (&optional msgp) ; Bound to `M-I M-M' in bookmark list
@@ -4763,33 +4748,24 @@ Non-nil optional arg COPY means copy also each element of LIST.  Use
 this if, for example, you have bookmark lists that share bookmarks and
 you want to treat the shared bookmarks separately.
 
-Always strip property `face' and internal Icicles properties.  Remove
-other text properties only if using Emacs 20 or if option
-`bmkp-propertize-bookmark-names-flag' is non-nil."
+Always strip property `face' and similar display properties.  Remove
+all text properties if option `bmkp-propertize-bookmark-names-flag' is
+non-nil."
   (let ((new-list   (copy-sequence list))
-        (rem-all-p  (or (not bmkp-propertize-bookmark-names-flag)
-                        (< emacs-major-version 21)))) ; Cannot just use (not (boundp 'print-circle)).
+        (rem-all-p  (not bmkp-propertize-bookmark-names-flag)))
     (dolist (bmk  new-list)
       (when (and (consp bmk)  (stringp (car bmk))) (setq bmk  (car bmk)))
       (when (stringp bmk)
         (let ((len  (length bmk)))
           (if rem-all-p
               (set-text-properties 0 len nil bmk)
-            (remove-text-properties     ; Remove property `face' and any Icicles internal properties.
-             0 len '(face                     nil
-                     display                  nil
-                     help-echo                nil
-                     rear-nonsticky           nil
-                     icicle-fancy-candidates  nil
-                     icicle-mode-line-help    nil
-                     icicle-special-candidate nil
-                     icicle-user-plain-dot    nil
-                     icicle-whole-candidate   nil
-                     invisible                nil)
-             bmk)
-            (when (boundp 'icicle-candidate-properties-alist) ; Multi-completion indexes + text props.
-              (dolist (entry  icicle-candidate-properties-alist)
-                (put-text-property 0 len (car (cadr entry)) nil bmk)))))))
+            (remove-text-properties
+             0 len '(face            nil
+                     display         nil
+                     help-echo       nil
+                     rear-nonsticky  nil
+                     invisible       nil)
+             bmk)))))
     (if copy (mapcar #'copy-sequence new-list) new-list)))
 
 (defun bmkp-maybe-unpropertize-string (string &optional copy)
@@ -5079,9 +5055,6 @@ Return the propertized string (the bookmark name)."
            ((bmkp-non-invokable-bookmark-p bookmark)                           ; Non-invokable bookmark
             (append (bmkp-face-prop 'bmkp-no-jump)
                     '(help-echo "You CANNOT JUMP to this bookmark")))
-           ((bmkp-icicles-search-hits-bookmark-p bookmark)               ; Icicles search hits bookmark
-            (append (bmkp-face-prop 'bmkp-no-jump)
-                    '(help-echo "You can use this only during Icicles search, NOT HERE")))
            ((bmkp-info-bookmark-p bookmark)                                             ; Info bookmark
             (append (bmkp-face-prop 'bmkp-info)
                     '(mouse-face highlight follow-link t
@@ -5759,9 +5732,6 @@ are marked or ALLP is non-nil."
   (define-key bookmark-bmenu-mode-map "HS"                 'bmkp-bmenu-show-only-lighted-bookmarks)
   (define-key bookmark-bmenu-mode-map "H>U"                'bmkp-bmenu-unlight-marked)
   (define-key bookmark-bmenu-mode-map "HU"                 'bmkp-bmenu-unlight))
-(define-key bookmark-bmenu-mode-map "i"                    nil) ; For Emacs 20
-(define-key bookmark-bmenu-mode-map "iM"                  'bmkp-bmenu-mark-icicles-search-hits-bookmarks)
-(define-key bookmark-bmenu-mode-map "iS"                'bmkp-bmenu-show-only-icicles-search-hits-bookmarks)
 (define-key bookmark-bmenu-mode-map "I"                    nil) ; For Emacs 20
 (define-key bookmark-bmenu-mode-map "IM"                   'bmkp-bmenu-mark-info-bookmarks)
 (define-key bookmark-bmenu-mode-map "IS"                   'bmkp-bmenu-show-only-info-bookmarks)
@@ -6535,9 +6505,6 @@ are marked or ALLP is non-nil."
 (define-key bmkp-bmenu-show-types-menu [bmkp-bmenu-show-only-image-bookmarks]
   '(menu-item "Image Files" bmkp-bmenu-show-only-image-bookmarks
     :help "Display (only) image-file bookmarks"))
-(define-key bmkp-bmenu-show-types-menu [bmkp-bmenu-show-only-icicles-search-hits-bookmarks]
-  '(menu-item "Icicles Search-Hits" bmkp-bmenu-show-only-icicles-search-hits-bookmarks
-    :help "Display (only) Icicles search-hits bookmarks"))
 (define-key bmkp-bmenu-show-types-menu [bmkp-bmenu-show-only-info-bookmarks]
   '(menu-item "Info Nodes" bmkp-bmenu-show-only-info-bookmarks
     :help "Display (only) the Info bookmarks"))
@@ -6700,9 +6667,6 @@ are marked or ALLP is non-nil."
     :help "Mark non-file bookmarks"))
 (define-key bmkp-bmenu-mark-types-menu [bmkp-bmenu-mark-image-bookmarks]
   '(menu-item "Images" bmkp-bmenu-mark-image-bookmarks :help "Mark image-file bookmarks"))
-(define-key bmkp-bmenu-mark-types-menu [bmkp-bmenu-mark-icicles-search-hits-bookmarks]
-  '(menu-item "Icicle Search Hits" bmkp-bmenu-mark-icicles-search-hits-bookmarks
-    :help "Mark Icicles search-hit bookmarks"))
 (define-key bmkp-bmenu-mark-types-menu [bmkp-bmenu-mark-info-bookmarks]
   '(menu-item "Info Nodes" bmkp-bmenu-mark-info-bookmarks :help "Mark Info bookmarks"))
 (define-key bmkp-bmenu-mark-types-menu [bmkp-bmenu-mark-gnus-bookmarks]

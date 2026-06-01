@@ -390,8 +390,6 @@
 ;;    `bmkp-temote-non-dir-file-jump-other-window',
 ;;    `bmkp-remove-all-tags', `bmkp-remove-tags',
 ;;    `bmkp-remove-tags-from-all', `bmkp-rename-tag',
-;;    `bmkp-retrieve-icicle-search-hits',
-;;    `bmkp-retrieve-more-icicle-search-hits',
 ;;    `bmkp-revert-bookmark-file',
 ;;    `bmkp-save-bookmarks-this-file/buffer',
 ;;    `bmkp-save-menu-list-state', `bmkp-send-bug-report',
@@ -403,7 +401,6 @@
 ;;    `bmkp-set-dired-bookmark-for-files',
 ;;    `bmkp-set-eww-bookmark-here' (Emacs 25+),
 ;;    `bmkp-set-grep-command-bookmark' (Emacs 26+),
-;;    `bmkp-set-icicle-search-hits-bookmark',
 ;;    `bmkp-set-info-bookmark-with-node-name' (Emacs 22+),
 ;;    `bmkp-set-izones-bookmark', `bmkp-set-kmacro-bookmark' (Emacs
 ;;    22+), `bmkp-set-kmacro-list-bookmark' (Emacs 22+),
@@ -569,8 +566,7 @@
 ;;    `bmkp-handle-region-default',
 ;;    `bmkp-handle-region+narrow-indirect', `bmkp-handler-cp',
 ;;    `bmkp-handler-pred', `bmkp-has-tag-p',
-;;    `bmkp-icicles-search-hits-alist-only',
-;;    `bmkp-icicles-search-hits-bookmark-p', `bmkp-image-alist-only',
+;;    `bmkp-image-alist-only',
 ;;    `bmkp-image-bookmark-p', `bmkp-info-alist-only',
 ;;    `bmkp-info-bookmark-p', `bmkp-info-node-name-cp',
 ;;    `bmkp-info-position-cp', `bmkp-isearch-bookmarks' (Emacs 23+),
@@ -579,8 +575,8 @@
 ;;    `bmkp-jump-bookmark-file', `bmkp-jump-bookmark-list',
 ;;    `bmkp-jump-desktop', `bmkp-jump-dired', `bmkp-jump-eww' (Emacs
 ;;    25+), `bmkp-jump-function', `bmkp-jump-gnus',
-;;    `bmkp-jump-icicle-search-hits', `bmkp-jump-kmacro-list' (Emacs
-;;    22+), `bmkp-jump-man', `bmkp-jump-sequence',
+;;    `bmkp-jump-kmacro-list' (Emacs 22+), `bmkp-jump-man',
+;;    `bmkp-jump-sequence',
 ;;    `bmkp-jump-snippet', `bmkp-jump-url-browse',
 ;;    `bmkp-jump-variable-list', `bmkp-jump-w3m',
 ;;    `bmkp-jump-w3m-new-buffer', `bmkp-jump-w3m-new-buffer',
@@ -601,8 +597,7 @@
 ;;    `bmkp-make-bookmark-file-record',
 ;;    `bmkp-make-bookmark-list-record', `bmkp-make-desktop-record',
 ;;    `bmkp-make-dired-record', `bmkp-make-eww-record' (Emacs 25+),
-;;    `bmkp-make-gnus-record', `bmkp-make-icicle-search-hits-record',
-;;    `bmkp-make-kmacro-list-record' (Emacs 22+),
+;;    `bmkp-make-gnus-record', `bmkp-make-kmacro-list-record' (Emacs 22+),
 ;;    `bmkp-make-man-record', `bmkp-make-obsolete',
 ;;    `bmkp-make-obsolete-variable',
 ;;    `bmkp-make-record-for-target-file', `bmkp-make-sequence-record',
@@ -652,7 +647,6 @@
 ;;    `bmkp-rename-for-marked-and-omitted-lists',
 ;;    `bmkp-repeat-command', `bmkp-replace-existing-bookmark',
 ;;    `bmkp-reset-bmkp-store-org-link-checking-p' (Emacs 24.4+),
-;;    `bmkp-retrieve-icicle-search-hits-1',
 ;;    `bmkp-root-or-sudo-logged-p', `bmkp-same-creation-time-p',
 ;;    `bmkp-same-file-p', `bmkp-save-new-region-location',
 ;;    `bmkp-select-buffer-other-window', `bmkp-sequence-alist-only',
@@ -700,8 +694,7 @@
 ;;    `bmkp-eww-history' (Emacs 25+), `bmkp-eww-jumping-p' (Emacs
 ;;    25+), `bmkp-eww-new-buf-name' (Emacs 25+),
 ;;    `bmkp-file-bookmark-handlers', `bmkp-file-history',
-;;    `bmkp-gnus-history', `bmkp-icicles-search-hits-retrieve-more',
-;;    `bmkp-image-history', `bmkp-info-history',
+;;    `bmkp-gnus-history', `bmkp-image-history', `bmkp-info-history',
 ;;    `bmkp-isearch-bookmarks' (Emacs 23+),
 ;;    `bmkp-jump-display-function', `bmkp-jump-other-window-map',
 ;;    `bmkp-last-bmenu-state-file', `bmkp-last-bookmark-file',
@@ -963,17 +956,6 @@ Returns nil if neither is available."
 (defvar eww-search-prefix)              ; In `eww.el' (Emacs 25+)
 (defvar gnus-article-current)           ; In `gnus-sum.el'
 (defvar grep-history)                   ; In `grep.el' (Emacs 22+)
-(defvar icicle-bookmark-completing-p)   ; In `icicles-var.el'
-(defvar icicle-candidate-properties-alist) ; In `icicles-var.el'
-(defvar icicle-completion-candidates)   ; In `icicles-var.el'
-(defvar icicle-delete-candidate-object) ; In `icicles-opt.el'
-(defvar icicle-mode)                    ; In `icicle-mode.el'
-(defvar icicle-multi-completing-p)      ; In `icicles-var.el'
-(defvar icicle-must-pass-after-match-predicate) ; In `icicles-var.el'
-(defvar icicle-proxy-candidates)        ; In `icicles-var.el'
-(defvar icicle-saved-completion-candidates) ; In `icicles-var.el'
-(defvar icicle-searching-p)             ; In `icicles-var.el'
-(defvar icicle-unpropertize-completion-result-flag) ; In `icicles-opt.el'
 (defvar Info-current-node)              ; In `info.el'
 (defvar Info-current-file)              ; In `info.el'
 (defvar kmacro-counter)                 ; In `kmacro.el'
@@ -1188,8 +1170,7 @@ These are the predefined type predicates:
 `bmkp-eww-bookmark-p' (Emacs 25+), `bmkp-file-bookmark-p',
 `bmkp-file-remote-p', `bmkp-file-this-dir-bookmark-p',
 `bmkp-flagged-bookmark-p', `bmkp-function-bookmark-p',
-`bmkp-gnus-bookmark-p', `bmkp-icicles-search-hits-bookmark-p',
-`bmkp-image-bookmark-p', `bmkp-info-bookmark-p',
+`bmkp-gnus-bookmark-p', `bmkp-image-bookmark-p', `bmkp-info-bookmark-p',
 `bmkp-last-specific-buffer-p', `bmkp-last-specific-file-p',
 `bmkp-local-directory-bookmark-p', `bmkp-local-file-bookmark-p',
 `bmkp-local-non-dir-file-bookmark-p', `bmkp-man-bookmark-p',
@@ -1860,10 +1841,6 @@ An active region larger than this many characters prevents
   "List of functions that handle file or directory bookmarks.
 This is used to determine `bmkp-file-bookmark-p'.")
 
-(defvar bmkp-icicles-search-hits-retrieve-more nil
-  "Non-nil means add hits recorded in bookmark to current search hits.
-Otherwise, replace current with bookmark hits.")
-
 (defvar bmkp-last-bmenu-state-file nil "Last value of option `bmkp-bmenu-state-file'.")
 
 (defvar bmkp-last-bookmark-file bookmark-default-file
@@ -2509,11 +2486,7 @@ candidates.
 If you access this function from a menu, then, depending on the value
 of option `bmkp-menu-popup-max-length' and the number of
 bookmarks in ALIST, you choose the bookmark using a menu or using
-completion.
-
-If you use Icicles, then you can use `S-delete' during completion of a
-bookmark name to delete the bookmark named by the current completion
-candidate."
+completion."
   (bmkp-completing-read-1 prompt default alist pred hist nil use-nil-alist-p))
 
 
@@ -2962,10 +2935,6 @@ If the bookmark defines a region, then the region is activated if
 argument.  A prefix arg temporarily flips the value of
 `bmkp-use-region'.
 
-If you use Icicles, then you can use `S-delete' during completion of a
-bookmark name to delete the bookmark named by the current completion
-candidate.
-
 In Lisp code:
 BOOKMARK is a bookmark name or a bookmark record.
 Non-nil DISPLAY-FUNCTION is a function to display the bookmark.  By
@@ -3179,21 +3148,16 @@ Non-nil optional arg NO-REFRESH-P means do not refresh/rebuild the
 bookmark-list display.
 
 Changes the file associated with the bookmark.
-Useful when a file has been renamed after a bookmark was set in it.
-
-If you use Icicles, then you can use `S-delete' during completion of a
-bookmark name to delete the bookmark named by the current completion
-candidate."
+Useful when a file has been renamed after a bookmark was set in it."
   (interactive (list (bookmark-completing-read "Bookmark to relocate" (bmkp-default-bookmark-name))))
   (bookmark-maybe-historicize-string bookmark-name)
   (bookmark-maybe-load-default-file)
-  (let* ((icicle-unpropertize-completion-result-flag  t) ; For `read-file-name'.
-         (bookmark-filename                           (bookmark-get-filename bookmark-name))
-         (new-filename                                (abbreviate-file-name
-                                                       (expand-file-name
-                                                        (read-file-name
-                                                         (format "Relocate %s to: " bookmark-name)
-                                                         (file-name-directory bookmark-filename))))))
+  (let* ((bookmark-filename  (bookmark-get-filename bookmark-name))
+         (new-filename       (abbreviate-file-name
+                              (expand-file-name
+                               (read-file-name
+                                (format "Relocate %s to: " bookmark-name)
+                                (file-name-directory bookmark-filename))))))
     (bookmark-set-filename bookmark-name new-filename)
     (when (fboundp 'bookmark-update-last-modified) (bookmark-update-last-modified bookmark-name)) ; Emacs 29+
     ;; Change location for Dired too, but not if different from original file name (e.g. a cons).
@@ -3238,11 +3202,7 @@ If a file is bookmarked, insert the recorded file name.
 If a non-file buffer is bookmarked, insert the recorded buffer name.
 
 Optional arg NO-HISTORY means do not record BOOKMARK-NAME in
-`bookmark-history'.
-
-If you use Icicles then you can use `S-delete' during completion of a
-bookmark name to delete the bookmark named by the current completion
-candidate."
+`bookmark-history'."
   (interactive
    (let ((bmk  (bookmark-completing-read "Insert bookmark location" (bmkp-default-bookmark-name))))
      (if (> emacs-major-version 21) (list bmk) bmk)))
@@ -3314,11 +3274,7 @@ existing name.  See `bookmark-set' for particular keys available
 during this input.
 
 If BATCHP is non-nil, then do not rebuild the bookmark list.  (NEW
-should be non-nil if BATCH is non-nil.)
-
-If you use Icicles then you can use `S-delete' during completion of a
-bookmark name to delete the bookmark named by the current completion
-candidate."
+should be non-nil if BATCH is non-nil.)"
   (interactive (list (bookmark-completing-read "Old bookmark name" (bmkp-default-bookmark-name))))
   (bookmark-maybe-historicize-string old)
   (bookmark-maybe-load-default-file)
@@ -3360,11 +3316,7 @@ candidate."
 BOOKMARK-NAME is the name of the bookmark.
 You may have a problem using this function if the value of variable
 `bookmark-alist' is nil.  If that happens, you need to load in some
-bookmarks.  See function `bookmark-load' for more about this.
-
-If you use Icicles, then you can use `S-delete' during completion of a
-bookmark name to delete the bookmark named by the current completion
-candidate."
+bookmarks.  See function `bookmark-load' for more about this."
   (interactive (list (bookmark-completing-read "Insert bookmark contents" (bmkp-default-bookmark-name))))
   (bmkp-ORIG-bookmark-insert bookmark-name))
 
@@ -3394,10 +3346,7 @@ it is or has a name without property `bmkp-full-record' then
 delete (only) the first bookmark in `bookmark-alist' with that name.
 
 Optional arg BATCHP means do not update buffer `*Bookmark List*'.
-
-If you use Icicles, then you can use `S-delete' during completion of a
-bookmark name to delete the bookmark named by the current completion
-candidate.  In this way, you can delete multiple bookmarks."
+In this way, you can delete multiple bookmarks."
   (interactive (list (bookmark-completing-read "Delete bookmark" (bmkp-default-bookmark-name))))
 
   ;; $$$$$$ Instead of loading unconditionally, maybe we should just try to delete conditionally?
@@ -3559,21 +3508,13 @@ contain a `%s' construct, so that it can be passed along with FILE to
           (cond (rem-all-p ; Remove text properties from bookmark name and file name.
                  (set-text-properties 0 (length bname) () bname)
                  (when fname (set-text-properties 0 (length fname) () fname)))
-                (t ; Remove property `face' and any Icicles internal properties.
-                 (remove-text-properties 0 (length bname) '(face                     nil
-                                                                                     display                  nil
-                                                                                     help-echo                nil
-                                                                                     rear-nonsticky           nil
-                                                                                     icicle-fancy-candidates  nil
-                                                                                     icicle-mode-line-help    nil
-                                                                                     icicle-special-candidate nil
-                                                                                     icicle-user-plain-dot    nil
-                                                                                     icicle-whole-candidate   nil
-                                                                                     invisible                nil)
-                                         bname)
-                 (when (boundp 'icicle-candidate-properties-alist) ; Multi-completion indexes + text props.
-                   (dolist (entry  icicle-candidate-properties-alist)
-                     (put-text-property 0 (length bname) (car (cadr entry)) nil bname)))))
+                (t ; Remove face / display / etc. text properties.
+                 (remove-text-properties 0 (length bname) '(face            nil
+                                                            display         nil
+                                                            help-echo       nil
+                                                            rear-nonsticky  nil
+                                                            invisible       nil)
+                                         bname)))
           (setcar bmk bname)
           (when (setq last-fname  (assq 'filename bmk)) (setcdr last-fname fname))
           (let ((print-circle         bmkp-propertize-bookmark-names-flag)
@@ -4243,12 +4184,6 @@ A new list is returned (no side effects)."
   (bookmark-maybe-load-default-file)
   (bmkp-remove-if-not #'bmkp-gnus-bookmark-p bookmark-alist))
 
-(defun bmkp-icicles-search-hits-alist-only ()
-  "`bookmark-alist', but only for Icicles search hits bookmarks.
-A new list is returned (no side effects)."
-  (bookmark-maybe-load-default-file)
-  (bmkp-remove-if-not #'bmkp-icicles-search-hits-bookmark-p bookmark-alist))
-
 (defun bmkp-image-alist-only ()
   "`bookmark-alist', filtered to retain only image-file bookmarks.
 A new list is returned (no side effects)."
@@ -4814,12 +4749,8 @@ In addition:
     (unwind-protect
         (progn (define-key minibuffer-local-completion-map (kbd "C-M-w") 'bookmark-yank-word)
                (define-key minibuffer-local-completion-map (kbd "C-M-u") 'bookmark-insert-current-bookmark)
-               (unless (and (boundp 'icicle-mode)  icicle-mode
-                            (eq orig-SPC 'icicle-self-insert))
-                 (define-key minibuffer-local-completion-map (kbd "SPC") 'self-insert-command))
-               (unless (and (boundp 'icicle-mode)  icicle-mode
-                            (eq orig-qmark 'icicle-self-insert))
-                 (define-key minibuffer-local-completion-map   (kbd "?") 'self-insert-command))
+               (define-key minibuffer-local-completion-map (kbd "SPC")   'self-insert-command)
+               (define-key minibuffer-local-completion-map (kbd "?")     'self-insert-command)
                (bmkp-completing-read-1 prompt default alist pred hist 'LAX use-nil-alist-p))
       (define-key minibuffer-local-completion-map (kbd "C-M-w") orig-C-M-w)
       (define-key minibuffer-local-completion-map (kbd "C-M-u") orig-C-M-u)
@@ -4840,14 +4771,8 @@ See `bookmark-completing-read' for the argument descriptions."
        (if bmkp-sort-comparer           ; Test whether to sort, but always use `string-lessp'.
            (sort (bookmark-all-names alist) 'string-lessp)
          (bookmark-all-names alist)))
-    (let* ((icicle-delete-candidate-object  (lambda (cand) ; For `S-delete' in Icicles.
-                                              (bookmark-delete (icicle-transform-multi-completion cand))))
-           (icicle-bookmark-completing-p    t)
-           (completion-ignore-case          bookmark-completion-ignore-case)
+    (let* ((completion-ignore-case          bookmark-completion-ignore-case)
            (default                         (and (not (equal "" default))  default)) ; Treat "" like nil.
-           (default                         (if (and (consp default)  (< emacs-major-version 23))
-                                                (car default)
-                                              default))
            (prompt                          (concat prompt (if default
                                                                (format " (%s): " (if (consp default)
                                                                                      (car default)
@@ -5058,7 +4983,6 @@ With a prefix arg, edit the complete bookmark record (the
                                                             (bookmark-prop-get bookmark 'buffer)))
            (new-bmk-name                                (bmkp-completing-read-lax
                                                          "New bookmark name" bmk-name))
-           (icicle-unpropertize-completion-result-flag  t) ; For `read-file-name'.
            (new-location
             (cond (bmk-location
                    (cond ((not bmk-urlp) (read-string "New location: "))
@@ -5615,7 +5539,7 @@ Returns the new bookmark (internal record).
 
 Non-interactively, non-nil optional arg MSG-P means display a status
 message."
-  (interactive (let ((icicle-unpropertize-completion-result-flag  t))
+  (interactive (let ()
                  (list (bmkp-completing-read-lax "Bookmark")
                        (if (and current-prefix-arg  last-kbd-macro)
                            (read-kbd-macro last-kbd-macro 'NEED-VECTOR)
@@ -5815,8 +5739,7 @@ bookmarks only for this file/buffer."
   "Read and return an (absolute) bookmark file name.
 PROMPT is the prompt to use (default: \"Use bookmark file: \").
 The other args are the same as for `read-file-name'."
-  (let ((insert-default-directory                    t)
-        (icicle-unpropertize-completion-result-flag  t)) ; For `read-file-name'.
+  (let ((insert-default-directory  t))
     (expand-file-name
      (read-file-name (or prompt  "Use bookmark file: ") dir default-filename require-match))))
 
@@ -5842,7 +5765,7 @@ use `\\[bmkp-switch-bookmark-file-create]' (`bmkp-switch-bookmark-file-create').
 
 Interactively, and non-interactively if optional arg CONFIRMP is
 non-nil, require confirmation if the file already exists."
-  (interactive (list (let ((icicle-unpropertize-completion-result-flag  t))
+  (interactive (list (let ()
                        (read-file-name "Create empty bookmark file: " "~/"))
                      t))
   (setq file  (expand-file-name file))
@@ -5992,7 +5915,6 @@ The pseudo-type `any' sets the navigation list to all bookmarks.
 This sets variable `bmkp-nav-alist'."
   (interactive
    (let* ((completion-ignore-case                      t)
-          (icicle-unpropertize-completion-result-flag  t)
           (type                                        (completing-read "Type: "
                                                                         (cons '("any" . bookmark-history)
                                                                               (bmkp-types-alist))
@@ -6114,7 +6036,7 @@ If the current buffer is not visiting a file, prompt for the file name."
     (condition-case err
         (progn
           (setq bmkp-last-specific-file     (or (buffer-file-name)
-                                                (let ((icicle-unpropertize-completion-result-flag  t))
+                                                (let ()
                                                   (read-file-name "File: ")))
                 bmkp-bmenu-filter-function  'bmkp-last-specific-file-alist-only
                 bmkp-bmenu-title            (format "File `%s' Bookmarks" bmkp-last-specific-file))
@@ -6207,7 +6129,7 @@ If NO-DEFAULT-P is nil, then the default is the current buffer's name,
  or the value of `bmkp-last-specific-buffer' if the current buffer has
  no bookmarks."
   (bookmark-maybe-load-default-file)
-  (let ((icicle-unpropertize-completion-result-flag  t))
+  (let ()
     (completing-read "Buffer: " (mapcar #'list (bmkp-buffer-names)) nil t nil 'buffer-name-history
                      (and (not no-default-p)
                           (if (member (buffer-name) (bmkp-buffer-names))
@@ -6223,11 +6145,10 @@ If NO-DEFAULT-P is nil, then the default is the current buffer's file
  name, if any, or the value of `bmkp-last-specific-file' if the
  current buffer has no associated file or the file has no bookmarks."
   (bookmark-maybe-load-default-file)
-  (let ((completion-ignore-case                      (if (boundp 'read-file-name-completion-ignore-case)
-                                                         read-file-name-completion-ignore-case
-                                                       (memq system-type
-                                                             '(ms-dos windows-nt darwin cygwin))))
-        (icicle-unpropertize-completion-result-flag  t))
+  (let ((completion-ignore-case  (if (boundp 'read-file-name-completion-ignore-case)
+                                     read-file-name-completion-ignore-case
+                                   (memq system-type
+                                         '(ms-dos windows-nt darwin cygwin)))))
     (completing-read "File: " (mapcar #'list (bmkp-file-names)) nil t nil 'file-name-history
                      (and (not no-default-p)
                           (let ((file  (buffer-file-name)))
@@ -6378,12 +6299,11 @@ CANDIDATE-TAGS is an alist of tags to use for completion.
 REQUIRE-MATCH is passed to `completing-read'.
 Non-nil UPDATE-TAGS-ALIST-P means update var `bmkp-tags-alist'."
   (bookmark-maybe-load-default-file)
-  (let ((cand-tags                                   (copy-sequence
-                                                      (or candidate-tags
-                                                          (and (not update-tags-alist-p)
-                                                               bmkp-tags-alist) ; Use cached list.
-                                                          (bmkp-tags-list)))) ; Update the cache.
-        (icicle-unpropertize-completion-result-flag  t))
+  (let ((cand-tags  (copy-sequence
+                     (or candidate-tags
+                         (and (not update-tags-alist-p)
+                              bmkp-tags-alist) ; Use cached list.
+                         (bmkp-tags-list))))) ; Update the cache.
     (completing-read (or prompt  "Tag: ") cand-tags nil require-match nil 'bmkp-tag-history)))
 
 (defun bmkp-read-tags-completing (&optional candidate-tags require-match update-tags-alist-p)
@@ -6401,7 +6321,6 @@ determining the tags to use per option `bmkp-tags-for-completion'."
         (btags                                       ())
         (prompt1                                     "Tag (RET for each, empty input to finish): ")
         (prompt2                                     "Tag: ")
-        (icicle-unpropertize-completion-result-flag  t)
         tag)
     ;; Make a new candidates alist, with just one entry per tag name.  The original cdr is discarded.
     (dolist (full-tag  (or candidate-tags
@@ -6904,15 +6823,6 @@ BOOKMARK is a bookmark name or a bookmark record.
 If it is a record then it need not belong to `bookmark-alist'."
   (memq (bookmark-get-handler bookmark)
         '(gnus-summary-bookmark-jump bmkp-jump-gnus bmkext-jump-gnus)))
-
-(defun bmkp-icicles-search-hits-bookmark-p (bookmark)
-  "Return non-nil if BOOKMARK records a list of Icicles search hits.
-BOOKMARK is a bookmark name or a bookmark record.
-
-An Icicles search-hits bookmark is shown in the bookmark-list display
-with face `bmkp-no-jump', because you cannot jump to it from there."
-  (setq bookmark  (bmkp-get-bookmark bookmark))
-  (eq (bookmark-get-handler bookmark) 'bmkp-jump-icicle-search-hits))
 
 (defun bmkp-image-bookmark-p (bookmark)
   "Return non-nil if BOOKMARK is an image-file bookmark.
@@ -8425,15 +8335,14 @@ Non-interactively:
   display.
 * Non-nil MSG-P means display a status message."
   (interactive
-   (let* ((icicle-unpropertize-completion-result-flag  t)
-          (default-url                                 (or (bmkp-thing-at-point 'url)
-                                                           (and (fboundp 'url-get-url-at-point)
-                                                                (url-get-url-at-point))
-                                                           ;; TEMPORARY hack to work around Emacs bug #44822.
-                                                           "https://example.com"))
-          (parg                                        current-prefix-arg)
-          (prefix-only                                 (and parg  (natnump (prefix-numeric-value parg))))
-          (no-overw                                    (and parg  (atom current-prefix-arg))))
+   (let* ((default-url   (or (bmkp-thing-at-point 'url)
+                             (and (fboundp 'url-get-url-at-point)
+                                  (url-get-url-at-point))
+                             ;; TEMPORARY hack to work around Emacs bug #44822.
+                             "https://example.com"))
+          (parg          current-prefix-arg)
+          (prefix-only   (and parg  (natnump (prefix-numeric-value parg))))
+          (no-overw      (and parg  (atom current-prefix-arg))))
      (list (if (require 'ffap nil t)
                (ffap-read-file-or-url "URL: " default-url)
              (read-from-minibuffer "URL: " nil nil nil nil default-url))
@@ -8501,10 +8410,9 @@ Non-interactively:
   display.
 * Non-nil MSG-P means show a warning message if file does not exist."
   (interactive
-   (let* ((icicle-unpropertize-completion-result-flag  t)
-          (parg                                        current-prefix-arg)
-          (prefix-only                                 (and parg  (natnump (prefix-numeric-value parg))))
-          (no-overw                                    (and parg  (atom current-prefix-arg))))
+   (let* ((parg         current-prefix-arg)
+          (prefix-only  (and parg  (natnump (prefix-numeric-value parg))))
+          (no-overw     (and parg  (atom current-prefix-arg))))
      (list (read-file-name "File: " nil
                            (or (if (boundp 'file-name-at-point-functions) ; In `files.el', Emacs 23.2+.
                                    (run-hook-with-args-until-success 'file-name-at-point-functions)
@@ -8629,7 +8537,7 @@ Non-interactively:
    display.
  - Non-nil optional arg MSG-P means display status messages."
   (interactive
-   (list (let ((icicle-unpropertize-completion-result-flag  t))
+   (list (let ()
            (read-file-name "File: " nil
                            (if (or (> emacs-major-version 23)
                                    (and (= emacs-major-version 23)  (> emacs-minor-version 1)))
@@ -8727,7 +8635,7 @@ Non-interactively:
    refresh/rebuild the bookmark-list display
  - Non-nil MSG-P means display a message about the addition."
   (interactive
-   (list (let ((icicle-unpropertize-completion-result-flag  t))
+   (list (let ()
            (read-file-name "File or directory to tag: " nil
                            (or (if (boundp 'file-name-at-point-functions) ; In `files.el', Emacs 23.2+.
                                    (run-hook-with-args-until-success 'file-name-at-point-functions)
@@ -8782,7 +8690,6 @@ Non-interactively:
                   (tgs
                    (bmkp-read-tags-completing nil nil (and current-prefix-arg
                                                            (<= (prefix-numeric-value current-prefix-arg) 0))))
-                  (icicle-unpropertize-completion-result-flag  t) ; For `read-file-name'.
                   (fil   (condition-case nil
                              (read-file-name
                               "File: " nil
@@ -9212,7 +9119,6 @@ the file is an image file then the description includes the following:
         (function-p       (bmkp-function-bookmark-p bookmark))
         (kmacro-p         (bmkp-kmacro-list-bookmark-p bookmark))
         (variable-list-p  (bmkp-variable-list-bookmark-p bookmark))
-        (search-hits-p    (bmkp-icicles-search-hits-bookmark-p bookmark))
         (non-invokable-p  (bmkp-non-invokable-bookmark-p bookmark))
         (desktop-p        (bmkp-desktop-bookmark-p bookmark))
         (bookmark-file-p  (bmkp-bookmark-file-bookmark-p bookmark))
@@ -9229,7 +9135,7 @@ the file is an image file then the description includes the following:
         non-file-p no-position-p)
     (setq non-file-p     (equal file bmkp-non-file-filename)
           no-position-p  (not start))
-    (when (or sequence-p  function-p  variable-list-p  kmacro-p  search-hits-p) (setq no-position-p  t))
+    (when (or sequence-p  function-p  variable-list-p  kmacro-p) (setq no-position-p  t))
     (let* ((temp-text  (if temp-p "TEMPORARY " ""))
            (help-text
             (concat
@@ -9252,14 +9158,6 @@ the file is an image file then the description includes the following:
                                              (pp-to-string (bookmark-prop-get bookmark 'kmacros))))
                    (variable-list-p  (format "Variable list:\n%s\n"
                                              (pp-to-string (bookmark-prop-get bookmark 'variables))))
-                   (search-hits-p    (format "Icicles search hits:\n%s\n\n"
-                                             (mapconcat (lambda (hit)
-                                                          (let ((hit-copy  (copy-sequence hit)))
-                                                            (set-text-properties 0 (length hit-copy) ()
-                                                                                 hit-copy)
-                                                            hit-copy))
-                                                        (bookmark-prop-get bookmark 'hits)
-                                                        "\n\t")))
                    (non-invokable-p  (format "Non-invokable:\n\n%s"
                                              (let ((desc  (bookmark-prop-get bookmark 'filter-description)))
                                                (if desc
@@ -9918,27 +9816,16 @@ the default value.
 
 With a prefix arg, set a bookmark to an existing desktop file - do not
 save the current desktop.  Do not overwrite the file whose name you
-enter, just use it to set the bookmark.
-
-If you also use library Icicles, then the desktop files of all
-existing desktop bookmarks are available during the desktop file-name
-completion as proxy candidates.  To see them, use `C-M-_' to turn on
-the display of proxy candidates."
+enter, just use it to set the bookmark."
   (interactive
    (progn (unless (condition-case nil (require 'desktop nil t) (error nil))
             (error "You must have library `desktop.el' to use this command"))
-          (let ((icicle-proxy-candidates                     (and (boundp 'icicle-mode) icicle-mode
-                                                                  (mapcar (lambda (bmk)
-                                                                            (bookmark-prop-get
-                                                                             bmk 'desktop-file))
-                                                                          (bmkp-desktop-alist-only))))
-                (icicle-unpropertize-completion-result-flag  t))
-            (list (read-file-name
-                   (if current-prefix-arg "Use existing desktop file: " "Save desktop in file: ")
-                   bmkp-desktop-default-directory
-                   (if (boundp 'desktop-base-file-name) desktop-base-file-name desktop-basefilename)
-                   current-prefix-arg)
-                  current-prefix-arg))))
+          (list (read-file-name
+                 (if current-prefix-arg "Use existing desktop file: " "Save desktop in file: ")
+                 bmkp-desktop-default-directory
+                 (if (boundp 'desktop-base-file-name) desktop-base-file-name desktop-basefilename)
+                 current-prefix-arg)
+                current-prefix-arg)))
   (unless (or nosavep  (condition-case nil (require 'desktop nil t) (error nil)))
     (error "You must have library `desktop.el' to use this command"))
   (unless (file-name-absolute-p desktop-file)
@@ -10041,7 +9928,7 @@ Clear the desktop and load DESKTOP-FILE."
   (interactive
    (progn (unless (condition-case nil (require 'desktop nil t) (error nil))
             (error "You must have library `desktop.el' to use this command"))
-          (list (let ((icicle-unpropertize-completion-result-flag  t))
+          (list (let ()
                   (read-file-name "Change to desktop file: " bmkp-desktop-default-directory)))))
   (unless (condition-case nil (require 'desktop nil t) (error nil))
     (error "You must have library `desktop.el' to use this command"))
@@ -10142,77 +10029,6 @@ BOOKMARK is a bookmark name or a bookmark record."
       (when (fboundp 'desktop-release-lock) (desktop-release-lock))) ; Not defined for Emacs 20.
     (when (file-exists-p desktop-file) (delete-file desktop-file)))
   (bookmark-delete bookmark))
-
-;; Icicle search-hits bookmarks
-(defun bmkp-jump-icicle-search-hits (bookmark)
-  "Handle an Icicles search-hits bookmark BOOKMARK."
-  (unless (and (boundp 'icicle-mode)  icicle-mode  (icicle-completing-p)
-               (condition-case nil (icicle-barf-if-outside-Completions-and-minibuffer) (error nil)))
-    (error "You can use this bookmark only in Icicle mode, and only during completion"))
-  (let ((raw-cands  (bookmark-prop-get bookmark 'hits)))
-    (setq icicle-saved-completion-candidates
-          (if icicle-multi-completing-p
-              raw-cands                 ; But will not work if RAW-CANDS are not multi-completions.
-            (mapcar #'icicle-transform-multi-completion raw-cands)))
-    (if bmkp-icicles-search-hits-retrieve-more
-        (icicle-candidate-set-retrieve-more)
-      (icicle-candidate-set-retrieve))))
-
-;;;###autoload (autoload 'bmkp-retrieve-icicle-search-hits "bookmark+")
-(defun bmkp-retrieve-icicle-search-hits () ; Bound to `C-x C-M-<' during Icicles completion.
-  "Replace the current set of Icicles search hits by those from a bookmark.
-You are prompted for the bookmark name.
-This makes sense only if the buffer(s) or file(s) currently being
-searched correspond to the recorded search hits."
-  (interactive)
-  (when (called-interactively-p 'interactive) (icicle-barf-if-outside-Completions-and-minibuffer))
-  (bmkp-retrieve-icicle-search-hits-1))
-
-;;;###autoload (autoload 'bmkp-retrieve-more-icicle-search-hits "bookmark+")
-(defun bmkp-retrieve-more-icicle-search-hits () ; Bound to `C-x C-<' during Icicles completion.
-  "Add the Icicles search hits from a bookmark to the current set of hits.
-You are prompted for the bookmark name.
-This makes sense only if the buffer(s) or file(s) currently being
-searched correspond to the recorded search hits."
-  (interactive)
-  (when (called-interactively-p 'interactive) (icicle-barf-if-outside-Completions-and-minibuffer))
-  (bmkp-retrieve-icicle-search-hits-1 'MORE))
-
-(defun bmkp-retrieve-icicle-search-hits-1 (&optional morep)
-  "Helper for `bmkp-retrieve-(more-)icicle-search-hits'."
-  (unless (and (boundp 'icicle-searching-p)  icicle-searching-p)
-    (error "This command can be used only during Icicles search"))
-  (let* ((hits-bmks  (bmkp-icicles-search-hits-alist-only))
-         (bmk        (let ((icicle-completion-candidates
-                            icicle-completion-candidates)
-                           (enable-recursive-minibuffers  t))
-                       (bookmark-completing-read "Bookmark name"
-                                                 (mapcar #'bmkp-bookmark-name-from-record hits-bmks)
-                                                 hits-bmks
-                                                 nil
-                                                 nil
-                                                 'USE-NIL-ALIST-P)))
-         (bmkp-icicles-search-hits-retrieve-more  morep))
-    (bookmark-jump bmk)))
-
-;;;###autoload (autoload 'bmkp-set-icicle-search-hits-bookmark "bookmark+")
-(defun bmkp-set-icicle-search-hits-bookmark () ; Bound to `C-x C-M->' during Icicles completion.
-  "Record the current set of Icicles search-hit candidates as a bookmark."
-  (interactive)
-  (unless (and (boundp 'icicle-searching-p)  icicle-searching-p)
-    (error "This command can be used only during Icicles search"))
-  (unless icicle-completion-candidates (error "No search hits to record"))
-  (when (called-interactively-p 'interactive) (icicle-barf-if-outside-Completions-and-minibuffer))
-  (let ((bookmark-make-record-function  'bmkp-make-icicle-search-hits-record)
-        (enable-recursive-minibuffers   t))
-    (call-interactively #'bookmark-set)))
-
-(defun bmkp-make-icicle-search-hits-record ()
-  "Create and return an Icicles search-hits bookmark record."
-  `(,@(bookmark-make-record-default 'NO-FILE 'NO-CONTEXT nil nil 'NO-REGION)
-      (filename    . ,bmkp-non-file-filename)
-      (hits        . ,(mapcar #'bmkp-unpropertized-string icicle-completion-candidates))
-      (handler     . bmkp-jump-icicle-search-hits)))
 
 ;; Variable-list bookmarks
 
@@ -10500,9 +10316,8 @@ With non-nil OPTION, read the name of a user option.
 The default value is DEFAULT-VALUE if non-nil, or the nearest symbol
 to the cursor if it is a variable."
   (setq option  (if option 'user-variable-p 'boundp))
-  (let ((symb                                        (bmkp-symbol-nearest-point))
-        (enable-recursive-minibuffers                t)
-        (icicle-unpropertize-completion-result-flag  t))
+  (let ((symb                          (bmkp-symbol-nearest-point))
+        (enable-recursive-minibuffers  t))
     (when (and default-value  (symbolp default-value))
       (setq default-value  (symbol-name default-value)))
     (intern (completing-read prompt obarray option t nil 'minibuffer-history
@@ -11143,7 +10958,6 @@ bookmark name, or else an error is raised."
   (interactive
    (let* ((completion-ignore-case                      t)
           (type-cands                                  (bmkp-types-alist))
-          (icicle-unpropertize-completion-result-flag  t)
           (type                                        (completing-read "Type of bookmark: " type-cands))
           (history                                     (assoc-default type type-cands))
           (alist                                       (if history
@@ -11166,7 +10980,6 @@ bookmark name, or else an error is raised."
   (interactive
    (let* ((completion-ignore-case                      t)
           (type-cands                                  (bmkp-types-alist))
-          (icicle-unpropertize-completion-result-flag  t)
           (type                                        (completing-read "Type of bookmark: " type-cands))
           (history                                     (assoc-default type type-cands))
           (alist                                       (if history
@@ -11612,10 +11425,7 @@ non-nil property `no-clone-indirect' then no indirect buffer clone is
 created.  But unlike `clone-indirect-buffer' no error is raised."
   (interactive)
   (let ((bmkp-handle-region-function  'bmkp-handle-region+narrow-indirect))
-    (call-interactively
-     (if (and (boundp 'icicle-mode)  icicle-mode) ; Icicles
-         #'icicle-bookmark-region-other-window
-       #'bmkp-region-jump-other-window))))
+    (call-interactively #'bmkp-region-jump-other-window)))
 
 (defun bmkp-handle-region+narrow-indirect (bookmark)
   "`bmkp-handle-region-default', then narrow to region in cloned buffer."
@@ -12388,7 +12198,6 @@ Non-interactively:
 * Non-nil MSG-P means display a status message."
   (interactive "i\nP\ni\np")
   (let* ((use-file-dialog                             nil)
-         (icicle-unpropertize-completion-result-flag  t) ; For `read-file-name'.
          (fil                                         (or file  (read-file-name "Find file: " nil nil t)))
          (dir-to-use                                  (if (file-name-absolute-p fil)
                                                           (file-name-directory fil)
@@ -12407,7 +12216,6 @@ Non-interactively:
   "`bmkp-find-file', but in another window."
   (interactive "i\nP\ni\np")
   (let* ((use-file-dialog                             nil)
-         (icicle-unpropertize-completion-result-flag  t) ; For `read-file-name'.
          (fil                                         (or file  (read-file-name "Find file: " nil nil t)))
          (dir-to-use                                  (if (file-name-absolute-p fil)
                                                           (file-name-directory fil)
@@ -12452,14 +12260,10 @@ time.  Use a prefix argument if you want to refresh them."
                       (bmkp-lexlet* ((bmk   (bmkp-get-autofile-bookmark ff))
                                      (btgs  (and bmk  (bmkp-get-tags bmk))))
                         (and btgs  (bmkp-every (lambda (tag) (bmkp-has-tag-p bmk tag))  tgs)))))
-                   (icicle-unpropertize-completion-result-flag  t) ; For `read-file-name'.
-                   (icicle-must-pass-after-match-predicate      pred)
                    (fil                                         (or (and file  (funcall pred file)  file)
                                                                     (read-file-name
                                                                      "Find file: " nil nil t nil
-                                                                     (and (or (not (boundp 'icicle-mode))
-                                                                              (not icicle-mode))
-                                                                          pred))))
+                                                                     pred)))
                    (bmk                                         (bmkp-get-autofile-bookmark fil)))
       (when bmk  (bookmark-jump bmk)))))
 
@@ -12474,14 +12278,10 @@ time.  Use a prefix argument if you want to refresh them."
                       (bmkp-lexlet* ((bk    (bmkp-get-autofile-bookmark ff))
                                      (btgs  (and bk  (bmkp-get-tags bk))))
                         (and btgs  (bmkp-every (lambda (tag) (bmkp-has-tag-p bk tag))  tgs)))))
-                   (icicle-unpropertize-completion-result-flag  t) ; For `read-file-name'.
-                   (icicle-must-pass-after-match-predicate      pred)
                    (fil                                         (or (and file  (funcall pred file)  file)
                                                                     (read-file-name
                                                                      "Find file: " nil nil t nil
-                                                                     (and (or (not (boundp 'icicle-mode))
-                                                                              (not icicle-mode))
-                                                                          pred))))
+                                                                     pred)))
                    (bmk                                         (bmkp-get-autofile-bookmark fil)))
       (bookmark-jump-other-window bmk))))
 
@@ -12498,14 +12298,10 @@ You are prompted for the REGEXP."
                              (btgs  (and bk  (bmkp-get-tags bk))))
                         (and btgs  (bmkp-every (lambda (tag) (bmkp-string-match-p rg (bmkp-tag-name tag)))
                                                btgs)))))
-                   (icicle-unpropertize-completion-result-flag  t) ; For `read-file-name'.
-                   (icicle-must-pass-after-match-predicate      pred)
                    (fil                                         (or (and file  (funcall pred file)  file)
                                                                     (read-file-name
                                                                      "Find file: " nil nil t nil
-                                                                     (and (or (not (boundp 'icicle-mode))
-                                                                              (not icicle-mode))
-                                                                          pred))))
+                                                                     pred)))
                    (bmk                                         (bmkp-get-autofile-bookmark fil)))
       (bookmark-jump bmk))))
 
@@ -12522,14 +12318,10 @@ You are prompted for the REGEXP."
                              (btgs  (and bk  (bmkp-get-tags bk))))
                         (and btgs  (bmkp-every (lambda (tag) (bmkp-string-match-p rg (bmkp-tag-name tag)))
                                                btgs)))))
-                   (icicle-unpropertize-completion-result-flag  t) ; For `read-file-name'.
-                   (icicle-must-pass-after-match-predicate      pred)
                    (fil                                         (or (and file  (funcall pred file)  file)
                                                                     (read-file-name
                                                                      "Find file: " nil nil t nil
-                                                                     (and (or (not (boundp 'icicle-mode))
-                                                                              (not icicle-mode))
-                                                                          pred))))
+                                                                     pred)))
                    (bmk                                         (bmkp-get-autofile-bookmark fil)))
       (bookmark-jump-other-window bmk))))
 
@@ -12557,14 +12349,10 @@ time.  Use a prefix argument if you want to refresh them."
                       (bmkp-lexlet* ((bk    (bmkp-get-autofile-bookmark ff))
                                      (btgs  (and bk  (bmkp-get-tags bk))))
                         (and btgs  (bmkp-some (lambda (tag) (bmkp-has-tag-p bk tag))  tgs)))))
-                   (icicle-unpropertize-completion-result-flag  t) ; For `read-file-name'.
-                   (icicle-must-pass-after-match-predicate      pred)
                    (fil                                         (or (and file  (funcall pred file)  file)
                                                                     (read-file-name
                                                                      "Find file: " nil nil t nil
-                                                                     (and (or (not (boundp 'icicle-mode))
-                                                                              (not icicle-mode))
-                                                                          pred))))
+                                                                     pred)))
                    (bmk                                         (bmkp-get-autofile-bookmark fil)))
       (bookmark-jump bmk))))
 
@@ -12580,14 +12368,10 @@ time.  Use a prefix argument if you want to refresh them."
                       (bmkp-lexlet* ((bk    (bmkp-get-autofile-bookmark ff))
                                      (btgs  (and bk  (bmkp-get-tags bk))))
                         (and btgs  (bmkp-some (lambda (tag) (bmkp-has-tag-p bk tag))  tgs)))))
-                   (icicle-unpropertize-completion-result-flag  t) ; For `read-file-name'.
-                   (icicle-must-pass-after-match-predicate      pred)
                    (fil                                         (or (and file  (funcall pred file)  file)
                                                                     (read-file-name
                                                                      "Find file: " nil nil t nil
-                                                                     (and (or (not (boundp 'icicle-mode))
-                                                                              (not icicle-mode))
-                                                                          pred))))
+                                                                     pred)))
                    (bmk                                         (bmkp-get-autofile-bookmark fil)))
       (bookmark-jump-other-window bmk))))
 
@@ -12605,14 +12389,10 @@ You are prompted for the REGEXP."
                              (btgs  (and bk  (bmkp-get-tags bk))))
                         (and btgs  (bmkp-some (lambda (tag) (bmkp-string-match-p rg (bmkp-tag-name tag)))
                                               btgs)))))
-                   (icicle-unpropertize-completion-result-flag  t) ; For `read-file-name'.
-                   (icicle-must-pass-after-match-predicate      pred)
                    (fil                                         (or (and file  (funcall pred file)  file)
                                                                     (read-file-name
                                                                      "Find file: " nil nil t nil
-                                                                     (and (or (not (boundp 'icicle-mode))
-                                                                              (not icicle-mode))
-                                                                          pred))))
+                                                                     pred)))
                    (bmk                                         (bmkp-get-autofile-bookmark fil)))
       (bookmark-jump bmk))))
 
@@ -12629,14 +12409,10 @@ You are prompted for the REGEXP."
                              (btgs  (and bk  (bmkp-get-tags bk))))
                         (and btgs  (bmkp-some (lambda (tag) (bmkp-string-match-p rg (bmkp-tag-name tag)))
                                               btgs)))))
-                   (icicle-unpropertize-completion-result-flag  t) ; For `read-file-name'.
-                   (icicle-must-pass-after-match-predicate      pred)
                    (fil                                         (or (and file  (funcall pred file)  file)
                                                                     (read-file-name
                                                                      "Find file: " nil nil t nil
-                                                                     (and (or (not (boundp 'icicle-mode))
-                                                                              (not icicle-mode))
-                                                                          pred))))
+                                                                     pred)))
                    (bmk                                         (bmkp-get-autofile-bookmark fil)))
       (bookmark-jump-other-window bmk))))
 

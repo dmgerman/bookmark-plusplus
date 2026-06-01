@@ -256,7 +256,6 @@
 (defvar bmkp-nav-alist)                 ; In `bookmark+-1.el'.
 (defvar bmkp-this-file/buffer-cycle-sort-comparer) ; In `bookmark+-1.el'.
 (defvar fringe-bitmaps)                 ; Built-in for Emacs 22+.
-(defvar icicle-unpropertize-completion-result-flag) ; In `icicles-opt.el'.
 
  
 ;;(@* "Faces (Customizable)")
@@ -1444,8 +1443,7 @@ Return the bookmark name or, if FULLP non-nil, the full bookmark data."
 (defun bmkp-read-set-lighting-args (&optional default-style default-face default-when)
   "Read args STYLE, FACE, and WHEN for commands that set `lighting' prop.
 Optional args are the default values (strings) for reading new values."
-  (let* ((icicle-unpropertize-completion-result-flag  t)
-         (style       (cdr (assoc (let ((completion-ignore-case  t))
+  (let* ((style       (cdr (assoc (let ((completion-ignore-case  t))
                                     (completing-read "Style: " bmkp-light-styles-alist
                                                      nil t nil nil default-style))
                                   bmkp-light-styles-alist)))
