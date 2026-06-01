@@ -242,6 +242,8 @@ The default value is that of vanilla Emacs constant `bookmark-bmenu-buffer'."
 (require 'bookmark+-1)                  ; Rest of Bookmark+, except keys & menus.
 (require 'bookmark+-key)                ; Keys & menus.
 (require 'bookmark+-preview)            ; Live preview for jump and `*Bmkp List*'.
+(when (locate-library "casual-lib")     ; Optional Casual transient menu, only if
+  (require 'casual-bmkp nil t))         ; `casual-lib' is installed.
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -17,6 +17,13 @@ under the parent `.emacs.d` repo; the `.git` file points to
 - `bookmark+-doc.el` — upstream documentation (comment-only, untouched)
 - `bookmark+-chg.el` — upstream changelog (comment-only, untouched)
 - `readme.org`, `doc/reference.org` — locally-authored user docs
+- `bookmark+-preview.el` — live preview for `bmkp-jump` and `*Bmkp List*`
+  (always loaded; consult integration is soft-gated on `(featurep 'consult)`)
+- `casual-bmkp.el` — optional Casual-style Transient menu for `*Bmkp List*`.
+  Soft-loaded only if `casual-lib` is on `load-path`. Bound to `c` in
+  `bmkp-list-mode-map`. Not built by the standard byte-compile command
+  below (depends on third-party `casual-lib`); your runtime Emacs will
+  compile it when first loaded.
 
 ## What this fork has dropped from upstream
 
