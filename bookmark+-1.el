@@ -11691,12 +11691,8 @@ for the cloned indirect buffer.
 
 If the major-mode symbol of the buffer with the selected region has
 non-nil property `no-clone-indirect' then no indirect buffer clone is
-created.  But unlike `clone-indirect-buffer' no error is raised.
-
-You need library `narrow-indirect.el' to use this command."
+created.  But unlike `clone-indirect-buffer' no error is raised."
   (interactive)
-  (unless (require 'narrow-indirect nil t)
-    (error "You need library `narrow-indirect.el' for this command"))
   (let ((bmkp-handle-region-function  'bmkp-handle-region+narrow-indirect))
     (call-interactively
      (if (and (boundp 'icicle-mode)  icicle-mode) ; Icicles
@@ -11709,7 +11705,10 @@ You need library `narrow-indirect.el' to use this command."
     (bookmark-handle-bookmark bookmark))
   (if (get major-mode 'no-clone-indirect) ; e.g., `Info-mode'
       (message "Cannot indirectly clone a buffer in `%s' mode" major-mode)
-    (ni-narrow-to-region-indirect-other-window (region-beginning) (region-end) (point))))
+    (let ((start  (region-beginning))
+          (end    (region-end)))
+      (clone-indirect-buffer-other-window nil t)
+      (narrow-to-region start end))))
 
 ;;;###autoload (autoload 'bmkp-remote-file-jump "bookmark+")
 (defun bmkp-remote-file-jump (bookmark &optional flip-use-region-p) ; `C-x j n'
