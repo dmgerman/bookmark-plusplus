@@ -6,12 +6,12 @@
 * Introduction
 
 /Bookmark+/ is a substantial extension of GNU Emacs's built-in
-=bookmark.el=.  It keeps every concept from vanilla bookmarks ---
+=bookmark.el=.  It keeps every concept from built-in bookmarks ---
 named, persistent placeholders into files, buffers, Info nodes, and
 so on --- but makes bookmarks useful as persistent Emacs records,
 not just saved positions.
 
-Bookmark+ enlarges vanilla bookmarks in three directions:
+Bookmark+ enlarges built-in bookmarks in three directions:
 
 1. *Richer bookmarks.*  Bookmarks can carry tags, annotations,
    region information, visit counts, last-access timestamps, and
@@ -43,36 +43,56 @@ This README is a user guide and reference.  It starts with the
 problems Bookmark+ solves and the commands most users need first,
 then continues into the larger feature reference.
 
-* Why Bookmark+?
+* Differences from built-in =bookmark.el=
 :PROPERTIES:
-:CUSTOM_ID: why-bookmark-plus
+:CUSTOM_ID: vs-built-in
 :END:
 
-Vanilla Emacs bookmarks are useful, but they are deliberately
-small: they mostly name places and let you jump back to them.
-Bookmark+ is for workflows where bookmarks become part of how you
-organize and restore Emacs state.
+Emacs's built-in =bookmark.el= is purposely small: it lets you name
+a position in a file or buffer and jump back to it later, with modest
+annotation and persistence support.  Bookmark+ keeps everything the
+built-in =bookmark.el= does and turns bookmarks into a workspace.
+The four biggest
+differences in practice: *over 70 bookmark types* beyond file
+positions (Dired, Info, Gnus, EWW, =man=, image, URL, desktop, region,
+keyboard macro, ...); *tags*, with jump-by-tag and filter-by-tag;
+*the =*Bookmark List*= as a real buffer* (filter, sort, mark, copy/move
+across files, query-replace through marked); and *multiple bookmark
+files as a first-class concept*, including a bookmark type that loads
+another bookmark file.
 
-Use Bookmark+ when you want to:
+The full picture:
 
-- Keep many bookmarks understandable with tags, annotations,
-  filtering, sorting, and saved views.
-- Bookmark things other than simple file positions: Dired buffers,
-  Info nodes, Gnus articles, EWW/W3M pages, images, URLs, desktops,
-  keyboard macros, variable sets, snippets, bookmark files, and
-  sequences of other bookmarks.
-- Return to a working context, not just a location: a Dired buffer
-  with markings, a saved desktop, a restored narrowing, or a list of
-  bookmarks you can cycle through.
-- Act on bookmarks in bulk: mark them, tag them, search their
-  targets, query-replace through them, copy or move them to another
-  bookmark file, or define a command from the current view.
-- Treat bookmarks as lightweight persistent records, including
-  non-invokable records that do not jump anywhere.
+| Capability                                              | Built-in =bookmark.el=                      | Bookmark+                                                  |
+|---------------------------------------------------------+--------------------------------------------+------------------------------------------------------------|
+| Named, persistent positions in files / buffers          | Yes                                        | Yes                                                        |
+| Persistence across sessions (=~/.emacs.d/bookmarks=)    | Yes                                        | Yes                                                        |
+| Auto-save (=bookmark-save-flag=)                        | Yes                                        | Yes                                                        |
+| Context-aware position (survives small edits)           | Yes                                        | Yes                                                        |
+| Fringe mark at bookmarked line                          | Yes (Emacs 28+)                            | Yes                                                        |
+| Annotations                                             | Single string                              | Multi-line, with their own editing buffer                  |
+| =*Bookmark List*= buffer                                | Basic (mark, delete, rename, save, search) | Filter, sort by many fields, mark by type/tag, copy/move across files, query-replace through marked, define commands from a view |
+| Pulse highlight on jump                                 | No                                         | Yes (=bmkp-highlight-on-jump-flag=, default on)             |
+| Tags on bookmarks                                       | No                                         | Multi-tag, tag-with-value, jump-by-tag, filter-by-tag      |
+| Multiple bookmark files                                 | =bookmark-write= / =bookmark-load= only    | First-class: switch, merge, define new, =bookmark-file= bookmark type |
+| Bookmark types beyond file positions                    | None                                       | 70+: Dired, Info, Gnus, EWW, =man=, URL, image, desktop, kbd-macro, snippet, region, variable list, sequence-of-bookmarks, bookmark-file, autonamed, non-invokable, ... |
+| Region bookmarks (start+end; region activates on jump)  | No                                         | Yes                                                        |
+| Per-bookmark highlight in destination buffer            | No                                         | Yes (=bookmark+-lit.el=)                                    |
+| Auto-creation (bookmark every N idle seconds)           | No                                         | Yes (=bmkp-automatic-bookmark-mode=)                        |
+| Temporary (non-persistent) bookmarks                    | No                                         | Yes                                                        |
+| Autonamed bookmarks (auto-generated names)              | No                                         | Yes                                                        |
+| Visit counts and last-access timestamps                 | No                                         | Yes                                                        |
+| Save the =*Bookmark List*= view itself as a bookmark    | No                                         | Yes (=bookmark-list= bookmark type)                         |
+| Sequence bookmarks (composite of other bookmarks)       | No                                         | Yes                                                        |
+| Custom jump function via =bmkp-jump= tag                | No                                         | Yes                                                        |
+| Type-aware jump commands (=C-x j i= Info, =C-x j d= Dired, ...) | No                                 | Yes                                                        |
 
-The center of this workflow is the =*Bookmark List*= buffer.  It is
-not just a list of names; it is the place where you inspect,
-filter, mark, edit, sort, tag, save, and operate on bookmarks.
+If the built-in =bookmark.el= covers your use, stick with it ---
+nothing in Bookmark+ is forced on you.  If your bookmark workflow
+has outgrown it, the rest of this README is the tour.  The
+=*Bookmark List*= buffer is the centerpiece: not just a list of
+names but the place where you inspect, filter, mark, edit, sort,
+tag, save, and operate on bookmarks.
 
 * Quick start
 :PROPERTIES:
@@ -109,7 +129,7 @@ Suggested first session:
 :END:
 
 - [[#introduction][Introduction]]
-- [[#why-bookmark-plus][Why Bookmark+?]]
+- [[#vs-built-in][Differences from built-in =bookmark.el=]]
 - [[#quick-start][Quick start]]
 - [[#installation][Installation]]
 - [[#concepts][Concepts: list, file, display]]
@@ -128,9 +148,9 @@ Suggested first session:
 - [[#bookmark-links][Bookmark links]]
 - [[#org-integration][Org-mode integration]]
 - [[#menus][Menus]]
-- [[#icicles][Use with Icicles]]
+- [[#completion][Use with modern completion frameworks]]
 - [[#customization][Customization]]
-- [[#compatibility][Compatibility with vanilla =bookmark.el=]]
+- [[#compatibility][Compatibility with built-in =bookmark.el=]]
 - [[#documentation-help][Built-in documentation and help]]
 - [[#commands-reference][Command reference]]
 
@@ -182,15 +202,12 @@ that uses them is compiled:
 
 | Library            | Adds                                                                    |
 |--------------------+-------------------------------------------------------------------------|
-| =crosshairs.el=     | Crosshair highlighting of the destination when you jump.                |
 | =bookmark+-lit.el=  | Persistent highlight (overlay / fringe / region) for bookmark locations. |
 | =dired+.el=         | =M-b=, =C-M-b=, =C-+/-= in Dired for bookmarking marked files.            |
 | =highlight.el=      | Per-file autofile highlighting in Dired (with =dired+.el=).              |
 | =w32-browser.el=    | Opens bookmarks via MS-Windows file associations.                        |
-| =Icicles=           | Bookmark browsing, multi-commands, on-the-fly tagging and autofile creation.  |
 | =info+.el=          | =Info-persist-history-mode= for persistent Info history.                  |
-| =zones.el=          | =bmkp-set-izones-bookmark= --- save/restore multiple narrowings.          |
-| =narrow-indirect.el= | =bmkp-region-jump-narrow-indirect-other-window=.                          |
+| =zones.el=          | Enables the =bmkp-set-izones-bookmark= command (uses zones' izone ring). |
 | =font-lock+.el=     | Bookmark links keep the =link= face inside font-locked buffers.          |
 
 ** Load order and =bookmark-default-file=
@@ -205,7 +222,7 @@ set =bookmark-default-file= once, then use
 ** Back up your bookmark file
 
 Bookmark+ writes backups when it saves your bookmark file
-(vanilla Emacs does not, due to bug #12507).  For safety, set
+(the built-in =bookmark.el= does not, due to bug #12507).  For safety, set
 =bookmark-version-control= to =t= so numbered backups are kept, and
 =delete-old-versions= to =t= to suppress the prompt at save time.
 
@@ -258,9 +275,9 @@ separating them from the shared =C-x r= register prefix.
 | =bmkp-annotate-map=               | =C-x x a=    | Annotation commands.                    |
 | =bmkp-jump-map=                   | =C-x j=      | Jump (visit) bookmarks --- same window.  |
 | =bmkp-jump-other-window-map=      | =C-x 4 j=    | Jump --- other window.                   |
-| Vanilla other-frame jump          | =C-x 5 j=    | Jump --- other frame.                    |
+| Built-in other-frame jump         | =C-x 5 j=    | Jump --- other frame.                    |
 
-The vanilla =C-x r m= / =C-x r b= / =C-x r l= bindings still work.
+The built-in =C-x r m= / =C-x r b= / =C-x r l= bindings still work.
 
 The prefixes are themselves customizable through three list-valued
 options:
@@ -285,7 +302,7 @@ j=), and the other-window jump prefix (=j=) mirrors
 :CUSTOM_ID: setting-bookmarks
 :END:
 
-** =bmkp-bookmark-set-confirm-overwrite= --- vanilla set, with extras
+** =bmkp-bookmark-set-confirm-overwrite= --- enhanced =bookmark-set=
 
 =bmkp-bookmark-set-confirm-overwrite= (=C-x r m=, with aliases
 =C-x x c m= and =C-x x m=) is an enhanced replacement for
@@ -383,7 +400,7 @@ bookmarks of that type as completion candidates.  They live on the
 | Image                         | =bmkp-image-jump= (=C-x j M-i=)  | =bmkp-image-jump-other-window= (=C-x 4 j M-i=) |
 | Region                        | =bmkp-region-jump= (=C-x j r=)   | =bmkp-region-jump-other-window= (=C-x 4 j r=) |
 | URL                           | =bmkp-url-jump= (=C-x j u=)      | =bmkp-url-jump-other-window= (=C-x 4 j u=) |
-| W3M                           | =bmkp-w3m-jump= (=C-x j w=)      | =bmkp-w3m-jump-other-window= (=C-x 4 j w=) |
+| W3M (legacy, opens in EWW)    | =bmkp-w3m-jump= (=C-x j w=)      | =bmkp-w3m-jump-other-window= (=C-x 4 j w=) |
 | EWW                           | =bmkp-eww-jump= (=C-x j e=)      | =bmkp-eww-jump-other-window= (=C-x 4 j e=) |
 | Gnus article                  | =bmkp-gnus-jump= (=C-x j g=)     | =bmkp-gnus-jump-other-window= (=C-x 4 j g=) |
 | Highlighted (lighted) bookmark| =bmkp-lighted-jump= (=C-x j h=) | =bmkp-lighted-jump-other-window= (=C-x 4 j h=) |
@@ -431,7 +448,6 @@ Several modes bind =j= to the corresponding type-specific jump:
 | Info                       | Info bookmark.                            |
 | Gnus summary               | Gnus bookmark.                            |
 | =man= / =woman=             | =man=-page bookmark.                       |
-| W3M (mode and minor mode)  | W3M bookmark.                             |
 | EWW                        | EWW bookmark.                             |
 | Buffer-menu                | Non-file (buffer) bookmark.               |
 | Dired (=J= used --- =j= is dired-goto-file) | Dired bookmark.            |
@@ -524,8 +540,7 @@ Predicates of the form =bmkp-TYPE-bookmark-p= recognize each type.
   activates the region.  See =bmkp-use-region= for the activation
   policy (=t=, =cycling-too=, or =nil=).  Use
   =bmkp-region-jump-narrow-indirect-other-window= (=C-x 4 j R=) to
-  narrow the region in a cloned indirect buffer (needs
-  =narrow-indirect.el=).
+  narrow the region in a cloned indirect buffer.
 
 ** Type-aware file actions
 
@@ -593,15 +608,18 @@ Info bookmark every time you visit a node.
 =bmkp-info-auto-type= picks =update-only= (the default) or
 =create-or-replace=; toggle with =bmkp-toggle-info-auto-type=.
 
-** Gnus, =man=, =woman=, W3M, EWW
+** Gnus, =man=, =woman=, EWW (and legacy W3M)
 
 - =bmkp-gnus-jump= bookmark of a Gnus article (group, article,
   message id).
 - =bmkp-man-jump= for =man= or =woman= pages.
-- =bmkp-w3m-jump=, =bmkp-eww-jump= for W3M and EWW URLs.
+- =bmkp-eww-jump= for EWW URLs.
+- =bmkp-w3m-jump= still recognises legacy W3M bookmarks saved by
+  earlier versions of Bookmark+, but opens them in EWW.  This fork
+  does not create new W3M bookmarks.
 - EWW can be configured so that visiting a page records a
   bookmark, via =bmkp-set-eww-bookmark-here= and
-  =bmkp-eww-replace-keys-flag= (rebinds vanilla EWW bookmark keys
+  =bmkp-eww-replace-keys-flag= (rebinds built-in EWW bookmark keys
   to Bookmark+'s).
 
 ** Image bookmarks
@@ -681,8 +699,6 @@ file.  With =C-u=, jumping /switches/ to it.
 
 ** Other built-in types
 
-- *Icicles search-hits* bookmarks --- save the current
-  Icicles-search candidate set; restore with =bmkp-jump-icicle-search-hits=.
 - *Lighter (highlight) override* --- per-bookmark style/face/condition
   for highlighting (see [[#highlighting][Highlighting]]).
 - *Non-invokable* --- handler is =ignore=.  Useful for using
@@ -902,7 +918,7 @@ Three independent kinds of filtering:
    G S  - Gnus bookmarks           V S  - variable-list bookmarks
    M S  - man-page bookmarks       N S  - non-invokable bookmarks
    M-I M-S - image bookmarks       Q S  - function bookmarks
-   W3 S - W3M bookmarks            i S  - Icicles search-hits
+   W3 S - W3M bookmarks (legacy)
    WE S - EWW bookmarks            w S  - snippet bookmarks
    X S  - temporary bookmarks      O S  - orphaned local file bookmarks
    #S   - autonamed bookmarks      M-d M-s - Dired bookmarks
@@ -978,7 +994,7 @@ one directly:
 | =bmkp-define-tags-sort-command=                | =T s=                   | tag set                                             |
 
 The macro =bmkp-define-sort-command= lets you define your own.
-Sorting is governed by option =bmkp-sort-comparer= --- vanilla
+Sorting is governed by option =bmkp-sort-comparer= --- the built-in
 =bookmark-sort-flag= is ignored.
 
 Cycling list:  =bmkp-sort-orders-for-cycling-alist=.
@@ -1362,12 +1378,11 @@ Both =bmkp-auto-light-when-*= options accept the values:
 =autonamed-in-buffer=, =non-autonamed-in-buffer=, =all-in-buffer=,
 =nil= (off).
 
-** Crosshair flash on jump
+** Pulse highlight on jump
 
-If =bmkp-crosshairs-flag= is non-nil (default) and =crosshairs.el=
-is loaded, jumping to a bookmark that has no region briefly draws
-horizontal and vertical lines through the destination so you can
-find it at a glance.
+If =bmkp-highlight-on-jump-flag= is non-nil (default), jumping to a
+bookmark that has no region briefly pulse-highlights the landing line
+via the built-in =pulse.el= so you can find it at a glance.
 
 * Bookmark links
 :PROPERTIES:
@@ -1428,7 +1443,7 @@ loaded), =Define Command=.  Also available on =C-mouse-3=.
 Click =mouse-3= on a bookmark for a menu of actions on /that/
 bookmark.
 
-** Vanilla =Bookmarks= menu (under =Edit=)
+** Built-in =Bookmarks= menu (under =Edit=)
 
 Bookmark+ adds several items to the standard =Bookmarks= menu:
 =Jump To= submenu, =Tags= submenu, =Highlight= submenu, plus items
@@ -1454,38 +1469,31 @@ jumping (controlled by =imenup-show-bookmarks-flag=).
 The reason the option defaults to =nil=: computing the menu has a
 small but real cost.
 
-* Use with Icicles
+* Use with modern completion frameworks
 :PROPERTIES:
-:CUSTOM_ID: icicles
+:CUSTOM_ID: completion
 :END:
 
-If you load /Icicles/, Bookmark+ gains:
+This fork of Bookmark+ uses the built-in =completing-read= for every
+prompt and ships no completion-framework integrations of its own.
+That keeps it composable with whatever completion stack you already
+use --- /vertico/, /ivy/, /helm/, /ido/, or plain Emacs.
 
-- *Bookmark browsing.*  Jump commands become multi-commands ---
-  you can act on / visit several bookmarks during one invocation,
-  cycle through candidates, etc.
-- *Progressive completion.*  Narrow candidates against multiple
-  patterns; intersect with bookmark types (=C-M-i= Info,
-  =C-M-@= remote, =C-M-r= region, ...).
-- *Single key to set or jump.*  Whatever you bind
-  =bmkp-bookmark-set-confirm-overwrite= to (typically =C-x r m=)
-  becomes contextual: =M--= prefix jumps, numeric prefix sets
-  silently using buffer + region/line text as the name, =C-u=
-  prompts without overwriting.
-- *=*Completions*= is a dynamic =*Bookmark List*=.*  Multi-completion
-  candidates have three parts (name, file/buffer, tags); =C-,=
-  cycles Bookmark+ sort orders; =C-M-RET= shows full bookmark
-  info; =S-delete= deletes a candidate.
-- *File-name completion gets bookmark hooks.*  =C-x m= jumps to a
-  file bookmark, =C-x a a= creates an autofile, =C-x a += / =C-x a -=
-  add/remove tags.
-- *Icicles search-hits bookmarks.*  During Icicles search, =C-x
-  C-M->= saves the current set of search-hit candidates as a
-  bookmark; =C-x C-M-<= restores them; =C-x C-<= adds to them.
+For the closest thing to a single-key "browse and jump" experience,
+the /consult/ package's =consult-bookmark= reads a bookmark with live
+preview-while-jumping --- bind it over =C-x r b= for the convenience.
+With /vertico/ + /marginalia/ + /orderless/, every Bookmark+ jump
+command (=bmkp-info-jump=, =bmkp-dired-jump=, =bmkp-tagged-jump=,
+=bmkp-eww-jump=, etc.) gets vertical completion, fuzzy matching, and
+annotations for free.
 
-There are 25 Icicles commands for searching bookmark destinations.
-The most general is =icicle-search-bookmark=; others filter by
-type or by tag combinations.
+For acting on the selected bookmark, /embark/'s =embark-act= pairs
+naturally: bind it inside completing-read and you can rename, delete,
+or describe the candidate without leaving the minibuffer.
+
+The =*Bookmark List*= buffer is unchanged by any of this --- it is
+its own tabulated UI, independent of how you select bookmarks
+from the minibuffer.
 
 * Customization
 :PROPERTIES:
@@ -1559,10 +1567,10 @@ This section enumerates the most commonly tweaked options.
 - =bmkp-last-as-first-bookmark-file= --- start each Emacs session
   with the last bookmark file used.  Set to =nil= to always start
   with =bookmark-default-file=.
-- =bookmark-save-flag= (vanilla) --- when to auto-save the current
+- =bookmark-save-flag= (built-in) --- when to auto-save the current
   bookmark file (=nil= = never, =t= = on every change, integer =
   after that many modifications).
-- =bookmark-version-control= and =delete-old-versions= (vanilla) ---
+- =bookmark-version-control= and =delete-old-versions= (built-in) ---
   recommended =t= so Bookmark+'s save-time backups accumulate
   cleanly.
 
@@ -1613,8 +1621,8 @@ This section enumerates the most commonly tweaked options.
   tooltip body for hovered highlighted bookmarks (default
   =bmkp-bookmark-description=; an alternative is
   =bmkp-annotation-or-bookmark-description=).
-- =bmkp-crosshairs-flag= --- crosshair flash on jump (needs
-  =crosshairs.el=).
+- =bmkp-highlight-on-jump-flag= --- pulse-highlight the landing line
+  after a jump (uses built-in =pulse.el=).
 
 ** Faces (=*Bookmark List*=)
 
@@ -1634,23 +1642,23 @@ Marker faces: =bmkp->-mark= (=>=), =bmkp-D-mark= (=D=),
 =bmkp-a-mark= (=a=), =bmkp-bad-bookmark= (invalid bookmark line),
 =bmkp-heading= (the title line).
 
-* Compatibility with vanilla =bookmark.el=
+* Compatibility with built-in =bookmark.el=
 :PROPERTIES:
 :CUSTOM_ID: compatibility
 :END:
 
-Bookmark+ is compatible with vanilla Emacs 20--26+.  Bookmarks
-created by either implementation can be used by the other, with
-one important caveat: if you need to save the same bookmark file
-from vanilla Emacs, set =bmkp-propertize-bookmark-names-flag= to
-=nil= before saving with Bookmark+.
+Bookmark files written by Bookmark+ can be read by the built-in
+=bookmark.el=, with one important caveat: if the same bookmark file
+is going to be /saved/ by the built-in =bookmark.el= (not just read),
+set =bmkp-propertize-bookmark-names-flag= to =nil= before saving with
+Bookmark+.
 
-=bmkp-propertize-bookmark-names-flag= (non-nil by default on Emacs
-21+) makes Bookmark+ store bookmark records as /circular/ Lisp
-structures (the name has the full record as a text property).
-That layout is readable by vanilla Emacs.  But if vanilla Emacs
-then /saves/ the file, the resulting file is unreadable --- vanilla
-does not bind =print-circle= when writing.
+=bmkp-propertize-bookmark-names-flag= (non-nil by default) makes
+Bookmark+ store bookmark records as /circular/ Lisp structures (the
+name has the full record as a text property).  That layout is readable
+by the built-in =bookmark.el=, but if the built-in then /saves/ the
+file, the resulting file is unreadable --- the built-in does not bind
+=print-circle= when writing.
 
 If you use only Bookmark+, leave the option at its default.  It
 enables conveniences such as multiple bookmarks with the same name,

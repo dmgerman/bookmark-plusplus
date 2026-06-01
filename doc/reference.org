@@ -11,7 +11,7 @@ can still discover them with =M-x bmkp-= =TAB=.
 | Command                                    | Default key  | What it does                                |
 |--------------------------------------------+--------------+---------------------------------------------|
 | =bmkp-bookmark-set-confirm-overwrite=        | =C-x r m=, =C-x x m=, =C-x x c m= | Set / update a bookmark.  Buffer-local default. |
-| =bookmark-set=                              | =C-x x c M=    | Vanilla =bookmark-set=.                       |
+| =bookmark-set=                              | =C-x x c M=    | Built-in =bookmark-set=.                      |
 | =bmkp-toggle-autonamed-bookmark-set/delete=  | =C-x x RET=, =C-x x c RET= | Toggle autonamed bookmark here.             |
 | =bmkp-autofile-set= (=bmkp-bookmark-a-file=)  | =C-x x c a=    | Autofile bookmark for a file.                |
 | =bmkp-file-target-set=                       | =C-x x c f=    | File bookmark (file at point).                |
@@ -72,12 +72,12 @@ can still discover them with =M-x bmkp-= =TAB=.
 | =bmkp-info-jump=                       | =C-x j i=    | Info bookmark.                         |
 | =bmkp-man-jump=                        | =C-x j m=    | =man= / =woman= bookmark.                |
 | =bmkp-gnus-jump=                       | =C-x j g=    | Gnus article.                          |
-| =bmkp-w3m-jump=                        | =C-x j w=    | W3M bookmark.                          |
-| =bmkp-eww-jump=                        | =C-x j e=    | EWW bookmark (Emacs 25+).              |
+| =bmkp-w3m-jump=                        | =C-x j w=    | Legacy W3M bookmark; opens in EWW.     |
+| =bmkp-eww-jump=                        | =C-x j e=    | EWW bookmark.                          |
 | =bmkp-image-jump=                      | =C-x j M-i=  | Image bookmark.                        |
 | =bmkp-url-jump=                        | =C-x j u=    | URL bookmark.                          |
 | =bmkp-region-jump=                     | =C-x j r=    | Region bookmark; activates region.     |
-| =bmkp-region-jump-narrow-indirect-other-window= | =C-x 4 j R= | Narrow into indirect clone (=narrow-indirect.el=). |
+| =bmkp-region-jump-narrow-indirect-other-window= | =C-x 4 j R= | Narrow into indirect clone. |
 | =bmkp-desktop-jump=                    | =C-x j K=    | Desktop bookmark.                      |
 | =bmkp-variable-list-jump=              | =C-x j v=    | Variable-list bookmark.                |
 | =bmkp-lighted-jump=                    | =C-x j h=    | Highlighted bookmark.                  |
@@ -109,7 +109,7 @@ commands.  Additional commands include =bmkp-copy-tags=,
 | =bmkp-bmenu-w32-open-with-mouse=                   | =M-mouse-2=      |                                          |
 | =bmkp-bmenu-w32-jump-to-marked=                    | =M-o=, =v=        | Open all marked via MS-Windows.           |
 | =bmkp-bmenu-jump-to-marked=                        | =j >=            | Jump to each marked bookmark, in other windows. |
-| =bookmark-bmenu-relocate=                          | =M-r=            | Vanilla relocate.                         |
+| =bookmark-bmenu-relocate=                          | =M-r=            | Built-in relocate.                        |
 | =bmkp-bmenu-relocate-marked=                       | =M-R=            | Relocate all marked.                      |
 | =bmkp-bmenu-make-sequence-from-marked=             | --             | Sequence bookmark from marked.            |
 | =bmkp-bmenu-store-org-link=                        | (mouse-3 menu) | Store an Org link to this bookmark.       |
