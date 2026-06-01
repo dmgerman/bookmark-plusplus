@@ -425,7 +425,7 @@
 ;;    `bmkp-this-buffer-bmenu-list', `bmkp-this-buffer-jump',
 ;;    `bmkp-this-buffer-jump-other-window',
 ;;    `bmkp-this-file-bmenu-list', `bmkp-this-file/buffer-bmenu-list',
-;;    `bmkp-toggle-autonamed-bookmark-set/delete',
+;;    `bmkp-toggle-autonamed-bmkp-set/delete',
 ;;    `bmkp-toggle-autotemp-on-set',
 ;;    `bmkp-toggle-bookmark-set-refreshes',
 ;;    `bmkp-toggle-eww-auto-type' (Emacs 25+),
@@ -724,7 +724,7 @@
 ;;    `bmkp-jump', `bmkp-jump-other-frame',
 ;;    `bmkp-jump-other-window', `bmkp-load',
 ;;    `bmkp-relocate', `bmkp-rename', `bmkp-save',
-;;    `bmkp-send-edited-annotation', `bookmark-set',
+;;    `bmkp-send-edited-annotation', `bmkp-set',
 ;;    `bmkp-set-name', `bmkp-yank-word'.
 ;;
 ;;
@@ -1768,7 +1768,7 @@ different Emacs version from that of the current session."
 (defconst bmkp-non-file-filename "   - no file -"
   "Name to use for `filename' entry, for non-file bookmarks.")
 
-(defvar bmkp-after-set-hook nil "Hook run after `bookmark-set' sets a bookmark.")
+(defvar bmkp-after-set-hook nil "Hook run after `bmkp-set' sets a bookmark.")
 
 (defvar bmkp-automatic-bookmarks ()
   "Alist of bookmarks that were created automatically during this session.")
@@ -1809,7 +1809,7 @@ Useful for example to unhide text in `outline-mode'.")
   "List of tags copied from a bookmark, for pasting to other bookmarks.")
 
 (defvar bmkp-bookmark-set-confirms-overwrite-p nil
-  "Non-nil means `bookmark-set' requires confirmation about overwriting.")
+  "Non-nil means `bmkp-set' requires confirmation about overwriting.")
 
 (defvar bmkp-current-bookmark-file bookmark-default-file
   "Current bookmark file.
@@ -2452,8 +2452,8 @@ Point is irrelevant and unaffected."
 ;; 11. Make bookmark temporary, if `bmkp-autotemp-bookmark-predicates' says to.
 ;; 12. Run `bmkp-after-set-hook'.
 ;;
-;;;###autoload (autoload 'bookmark-set "bookmark+")
-(defun bookmark-set (&optional name parg interactivep no-refresh-p) ; `C-x r M', `C-x x c M'
+;;;###autoload (autoload 'bmkp-set "bookmark+")
+(defun bmkp-set (&optional name parg interactivep no-refresh-p) ; `C-x r M', `C-x x c M'
   "Set a bookmark named NAME, then run `bmkp-after-set-hook'.
 If the region is active (`transient-mark-mode') and nonempty, then
 record the region limits in the bookmark.
@@ -2582,11 +2582,11 @@ From Lisp code:
           ;; Pass RECORD, not BNAME, so `bmkp-prop-set' DTRT in `bmkp-make-bookmark-temporary'.
           (if bmkp-autotemp-all-when-set-p
               (bmkp-make-bookmark-temporary record)
-            (catch 'bookmark-set
+            (catch 'bmkp-set
               (dolist (pred  bmkp-autotemp-bookmark-predicates)
                 (when (and (functionp pred)  (funcall pred bname))
                   (bmkp-make-bookmark-temporary record)
-                  (throw 'bookmark-set t)))))
+                  (throw 'bmkp-set t)))))
           ;; `bmkp-store' may auto-disambiguate (foo -> foo<2>) when
           ;; (consp parg) is non-nil and `bname' collides.  Update local
           ;; `bname' to the stored bookmark's actual name so subsequent
@@ -3094,7 +3094,7 @@ If NEW is nil, then prompt for its string value (unless BATCH).
 
 When entering the NEW name you can use completion against existing
 bookmark names.  This completion is lax, so you can easily edit an
-existing name.  See `bookmark-set' for particular keys available
+existing name.  See `bmkp-set' for particular keys available
 during this input.
 
 If BATCHP is non-nil, then do not rebuild the bookmark list.  (NEW
@@ -4842,7 +4842,7 @@ BOOKMARK is a bookmark name or a bookmark record.
 Without a prefix arg, you are prompted for the new bookmark name and
  the new location name.  When entering the new names you can use
  completion against existing names.  This completion is lax, so you
- can easily edit an existing name.  See `bookmark-set' for particular
+ can easily edit an existing name.  See `bmkp-set' for particular
  keys available during this input.
 
 With a prefix arg, edit the complete bookmark record (the
@@ -5228,12 +5228,12 @@ This excludes the pseudo file name `bmkp-non-file-filename'."
 ;;;###autoload (autoload 'bmkp-bookmark-set-confirm-overwrite "bookmark+")
 (defun bmkp-bookmark-set-confirm-overwrite (&optional _n _p _intp _no-r-p) ; Bound `C-x r m', `C-x x c m'.
   "Set a bookmark named NAME, then run `bmkp-after-set-hook'.
-This is the same as `bookmark-set', except that with no prefix arg you
+This is the same as `bmkp-set', except that with no prefix arg you
 are asked to confirm overwriting an existing bookmark of the same
 NAME."
   (interactive (list nil current-prefix-arg t))
   (let ((bmkp-bookmark-set-confirms-overwrite-p  t))
-    (call-interactively #'bookmark-set)))
+    (call-interactively #'bmkp-set)))
 
 ;;;###autoload (autoload 'bmkp-send-bug-report "bookmark+")
 (defun bmkp-send-bug-report ()          ; Not bound
@@ -5248,7 +5248,7 @@ Be sure to mention the `Update #' from header of the particular Bookmark+ file h
 
 ;;;###autoload (autoload 'bmkp-toggle-bookmark-set-refreshes "bookmark+")
 (defun bmkp-toggle-bookmark-set-refreshes () ; Not bound
-  "Toggle whether `bookmark-set' refreshes `bookmark-alist' as last filtered.
+  "Toggle whether `bmkp-set' refreshes `bookmark-alist' as last filtered.
 Add/remove `bmkp-refresh-latest-bookmark-list' to/from
 `bmkp-after-set-hook'.
 \(Applies also to command `bmkp-bookmark-set-confirm-overwrite'.)"
@@ -8142,7 +8142,7 @@ case, the bookmark name is the prefix followed by the URL.
 
 When entering a bookmark name you can use completion against existing
 names.  This completion is lax, so you can easily edit an existing
-name.  See `bookmark-set' for particular keys available during this
+name.  See `bmkp-set' for particular keys available during this
 input.
 
 If you use a numeric prefix arg, such as `C-1', instead of plain
@@ -8217,7 +8217,7 @@ part of FILE (or of its `directory-file-name', if a directory name).
 
 When entering a bookmark name you can use completion against existing
 names.  This completion is lax, so you can easily edit an existing
-name.  See `bookmark-set' for particular keys available during this
+name.  See `bmkp-set' for particular keys available during this
 input.
 
 If you use a numeric prefix arg, such as `C-1', instead of plain
@@ -8657,11 +8657,11 @@ of the hit, followed by the line number of the hit."
         (with-current-buffer (let ((enable-local-variables  ())) (find-file-noselect file))
           (goto-char (point-min)) (forward-line (1- line))
           (if (not prefix)
-              (call-interactively #'bookmark-set)
+              (call-interactively #'bmkp-set)
             (when (called-interactively-p 'interactive)
               (setq prefix  (read-string "Prefix for bookmark name: ")))
             (unless (stringp prefix) (setq prefix  ""))
-            (bookmark-set (format "%s%s, line %s" prefix (file-name-nondirectory file) line)
+            (bmkp-set (format "%s%s, line %s" prefix (file-name-nondirectory file) line)
                           99 'INTERACTIVEP))))))
 
   (defun bmkp-compilation-file+line-at (&optional pos)
@@ -8735,11 +8735,11 @@ You can use this only in `Occur' mode (commands such as `occur' and
       (save-excursion (with-current-buffer buf
                         (goto-char mkr)
                         (if (not prefix)
-                            (call-interactively #'bookmark-set)
+                            (call-interactively #'bmkp-set)
                           (when (called-interactively-p 'interactive)
                             (setq prefix  (read-string "Prefix for bookmark name: ")))
                           (unless (stringp prefix) (setq prefix  ""))
-                          (bookmark-set (format "%s%s, line %s" prefix buf line) 99 'INTERACTIVEP)))))))
+                          (bmkp-set (format "%s%s, line %s" prefix buf line) 99 'INTERACTIVEP)))))))
 
 (when (> emacs-major-version 21)
   (defun bmkp-occur-target-set-all (&optional prefix msg-p) ; Bound to `C-c C-M-b' in Occur mode
@@ -9475,7 +9475,7 @@ BOOKMARK is a bookmark name or a bookmark record."
 You are prompted for the names of the bookmark file and the bookmark.
 When entering the bookmark name you can use completion against
 existing names.  This completion is lax, so you can easily edit an
-existing name.  See `bookmark-set' for particular keys available
+existing name.  See `bmkp-set' for particular keys available
 during this input.
 
 Non-interactively, non-nil MSG-P means display a status message."
@@ -9504,7 +9504,7 @@ Non-interactively, non-nil MSG-P means display a status message."
                                           (lambda () (bmkp-make-bookmark-file-record ff))))
         (bookmark-name                  (bmkp-completing-read-lax "Bookmark-file BOOKMARK name"
                                                                   file nil nil 'bookmark-history)))
-    (bookmark-set bookmark-name 99 'INTERACTIVEP))
+    (bmkp-set bookmark-name 99 'INTERACTIVEP))
   (when msg-p (message "Set bookmark-file bookmark")))
 
 (defun bmkp-make-bookmark-file-record (bmk-file)
@@ -9605,8 +9605,8 @@ you can yank it using `C-y'."
                                               (text    . ,text)
                                               (handler . bmkp-jump-snippet))))
           (bname                          (and (not promptp)  (car (split-string text "[\n]")))))
-      (bookmark-set bname 99 'INTERACTIVEP)
-      ;; `bookmark-set does the prompting, providing default names.  
+      (bmkp-set bname 99 'INTERACTIVEP)
+      ;; `bmkp-set does the prompting, providing default names.  
       (when msgp (message "Region text bookmarked%s" (if bname (format " as `%s'" bname) ""))))))
 
 (defun bmkp-jump-snippet (bookmark)
@@ -9659,8 +9659,8 @@ enter, just use it to set the bookmark."
     (bmkp-desktop-save desktop-file))
   (let ((bookmark-make-record-function  (bmkp-lexlet ((df  desktop-file))
                                           (lambda () (bmkp-make-desktop-record df))))
-        (current-prefix-arg             99)) ; Use all bookmarks for completion, for `bookmark-set'.
-    (call-interactively #'bookmark-set)))
+        (current-prefix-arg             99)) ; Use all bookmarks for completion, for `bmkp-set'.
+    (call-interactively #'bmkp-set)))
 
 (defun bmkp-desktop-save (desktop-file)
   "Save current desktop in DESKTOP-FILE."
@@ -9899,7 +9899,7 @@ Non-interactively, VARIABLE is the restrictions variable to use."
                                     (extra  (nthcdr 3 xx)))
                                 `(,id ,(bmkp-readable-marker beg) ,(bmkp-readable-marker end) ,@extra)))
                             (symbol-value variable))))))))
-      (call-interactively #'bookmark-set)
+      (call-interactively #'bmkp-set)
       (and msgp  (not (featurep 'zones))  (message "Bookmark created, but you need `zones.el' to use it")))))
 
 ;;;###autoload (autoload 'bmkp-wrap-bookmark-with-last-kbd-macro "bookmark+")
@@ -10036,7 +10036,7 @@ MSGP non-nil means possibly interact with the user, showing messages."
                              (nconc bnames (bookmark-prop-get seq 'sequence))
                            (nconc (bookmark-prop-get seq 'sequence) bnames)))))
     (let ((bookmark-make-record-function `(lambda () (bmkp-make-sequence-record ',bnames))))
-      (bookmark-set seqname))
+      (bmkp-set seqname))
     (when msgp (message "Sequence `%s' %s" seqname (if exists
                                                        (if replacing "replaced" "updated")
                                                      "created")))))
@@ -10081,7 +10081,7 @@ With a prefix arg, use `last-kbd-macro' as the keyboard macro."
     (let ((bookmark-make-record-function  (lambda ()
                                             (bmkp-make-kmacro-list-record
                                              (cons (kmacro-ring-head) kmacro-ring)))))
-      (bookmark-set bookmark-name)))
+      (bmkp-set bookmark-name)))
 
   (defun bmkp-make-kmacro-list-record (kmacros)
     "Create and return a kmacro-list bookmark record.
@@ -10104,7 +10104,7 @@ Interactively, read the variables to save, using
   (interactive (list (bmkp-read-variables-completing)))
   (let ((bookmark-make-record-function  (bmkp-lexlet ((vars  variables))
                                           (lambda () (bmkp-make-variable-list-record vars)))))
-    (call-interactively #'bookmark-set)))
+    (call-interactively #'bmkp-set)))
 
 ;; Not used in the Bookmark+ code.  Available for users to create varlist bookmark non-interactively.
 (defun bmkp-create-variable-list-bookmark (bookmark-name vars vals &optional buffer-name)
@@ -10118,7 +10118,7 @@ If BUFFER-NAME is nil, the current buffer name is recorded."
            (let ((bookmark-make-record-function  (bmkp-lexlet ((vs   ',vars)
                                                                (buf  ,buffer-name))
                                                    (lambda () (bmkp-make-variable-list-record vs buf)))))
-             (bookmark-set ,bookmark-name)))))
+             (bmkp-set ,bookmark-name)))))
 
 (defun bmkp-read-variables-completing (&optional option)
   "Read variable names with completion, and return them as a list of symbols.
@@ -10419,7 +10419,7 @@ The current buffer is assumed to be in `eww-mode' and visiting a URL."
            (visits  (and bmk  (bookmark-prop-get bmk 'visits))))
       (when bname
         (cond ((and (not visits)  (eq bmkp-eww-auto-type 'create-or-update))
-               (bookmark-set bname)
+               (bmkp-set bname)
                (unless nomsg (message "Created EWW bookmark `%s'" bname)))
               (visits
                (bmkp-record-visit bname 'BATCHP)
@@ -10737,7 +10737,7 @@ create or replace a sequence bookmark."
     (dolist (dbuf  dbufs)
       (with-current-buffer dbuf
         (setq bname  (abbreviate-file-name default-directory))
-        (bookmark-set bname)
+        (bmkp-set bname)
         (when sequence (setq bnames  (cons bname bnames)))
         (setq count  (1+ count))))
     (when msgp (message "%d Dired bookmarks created" count))
@@ -12905,8 +12905,8 @@ See `bmkp-next-bookmark-w32-repeat'."
 (bmkp-define-next+prev-cycle-commands "url")
 (bmkp-define-next+prev-cycle-commands "url" 'OTHER-WINDOW)
 
-;;;###autoload (autoload 'bmkp-toggle-autonamed-bookmark-set/delete "bookmark+")
-(defun bmkp-toggle-autonamed-bookmark-set/delete (&optional position allp)
+;;;###autoload (autoload 'bmkp-toggle-autonamed-bmkp-set/delete "bookmark+")
+(defun bmkp-toggle-autonamed-bmkp-set/delete (&optional position allp)
                                         ; Bound globally to `C-x x RET', `C-x x c RET'
   "If there is an autonamed bookmark at point, delete it, else create one.
 The bookmark created has no region.  Its name is formatted according
@@ -12922,7 +12922,7 @@ Non-interactively, act at POSITION, not point.  If nil, act at point."
     (let ((bmk-name  (funcall bmkp-autoname-bookmark-function position)))
       (if (not (bmkp-get-bookmark-in-alist bmk-name 'NOERROR))
           (let ((mark-active  nil))     ; Do not set a region bookmark.
-            (bookmark-set bmk-name)
+            (bmkp-set bmk-name)
             (message "Set bookmark `%s'" bmk-name))
         (bmkp-delete bmk-name)
         (message "Deleted bookmark `%s'" bmk-name)))))
@@ -12939,7 +12939,7 @@ Non-interactively:
   (unless position (setq position  (point)))
   (let ((bmk-name     (funcall bmkp-autoname-bookmark-function position))
         (mark-active  nil))             ; Do not set a region bookmark.
-    (bookmark-set bmk-name)
+    (bmkp-set bmk-name)
     (when msg-p (message "Set bookmark `%s'" bmk-name))))
 
 ;;;###autoload (autoload 'bmkp-set-autonamed-bookmark-at-line "bookmark+")
@@ -13255,7 +13255,7 @@ the node was bookmarked."
                (visits    (and bmk  (bookmark-prop-get bmk 'visits))))
           (when bmk-name
             (cond ((and (not visits)  (eq bmkp-info-auto-type 'create-or-update))
-                   (bookmark-set bmk-name)
+                   (bmkp-set bmk-name)
                    (unless nomsg (message "Created bookmark `%s' for Info node" bmk-name)))
                   (visits
                    (bmkp-record-visit bmk-name 'BATCHP)

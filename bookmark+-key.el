@@ -264,7 +264,7 @@ there are such bookmarks can take a little time."
 (define-key bookmark-map ","      'bmkp-this-file/buffer-bmenu-list)                  ; `C-x x ,'
 (define-key bookmark-map "?"      'bmkp-describe-bookmark-lighted-here)               ; `C-x x ?'
 (define-key bookmark-map ":"      'bmkp-choose-navlist-of-type)                       ; `C-x x :'
-(define-key bookmark-map "\r"     'bmkp-toggle-autonamed-bookmark-set/delete)         ; `C-x x RET'
+(define-key bookmark-map "\r"     'bmkp-toggle-autonamed-bmkp-set/delete)         ; `C-x x RET'
 (define-key bookmark-map [delete] 'bmkp-delete-bookmarks)                             ; `C-x x delete'
 
 (substitute-key-definition 'kill-line 'bmkp-delete-bookmarks          ; `C-x x C-k', `C-x x deleteline'
@@ -348,12 +348,12 @@ there are such bookmarks can take a little time."
 (define-key bmkp-set-map "K"    'bmkp-set-desktop-bookmark)                    ; `C-x x c K'
 (define-key bmkp-set-map "\C-k" 'bmkp-wrap-bookmark-with-last-kbd-macro)       ; `C-x x C-k'
 (define-key bmkp-set-map "m"    'bmkp-bookmark-set-confirm-overwrite)          ; `C-x x c m'
-(define-key bmkp-set-map "M"    'bookmark-set)                                 ; `C-x x c M'
+(define-key bmkp-set-map "M"    'bmkp-set)                                 ; `C-x x c M'
 (define-key bmkp-set-map "s"    'bmkp-set-sequence-bookmark)                   ; `C-x x c s'
 (define-key bmkp-set-map "u"    'bmkp-url-target-set)                          ; `C-x x c u'
 (define-key bmkp-set-map "\M-w" 'bmkp-set-snippet-bookmark)                    ; `C-x x c M-w'
 (define-key bmkp-set-map "y"    'bmkp-set-bookmark-file-bookmark)              ; `C-x x c y'
-(define-key bmkp-set-map "\r"   'bmkp-toggle-autonamed-bookmark-set/delete)    ; `C-x x c RET'
+(define-key bmkp-set-map "\r"   'bmkp-toggle-autonamed-bmkp-set/delete)    ; `C-x x c RET'
 
 
 ;; Add set commands to other keymaps: occur, compilation: `C-c C-b', `C-c C-M-b', `C-c C-M-B'.
@@ -489,7 +489,7 @@ there are such bookmarks can take a little time."
 (eval-after-load "eww"
   '(when (> emacs-major-version 24)     ; Emacs 25+
     (when bmkp-eww-replace-keys-flag
-      (bmkp-remap 'eww-add-bookmark       'bookmark-set                eww-mode-map)
+      (bmkp-remap 'eww-add-bookmark       'bmkp-set                eww-mode-map)
       (bmkp-remap 'eww-list-bookmarks     'bookmark-bmenu-list         eww-mode-map)
       (bmkp-remap 'eww-next-bookmark      'bmkp-next-url-bookmark  eww-mode-map)
       (bmkp-remap 'eww-previous-bookmark  'bmkp-previous-url-bookmark  eww-mode-map))
@@ -1089,7 +1089,7 @@ Menu for bookmarks that target this file or buffer.")
     bmkp-delete-all-autonamed-for-this-buffer
     :help "Delete all autonamed bookmarks for the current buffer"))
 (define-key bmkp-delete-menu [bmkp-toggle-autoname-bmkp-delete]
-  '(menu-item "Delete Autonamed Bookmark" bmkp-toggle-autonamed-bookmark-set/delete
+  '(menu-item "Delete Autonamed Bookmark" bmkp-toggle-autonamed-bmkp-set/delete
     :help "Delete the autonamed bookmark at point"
     :visible (bmkp-get-bookmark-in-alist (funcall bmkp-autoname-bookmark-function (point))
               'noerror)))
@@ -1123,8 +1123,8 @@ Menu for bookmarks that target this file or buffer.")
 (define-key bmkp-set-bookmark-menu [bmkp-make-function-bookmark]
   '(menu-item "Function Bookmark..." bmkp-make-function-bookmark
     :help "Create a bookmark that will invoke a function when \"jumped\" to"))
-(define-key bmkp-set-bookmark-menu [bmkp-toggle-autoname-bookmark-set]
-  '(menu-item "Autonamed Bookmark" bmkp-toggle-autonamed-bookmark-set/delete
+(define-key bmkp-set-bookmark-menu [bmkp-toggle-autoname-bmkp-set]
+  '(menu-item "Autonamed Bookmark" bmkp-toggle-autonamed-bmkp-set/delete
     :help "Set an autonamed bookmark at point"
     :visible (not (bmkp-get-bookmark-in-alist (funcall bmkp-autoname-bookmark-function (point))
                                               'NOERROR))))
@@ -1145,10 +1145,10 @@ Menu for bookmarks that target this file or buffer.")
     :help "Set and automatically name a bookmark for a given file"))
 (define-key bmkp-set-bookmark-menu [bmkp-menu-bar-set-bookmark]
   '(menu-item "Ordinary Bookmark..." bmkp-menu-bar-set-bookmark
-    :help "Set a bookmark at point" :keys "(C-x x m)")) ; Really bound to `bookmark-set'
+    :help "Set a bookmark at point" :keys "(C-x x m)")) ; Really bound to `bmkp-set'
 
 
-;; Remove vanilla `bookmark-set' from main `Bookmarks' menu.
+;; Remove vanilla `bmkp-set' from main `Bookmarks' menu.
 (define-key menu-bar-bookmark-map [set] nil)
 
 

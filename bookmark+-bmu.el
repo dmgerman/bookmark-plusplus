@@ -1386,7 +1386,7 @@ Bookmark-List Display (`*Bookmark List*')
 `\\[bmkp-bmenu-refresh-menu-list]'\t- Refresh display to current bookmark list  (`C-u': from file)
 `\\[bmkp-bmenu-show-all]'\t- Show all bookmarks
 `\\[bmkp-toggle-bookmark-set-refreshes]'
-\t- Toggle whether `bookmark-set' refreshes the bookmark list
+\t- Toggle whether `bmkp-set' refreshes the bookmark list
 
 `\\[bmkp-bmenu-mode-status-help]'\t- Show this help
 `\\[bmkp-bmenu-quit]'\t- Quit (`*Bookmark List*')
@@ -1448,7 +1448,7 @@ Anywhere:
 Create/Set Bookmarks (anywhere)
 --------------------
 
-`\\[bmkp-toggle-autonamed-bookmark-set/delete]'\t- Set/delete an autonamed bookmark here
+`\\[bmkp-toggle-autonamed-bmkp-set/delete]'\t- Set/delete an autonamed bookmark here
 `\\[bmkp-autofile-set]'\t- Set and autoname a bookmark for a file
 `\\[bmkp-file-target-set]'\t- Set a bookmark for a file
 `\\[bmkp-url-target-set]'\t- Set a bookmark for a URL
@@ -1523,8 +1523,8 @@ File in this dir having all its tags match a regexp
 Autonamed Bookmarks
 -------------------
 
-`\\[bmkp-toggle-autonamed-bookmark-set/delete]'\t- Create/delete autonamed bookmark at point
-`C-u \\[bmkp-toggle-autonamed-bookmark-set/delete]'\t- Delete all autonamed bookmarks in current buffer
+`\\[bmkp-toggle-autonamed-bmkp-set/delete]'\t- Create/delete autonamed bookmark at point
+`C-u \\[bmkp-toggle-autonamed-bmkp-set/delete]'\t- Delete all autonamed bookmarks in current buffer
 `\\[bmkp-autonamed-jump-other-window]'\t\t- Jump to an autonamed bookmark
 `\\[bmkp-autonamed-this-buffer-jump-other-window]'\t\t- Jump to an autonamed bookmark in a given buffer
 
@@ -6051,7 +6051,7 @@ are marked or ALLP is non-nil."
 (define-key bmkp-bmenu-toggle-menu [sep2] '("--")) ; ------------ List display stuff
 (define-key bmkp-bmenu-toggle-menu [bmkp-toggle-bookmark-set-refreshes]
   '(menu-item "Autorefresh for `bmkp-latest-bookmark-alist'" bmkp-toggle-bookmark-set-refreshes
-    :help "Toggle whether `bookmark-set' refreshes `bmkp-latest-bookmark-alist'"))
+    :help "Toggle whether `bmkp-set' refreshes `bmkp-latest-bookmark-alist'"))
 (define-key bmkp-bmenu-toggle-menu [bmkp-toggle-count-multi-mods-as-one]
   (bmkp-menu-bar-make-toggle bmkp-toggle-count-multi-mods-as-one bmkp-count-multi-mods-as-one-flag
                              "Counting Multiple Modifications As One"
