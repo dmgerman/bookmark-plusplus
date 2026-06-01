@@ -539,7 +539,7 @@ the TYPE bookmarks, in the bookmark-list display."
               ,predicate)
             (defun ,alist-only-fn ()
               ,alist-only-doc
-              (bookmark-maybe-load-default-file)
+              (bmkp-maybe-load-default-file)
               (bmkp-remove-if-not (lambda (bmk) ,predicate) bookmark-alist))
             (bmkp-define-show-only-command ,type ,show-only-doc ,alist-only-fn)
             (bmkp-define-history-variables))))

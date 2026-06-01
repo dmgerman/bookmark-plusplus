@@ -913,7 +913,7 @@ Menu for bookmarks that target this file or buffer.")
 (define-key-after menu-bar-bookmark-map [separator-3] '("--") ;-------------------------------------
                   (if (fboundp 'advice-add) 'bmkp-store-org-link 'locate))
 (define-key-after menu-bar-bookmark-map [save]
-  '(menu-item "Save Bookmarks" bookmark-save :help "Save currently defined bookmarks")
+  '(menu-item "Save Bookmarks" bmkp-save :help "Save currently defined bookmarks")
   'separator-3)
 (define-key-after menu-bar-bookmark-map [write]
   '(menu-item "Save Bookmarks As..." bookmark-write
@@ -924,7 +924,7 @@ Menu for bookmarks that target this file or buffer.")
     :help "Switch to a different bookmark file, *replacing* the current set of bookmarks")
   'write)
 (define-key-after menu-bar-bookmark-map [load]
-  '(menu-item "Add Bookmarks from File..." bookmark-load
+  '(menu-item "Add Bookmarks from File..." bmkp-load
     :help "Load additional bookmarks from a bookmark file")
   'bmkp-switch-bookmark-file-create)
 (define-key-after menu-bar-bookmark-map [bmkp-empty-file]

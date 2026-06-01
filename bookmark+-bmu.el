@@ -372,7 +372,7 @@
 ;; bookmark-bmenu-hidden-bookmarks, bookmark-bmenu-mode-map,
 ;; bookmark-bmenu-select, bookmark-get-annotation,
 ;; bookmark-get-filename, bookmark-get-handler, bookmark-kill-line,
-;; bookmark-maybe-load-default-file, bookmark-name-from-full-record,
+;; bmkp-maybe-load-default-file, bookmark-name-from-full-record,
 ;; bookmark-name-from-record, bookmark-prop-get
 
 
@@ -1181,7 +1181,7 @@ Non-interactively:
 
  - Non-nil optional arg MSG-P means display progress messages."
   (interactive "i\np")
-  (bookmark-maybe-load-default-file)
+  (bmkp-maybe-load-default-file)
   (when msg-p (message "Gathering bookmarks to display..."))
   (when (and bmkp-bmenu-first-time-p  bmkp-bmenu-commands-file
              (file-readable-p bmkp-bmenu-commands-file))
@@ -2130,7 +2130,7 @@ Non-interactively, non-nil MSG-P means display messages."
 ;;  3. Added optional arg NO-CONFIRM-P.
 ;;  4. Delete bookmark on current line (after confirmation) if none are flagged/marked.
 ;;  5. Inhibit saving until all are deleted, then save all.  This is because the Bookmark+ version of
-;;     `bookmark-save' refreshes the bookmark list display, and that removes `D' flags.
+;;     `bmkp-save' refreshes the bookmark list display, and that removes `D' flags.
 ;;  6. Use `bmkp-get-bookmark' instead of `bookmark-get-bookmark', so we can get the right bookmarks when
 ;;     they have names with property `bmkp-full-record'.  But don't require that they have names, so
 ;;     calls from vanilla or other code won't be bothered.
@@ -2178,7 +2178,7 @@ for confirmation when deleting marked (not flagged) bookmarks."
             (let* ((bmk-name  (bookmark-bmenu-bookmark))
                    (bmk       (bmkp-get-bookmark bmk-name nil 'NO-NAME-CHECK-P)))
               ;; Inhibit saving until all are deleted, then do it once.  Otherwise, some might not be
-              ;; deleted, because `bookmark-save' refreshes the list, which removes `D' flags.
+              ;; deleted, because `bmkp-save' refreshes the list, which removes `D' flags.
               (let ((bookmark-save-flag  nil))  (bookmark-delete bmk-name 'BATCHP))
               ;; Count is misleading if the bookmark is not really in `bookmark-alist'.
               (setq count                       (1+ count)
@@ -2454,7 +2454,7 @@ From Lisp, non-nil optional arg MSG-P means show progress messages."
     (cond ((and parg  (yes-or-no-p (format "Refresh list to bookmarks saved in file `%s'? "
                                            bmkp-current-bookmark-file)))
            (when msg-p (message (setq msg  (concat msg "file..."))))
-           (bookmark-load bmkp-current-bookmark-file 'OVERWRITE 'BATCH-NO-SAVE)
+           (bmkp-load bmkp-current-bookmark-file 'OVERWRITE 'BATCH-NO-SAVE)
            (setq bmkp-bmenu-marked-bookmarks   () ; Start from scratch.
                  bmkp-modified-bookmarks       ()
                  bmkp-flagged-bookmarks        ()
@@ -3194,7 +3194,7 @@ Non-interactively:
           (bookmark-alist-modification-count  bookmark-alist-modification-count))
       (when (and (not (zerop bookmark-alist-modification-count)) ; Unsaved changes.
                  (yes-or-no-p "Unsaved changes.  Save bookmarks before copying? "))
-        (bookmark-save))
+        (bmkp-save))
       (with-current-buffer (let ((enable-local-variables  ())) (find-file-noselect file))
         (goto-char (point-min))
         (unless (file-exists-p file)
@@ -3204,11 +3204,11 @@ Non-interactively:
         (let ((blist  (bmkp-alist-from-buffer)))
           (unless (listp blist) (error "Invalid bookmark list in file `%s'" file))
           (setq bookmark-alist  blist)  ; Bookmarks in FILE
-          (setq imported  (bookmark-import-new-list marked-bmks duplicates-ok 'RETURN-BMKS))
+          (setq imported  (bmkp-import-new-list marked-bmks duplicates-ok 'RETURN-BMKS))
           (if (and (zerop (nth 0 imported))  (zerop (nth 1 imported)))
               (unless batchp (message "No changes"))
             (unless batchp (message "%d added, %d renamed" (nth 1 imported) (nth 0 imported)))
-            (bookmark-write-file file)))))
+            (bmkp-write-file file)))))
     ;; (Exit `let', to restore `bookmark-alist'.)
     (cond (movep
            ;; Moved.  Delete moved bookmarks.  Refresh from memory w/o asking.
@@ -3216,7 +3216,7 @@ Non-interactively:
            (bmkp-bmenu-refresh-menu-list nil 'MSGP))
           ((not (zerop (nth 0 imported)))
            ;; Copied, and some were renamed.  Refresh from file w/o asking.
-           (bookmark-load bmkp-current-bookmark-file 'OVERWRITE 'BATCH-NO-SAVE)
+           (bmkp-load bmkp-current-bookmark-file 'OVERWRITE 'BATCH-NO-SAVE)
            (bmkp-refresh-menu-list (bookmark-bmenu-bookmark))))))
 
 ;;;###autoload (autoload 'bmkp-bmenu-create-bookmark-file-from-marked "bookmark+")
@@ -3321,7 +3321,7 @@ to turn saving back on."
                        (yes-or-no-p "Save current bookmarks? (`C-g': cancel load too) ")
                      (quit  (error "OK - canceled"))
                      (error (error (error-message-string err))))))
-      (bookmark-save))
+      (bmkp-save))
     (when (or (not msg-p)
               (yes-or-no-p "Load the marked bookmark-file bookmarks? ")
               (error "OK - canceled"))
@@ -3332,7 +3332,7 @@ to turn saving back on."
       (when msg-p (message "Loading marked bookmark files..."))
       (dolist (bmk  bmks)               ; Load.
         ;; USE BATCHP: Do not refresh list or display messages here - do that after iterate.
-        (bookmark-load (bookmark-get-filename bmk) nil 'BATCHP))
+        (bmkp-load (bookmark-get-filename bmk) nil 'BATCHP))
       ;; $$$$$$ Should we do (bmkp-tags-list) here to update the tags cache?
       (bmkp-refresh-menu-list bmk (not msg-p)) ; Refresh after iterate.
       (when msg-p (message "Autosaving is now OFF.  Loaded: %s"
@@ -3342,7 +3342,7 @@ to turn saving back on."
 
 ;;;###autoload (autoload 'bmkp-bmenu-load-marking "bookmark+")
 (defun bmkp-bmenu-load-marking (file &optional unmark-first-p)
-  "Like `bookmark-load', but mark the bookmarks that are loaded.
+  "Like `bmkp-load', but mark the bookmarks that are loaded.
 With a prefix arg, unmark all bookmarks first."
   (interactive
    (list (let ((default  (if (bmkp-same-file-p bmkp-current-bookmark-file bmkp-last-bookmark-file)
@@ -3356,7 +3356,7 @@ With a prefix arg, unmark all bookmarks first."
   (bmkp-bmenu-barf-if-not-in-menu-list)
   (when unmark-first-p (bmkp-bmenu-unmark-all ?\r))
   (let* ((bmkp-read-bookmark-file-hook  bmkp-read-bookmark-file-hook)
-         (bmks-read                     (bookmark-load file)))
+         (bmks-read                     (bmkp-load file)))
     (bmkp-bmenu-mark-bookmarks-satisfying
      `(lambda (bmk) (bmkp-get-bookmark-in-alist bmk t ',bmks-read)))
     bmks-read))                         ; Return list of bookmarks read.
@@ -4779,7 +4779,7 @@ Non-interactively, non-nil MSG-P means display messages."
         (bookmark-set-filename bmk (expand-file-name file directory))
         (setq bookmark-alist-modification-count
               (1+ bookmark-alist-modification-count))))
-    (when (bookmark-time-to-save-p) (bookmark-save))
+    (when (bookmark-time-to-save-p) (bmkp-save))
     (bookmark-bmenu-surreptitiously-rebuild-list)
     (when msgp
       (if (> count 0)
@@ -5937,10 +5937,10 @@ are marked or ALLP is non-nil."
     :help "Load the marked bookmark-file bookmarks, in order"))
 (define-key bmkp-bmenu-bookmark-file-menu [bmkp-bmenu-load-marking-unmark-first]
   '(menu-item "Load Bookmarks, Mark Only Those Loaded...." bmkp-bmenu-load-marking-unmark-first
-    :help "`bookmark-load', marking those loaded, unmarking others"))
+    :help "`bmkp-load', marking those loaded, unmarking others"))
 (define-key bmkp-bmenu-bookmark-file-menu [bmkp-bmenu-load-marking]
   '(menu-item "Load Bookmarks, Mark Those Loaded...." bmkp-bmenu-load-marking
-    :help "`bookmark-load', marking bookmarks that are loaded"))
+    :help "`bmkp-load', marking bookmarks that are loaded"))
 (define-key bmkp-bmenu-bookmark-file-menu [bf-sep2] '("--")) ; ------------
 ;;; (define-key bmkp-bmenu-bookmark-file-menu [bmkp-save-bookmarks-this-file/buffer]
 ;;;   '(menu-item "Save Bookmarks Here to File (No Switch)..." bmkp-save-bookmarks-this-file/buffer
@@ -6439,10 +6439,10 @@ are marked or ALLP is non-nil."
 (define-key bmkp-bmenu-mark-menu [mark-sep5] '("--")) ; --------------
 (define-key bmkp-bmenu-mark-menu [bmkp-bmenu-load-marking-unmark-first]
   '(menu-item "Load Bookmark File, Mark Only Loaded...." bmkp-bmenu-load-marking-unmark-first
-    :help "`bookmark-load', marking only bookmarks that are loaded."))
+    :help "`bmkp-load', marking only bookmarks that are loaded."))
 (define-key bmkp-bmenu-mark-menu [bmkp-bmenu-load-marking]
   '(menu-item "Load Bookmark File, Mark Loaded...." bmkp-bmenu-load-marking
-    :help "`bookmark-load', but mark bookmarks that are loaded.  C-u: unmark all first."))
+    :help "`bmkp-load', but mark bookmarks that are loaded.  C-u: unmark all first."))
 
 (define-key bmkp-bmenu-mark-menu [bmkp-bmenu-unmark-bookmarks-tagged-not-all]
   '(menu-item "Unmark If Not Tagged with All..." bmkp-bmenu-unmark-bookmarks-tagged-not-all

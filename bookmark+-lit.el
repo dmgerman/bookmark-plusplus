@@ -189,7 +189,7 @@
 
 (require 'bookmark)
 ;; bookmark-alist, bookmark-bmenu-bookmark, bmkp-completing-read, bmkp-get-bookmark,
-;; bookmark-get-position, bookmark-handle-bookmark, bookmark-maybe-load-default-file,
+;; bookmark-get-position, bookmark-handle-bookmark, bmkp-maybe-load-default-file,
 ;; bookmark-name-from-full-record, bookmark-name-from-record, bookmark-prop-get, bmkp-prop-set
 ;; (Note: bmkp-prop-set is provided by bookmark+-1.el.)
 
@@ -1207,7 +1207,7 @@ In Lisp code:
   first bookmark in the navlist."
   (interactive (let ((startovr  (consp current-prefix-arg)))
                  (list (if startovr 1 (prefix-numeric-value current-prefix-arg)) nil startovr)))
-  (bookmark-maybe-load-default-file)
+  (bmkp-maybe-load-default-file)
   (let ((bmkp-sort-comparer  bmkp-this-file/buffer-cycle-sort-comparer))
     (setq bmkp-nav-alist  (bmkp-sort-omit (bmkp-this-buffer-lighted-alist-only))))
   (unless bmkp-nav-alist (error "No lighted bookmarks for cycling"))
@@ -1470,13 +1470,13 @@ Optional args are the default values (strings) for reading new values."
 (defun bmkp-lighted-alist-only ()
   "`bookmark-alist', with only highlighted bookmarks.
 A new list is returned (no side effects)."
-  (bookmark-maybe-load-default-file)
+  (bmkp-maybe-load-default-file)
   (bmkp-remove-if-not (lambda (bmk) (bmkp-lighted-p bmk)) bookmark-alist))
 
 (defun bmkp-this-buffer-lighted-alist-only ()
   "`bookmark-alist', with only highlighted bookmarks for the current buffer.
 A new list is returned (no side effects)."
-  (bookmark-maybe-load-default-file)
+  (bmkp-maybe-load-default-file)
   (bmkp-remove-if-not (lambda (bmk) (and (bmkp-this-buffer-p bmk)  (bmkp-lighted-p bmk)))
                       bookmark-alist))
 
