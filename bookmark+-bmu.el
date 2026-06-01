@@ -76,12 +76,8 @@
 ;;  Index
 ;;  -----
 ;;
-;;  If you have library `linkd.el' and Emacs 22 or later, load
-;;  `linkd.el' and turn on `linkd-mode' now.  It lets you easily
-;;  navigate around the sections of this doc.  Linkd mode will
-;;  highlight this Index, as well as the cross-references and section
-;;  headings throughout this file.  You can get `linkd.el' here:
-;;  https://www.emacswiki.org/emacs/download/linkd.el.
+;;  Tip: run `M-x outline-minor-mode' with `outline-regexp' set to
+;;  `";;[ \\t]*(@[*>@]"' to fold and navigate the sections of this file.
 ;;
 ;;  (@> "Things Defined Here")
 ;;  (@> "Utility Functions")
@@ -4527,7 +4523,11 @@ Autosave bookmarks:\t%s\nAutosave list display:\t%s\n\n\n"
       'help-function #'(lambda ()
                          (message "Getting Bookmark+ doc from file commentary...")
                          (finder-commentary "bookmark+-doc")
-                         (when (condition-case nil (require 'linkd nil t) (error nil)) (linkd-mode 1))
+                         ;; Drew Adams' commentary uses `;;(@* "Heading")` and
+                         ;; `;;(@> "Index")` as section markers.  outline-minor-mode
+                         ;; gives folding, outline-cycling, and imenu over them.
+                         (setq-local outline-regexp ";;[ \t]*(@[*>@]")
+                         (outline-minor-mode 1)
                          (fit-frame-to-buffer))
       'help-echo (purecopy "mouse-2, RET: Bookmark+ documentation (no Internet needed)"))
   (define-button-type 'bmkp-customize-button

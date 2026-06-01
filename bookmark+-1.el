@@ -63,12 +63,8 @@
 ;;  Index
 ;;  -----
 ;;
-;;  If you have library `linkd.el' and Emacs 22 or later, load
-;;  `linkd.el' and turn on `linkd-mode' now.  It lets you easily
-;;  navigate around the sections of this doc.  Linkd mode will
-;;  highlight this Index, as well as the cross-references and section
-;;  headings throughout this file.  You can get `linkd.el' here:
-;;  https://www.emacswiki.org/emacs/download/linkd.el.
+;;  Tip: run `M-x outline-minor-mode' with `outline-regexp' set to
+;;  `";;[ \\t]*(@[*>@]"' to fold and navigate the sections of this file.
 ;;
 ;;  (@> "Things Defined Here")
 ;;  (@> "User Options (Customizable)")
