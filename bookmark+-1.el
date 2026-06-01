@@ -2124,112 +2124,21 @@ Any other non-nil value opens it in read-only mode.
   :group 'bookmark :group 'bookmark-plus)
 
 
-(when (< emacs-major-version 23)
+(defun bmkp-get-bookmark (bookmark &optional noerror _no-name-check-p)
+  "Return the full bookmark record for BOOKMARK, or nil / error.
+BOOKMARK is a bookmark name (a string) or a full bookmark record.
 
+If BOOKMARK is a cons (assumed already a record), return it as-is.
+If BOOKMARK is a string, return `(assoc-string BOOKMARK bookmark-alist)'
+(name lookup is precise because names are unique within bookmark-alist).
 
-  ;; REPLACES ORIGINAL in `bookmark.el' (Emacs 20-22).
-  ;;
-  ;; Same as Emacs 23+ version of the function.
-  ;; But the behavior is different from vanilla Emacs, because of the different `bookmark-get-bookmark'
-  ;; behavior: Only if BOOKMARK is a name without that property is it looked up in `bookmark-alist'.
-  ;;
-  (defun bookmark-get-bookmark-record (bookmark)
-    "Return the data part of BOOKMARK, that is, all but the name.
-BOOKMARK is a bookmark name or a bookmark record.
-
-If it is a name with text property `bmkp-full-record', or if it is a
-bookmark record, then it is NOT looked up in `bookmark-alist' (it need
-not belong).  Only if it is a name without that property is it looked
-up in `bookmark-alist'."
-    (let ((data  (cdr (bookmark-get-bookmark bookmark))))
-      ;; A bookmark record is either (NAME ALIST) or (NAME . ALIST).
-      (if (and (null (cdr data))  (consp (caar data)))
-          (car data)
-        data)))
-  )
-
-
-;; REPLACES ORIGINAL in `bookmark.el'.
-;;
-;; If BOOKMARK is a bookmark-name string that has non-nil property `bmkp-full-record' then just return that.
-;; Only if BOOKMARK is a name without that property is it looked up in `bookmark-alist'.
-;;
-(defun bookmark-get-bookmark (bookmark &optional noerror)
-  "Return the full bookmark (record) that corresponds to BOOKMARK.
-This is just `bmkp-get-bookmark' with non-nil NO-NAME-CHECK-P.
-
-If bookmark is a name with text property `bmkp-full-record', or if it
-is a bookmark record, then it is NOT looked up in `bookmark-alist' (it
-need not belong).  Only if it is a name without that property is it
-looked up in `bookmark-alist'.  The vanilla Emacs version of this
-function always looks up a string BOOKMARK in `bookmark-alist'.
-
-If you want to ensure that BOOKMARK is in `bookmark-alist' even when
-BOOKMARK is a string, then use `bmkp-get-bookmark-in-alist', not
-`bookmark-get-bookmark' or `bmkp-get-bookmark'."
-  (bmkp-get-bookmark bookmark noerror 'NO-NAME-CHECK-P))
-
-
-;; This is like vanilla `bookmark-get-bookmark' in `bookmark.el', but it has these differences:
-;;
-;; 1. If BOOKMARK is a bookmark-name string that has non-nil property `bmkp-full-record'
-;;    then return the value of that property - do not look up the string in `bookmark-alist'.
-;; 2. Handle the should-not-happen case of non-string, non-cons.
-;; 3. Added optional arg NO-NAME-CHECK-P.
-;; 4. Unless NO-NAME-CHECK-P, to be valid when a cons, the car must be a string.
-;;
-(defun bmkp-get-bookmark (bookmark &optional noerror no-name-check-p)
-  "Return the full bookmark (record) that corresponds to BOOKMARK.
-BOOKMARK is a bookmark name or a bookmark record.
-
-This function is like vanilla function `bookmark-get-bookmark', except
-for these differences:
-
-1. If BOOKMARK is a bookmark name instead of a full bookmark then
-   return what `bmkp-bookmark-record-from-name' (with no MEMP check)
-   returns.  That is, if the name has non-nil text property
-   `bmkp-full-record' then use that, without looking up the string in
-   `bookmark-alist'.
-
-2. By default, to be considered a valid bookmark record, it must have
-   a name.  That is, as a cons, its car must be a string.
-
-3. Accepts optional arg NO-NAME-CHECK-P.
-
-Non-nil optional arg NOERROR means return nil if BOOKMARK is not a
-valid bookmark.  If NOERROR is nil then raise an error in this case.
-
-Non-nil optional arg NO-NAME-CHECK-P means don't require that the
-bookmark have a name when checking for a valid bookmark.  That is,
-don't require that a cons bookmark have a string car.  Use this arg if
-you generally want the behavior of `bookmark-get-bookmark' but you
-also want the other advantages of `bmkp-get-bookmark'.
-
-You can use this in place of `bookmark-get-bookmark' and remain
-compatible with vanilla Emacs, if you do either of the following:
-
-* Use non-nil NOERROR.
-* Use nil ERROR and non-nil NO-NAME-CHECK-P.
-
-In those cases you still take advantage of a BOOKMARK that has a name
-with a `bmkp-full-record' property, but there's no requirement that
-BOOKMARK have a name.
-
-This function is like `bmkp-get-bookmark-in-alist', except that
-`bmkp-get-bookmark-in-alist' always tests whether BOOKMARK is in
-`bookmark-alist', regardless of whether BOOKMARK is a string (a
-bookmark name) or a full bookmark.  `bmkp-get-bookmark-in-alist' is
-thus a real test for bookmark existence.  Use `bmkp-get-bookmark' only
-when you do NOT want to look up the bookmark in `bookmark-alist'."
-  ;; Non-nil NO-NAME-CHECK-P means this, like `bookmark-get-bookmark', checks only for a cons.
-  ;; With nil NO-NAME-CHECK-P, the check is for a cons with a string car.  We test for the string (the
-  ;; bookmark name) so that we can distinguish, for example, a list of bookmarks from a single bookmark.
-  (cond ((and (consp bookmark)  (or no-name-check-p  (stringp (car bookmark)))) ; No test of alist membership.
-         bookmark)
-        ((stringp bookmark)             ; No MEMP check.
+Non-nil optional NOERROR means return nil for invalid input; otherwise
+raise an error.  The third arg is accepted for caller compatibility and
+ignored."
+  (cond ((consp bookmark) bookmark)
+        ((stringp bookmark)
          (bmkp-bookmark-record-from-name bookmark noerror))
-        (t (and (not noerror)           ; Return nil if NOERROR.
-                (error "Invalid bookmark: `%s'" bookmark)))))
+        (t (and (not noerror) (error "Invalid bookmark: `%s'" bookmark)))))
 
 
 ;; REPLACES ORIGINAL in `bookmark.el'.
@@ -2310,10 +2219,6 @@ bookmark file.  Saving the file depends on `bookmark-save-flag'."
            (when (and (boundp 'bookmark-set-fringe-mark)  bookmark-set-fringe-mark) ; Emacs 28+
              (bookmark--remove-fringe-mark bmk))
            (setcdr bmk data)))
-    ;; Put the full bookmark on its name as property `bmkp-full-record'.
-    ;; Do this regardless of Emacs version and `bmkp-propertize-bookmark-names-flag'.
-    ;; If it needs to be stripped, that will be done when saving.
-    (put-text-property 0 (length bname) 'bmkp-full-record bmk bname)
     (bmkp-maybe-save-bookmarks)
     ;; These two are the same as `add-to-list' with `EQ' (not available for Emacs 20-21).
     (unless (memq bmk bmkp-modified-bookmarks)
@@ -2553,15 +2458,9 @@ Non-nil NO-REGION means do not include the region end, `end-position'."
 
 
 ;; REPLACES ORIGINAL in `bookmark.el'.
-;;
-;; Unless non-nil arg DO-NOT-PROPERTIZE-P, put full bookmark record on bookmark name (inside record),
-;; as property `bmkp-full-record'.
-;;
-(defun bookmark-alist-from-buffer (&optional do-not-propertize-p)
+(defun bookmark-alist-from-buffer ()
   "Read and return a bookmark list (in any format) from the current buffer.
-Unless optional arg DO-NOT-PROPERTIZE-P is non-nil, put the full
-bookmark record on the bookmark name (in the record), as a text
-property.  Point is irrelevant and unaffected."
+Point is irrelevant and unaffected."
   (let ((bmks  (save-excursion
                  (goto-char (point-min))
                  (if (search-forward bookmark-end-of-version-stamp-marker nil t)
@@ -2581,11 +2480,6 @@ property.  Point is irrelevant and unaffected."
     ;; Put full bookmark on bookmark names as property `bmkp-full-record'.
     ;; Do this regardless of Emacs version and `bmkp-propertize-bookmark-names-flag'.
     ;; If property needs to be stripped, that will be done when saving.
-    (unless do-not-propertize-p
-      (let (bname)
-        (dolist (bmk  bmks)
-          (setq bname  (bmkp-bookmark-name-from-record bmk))
-          (put-text-property 0 (length bname) 'bmkp-full-record bmk bname))))
     bmks))
 
 
@@ -2791,10 +2685,6 @@ need not belong).  If it is a name without that property then it is
 looked up in `bookmark-alist'."
   (setq bookmark  (bookmark-get-bookmark bookmark))
   (setcar bookmark newname)
-  ;; Put the full bookmark on its name as property `bmkp-full-record'.
-  ;; Do this regardless of Emacs version and `bmkp-propertize-bookmark-names-flag'.
-  ;; If it needs to be stripped, that will be done when saving.
-  (put-text-property 0 (length newname) 'bmkp-full-record bookmark newname)
   ;; This is the same as `add-to-list' with `EQ' (not available for Emacs 20-21).
   (unless (memq bookmark bmkp-modified-bookmarks)
     (setq bmkp-modified-bookmarks  (cons bookmark bmkp-modified-bookmarks))))
@@ -3484,8 +3374,7 @@ contain a `%s' construct, so that it can be passed along with FILE to
                                     coding-system-for-write))
         (print-length             nil)
         (print-level              nil)
-        (rem-all-p                (or (not (> emacs-major-version 20)) ; Cannot: (not (boundp 'print-circle)).
-                                      (not bmkp-propertize-bookmark-names-flag)))
+        (rem-all-p                t) ; Always strip text properties on save.
         (existing-buf             (get-file-buffer file))
         (emacs-lisp-mode-hook     nil) ; Avoid inserting automatic file header if existing empty file, so
         (lisp-mode-hook           nil) ; better chance `bookmark-maybe-upgrade-file-format' signals error.
@@ -3530,9 +3419,7 @@ contain a `%s' construct, so that it can be passed along with FILE to
                                          bname)))
           (setcar bmk bname)
           (when (setq last-fname  (assq 'filename bmk)) (setcdr last-fname fname))
-          (let ((print-circle         bmkp-propertize-bookmark-names-flag)
-                (print-gensym         bmkp-propertize-bookmark-names-flag)
-                (pp-default-function  #'pp-28)) ; Emacs 30.1 redefined `pp' and added var `pp-default-function'.
+          (let ((pp-default-function  #'pp-28)) ; Emacs 30.1 redefined `pp' and added var `pp-default-function'.
             (if (not (and rem-all-p  (bmkp-sequence-bookmark-p bmk)))
                 (pp bmk (current-buffer))
               ;; Remove text properties from bookmark names in the `sequence' entry of sequence bookmark.
@@ -4654,31 +4541,19 @@ of names described above for Emacs 23+."
           (setq defs  (nreverse defs)))))
     defs))
 
-(defun bmkp-bookmark-record-from-name (bookmark-name &optional noerror memp alist)
-  "Return the full bookmark (record) that corresponds to BOOKMARK-NAME.
-BOOKMARK-NAME must be a string.  If it has non-nil text property
-`bmkp-full-record' then use that.  Otherwise, look for the first
-bookmark in ALIST that has the given name.
+(defun bmkp-bookmark-record-from-name (bookmark-name &optional noerror _memp alist)
+  "Return the full bookmark record for BOOKMARK-NAME, or nil / error.
+BOOKMARK-NAME must be a string.  Names are unique within ALIST (default
+`bookmark-alist'), so simple `assoc-string' lookup is precise.
 
-Non-nil optional arg NOERROR means return nil if BOOKMARK-NAME does
-not name a valid bookmark or is valid but is not in ALIST.  If NOERROR
-is nil then raise an error in this case.
-
-Non-nil optional arg MEMP means that if property `bmkp-full-record' is
-available then look up its value (the full bookmark) in ALIST, testing
-with `eq'.  If that record is not in ALIST, return nil.
-
-Optional arg ALIST defaults to `bookmark-alist'."
+Non-nil optional NOERROR means return nil if BOOKMARK-NAME is unknown;
+otherwise raise an error.  The MEMP arg is accepted for caller
+compatibility and ignored; it had meaning only in the previous design
+that disambiguated same-named bookmarks via a text property."
   (unless alist (setq alist  bookmark-alist))
-  (let ((full  (get-text-property 0 'bmkp-full-record bookmark-name)))
-    (or (and full
-             (or (not memp)  (memq full alist))
-             full)
-        ;; Punt: return first matching bookmark in ALIST.
-        (if (fboundp 'assoc-string)     ; Emacs 22+.  Use `assoc-string' for its CASE-FOLD arg.
-            (assoc-string bookmark-name alist bookmark-completion-ignore-case)
-          (assoc bookmark-name alist))
-        (and (not noerror)  (error "No such bookmark in bookmark list: `%s'" bookmark-name)))))
+  (or (assoc-string bookmark-name alist bookmark-completion-ignore-case)
+      (and (not noerror)
+           (error "No such bookmark in bookmark list: `%s'" bookmark-name))))
 
 (defun bmkp-rename-for-marked-and-omitted-lists (old new)
   "Replace OLD bookmark name with NEW in marked and omitted lists."
@@ -5023,16 +4898,12 @@ When called from Lisp:
    overwriting an existing bookmark."
   (interactive
    (let* ((orig     (bookmark-completing-read "Clone bookmark" (bmkp-default-bookmark-name)))
-          ;; Remove any `bmkp-full-record' property from name.
-          (_IGNORE  (remove-text-properties 0 (length orig) '(bmkp-full-record nil) orig))
           (default  (concat orig "<2>"))
           (new      (if current-prefix-arg
                         (bmkp-completing-read-lax "Clone name" default)
                       default)))
      (while (equal orig new)
        (setq new  (bmkp-completing-read-lax "Clone name (must be different)" default)))
-     ;; Remove any `bmkp-full-record' property from name.
-     (remove-text-properties 0 (length new) '(bmkp-full-record nil) new)
      (list orig new t)))
   (let ((orig-bmk  (bmkp-get-bookmark bookmark))
         (new-bmk   (bmkp-get-bookmark clone 'NO-ERROR)))
@@ -5183,10 +5054,6 @@ by `bmkp-bmenu-edit-marked' (`\\<bookmark-bmenu-mode-map>\\[bmkp-bmenu-edit-mark
                   (throw 'bmkp-edit-bookmark-records-send (format "Invalid bookmark: `%s'" edited-bmk)))
                 (let ((bname  (bmkp-bookmark-name-from-record edited-bmk))
                       (data   (bmkp-bookmark-data-from-record edited-bmk)))
-                  ;; Put the full bookmark on its name as property `bmkp-full-record'.
-                  ;; Do this regardless of Emacs version and `bmkp-propertize-bookmark-names-flag'.
-                  ;; If it needs to be stripped, that will be done when saving.
-                  (put-text-property 0 (length bname) 'bmkp-full-record edited-bmk bname)
                   ;; Update the original bookmark (same cons cell) with what's in the edited version.
                   (setcar (car orig-bmks) bname)
                   (setcdr (car orig-bmks) data)
@@ -5271,10 +5138,6 @@ Non-interactively, optional arg MSG-P means display progress messages."
                 (throw 'bmkp-edit-bookmark-record-send (format "Invalid bookmark: `%s'" edited-bmk)))
               (let ((bname  (bmkp-bookmark-name-from-record edited-bmk))
                     (data   (bmkp-bookmark-data-from-record edited-bmk)))
-                ;; Put the full bookmark on its name as property `bmkp-full-record'.
-                ;; Do this regardless of Emacs version and `bmkp-propertize-bookmark-names-flag'.
-                ;; If it needs to be stripped, that will be done when saving.
-                (put-text-property 0 (length bname) 'bmkp-full-record edited-bmk bname)
                 ;; Update the original bookmark with what's in the edited version.
                 (setcar bmkp-edit-bookmark-orig-record bname)
                 (setcdr bmkp-edit-bookmark-orig-record data)
@@ -5351,9 +5214,7 @@ BOOKMARK is a bookmark name or a bookmark record."
      (princ ";; DO NOT MODIFY THESE COMMENTS.\n;;\n")
      (princ (substitute-command-keys
              ";; Type \\<bmkp-edit-tags-mode-map>`\\[bmkp-edit-tags-send]' when done.\n\n"))
-     (let ((print-circle  bmkp-propertize-bookmark-names-flag)
-           (print-gensym  bmkp-propertize-bookmark-names-flag))
-       (pp btags))
+     (pp btags)
      (goto-char (point-min)))
     (pop-to-buffer edbuf)
     (buffer-enable-undo)
@@ -5558,8 +5419,6 @@ Non-interactively, optional arg MSG-P means display progress messages."
         (delete-region (point-min) (point-max))
         (let ((print-length           nil)
               (print-level            nil)
-              (print-circle           bmkp-propertize-bookmark-names-flag)
-              (print-gensym           bmkp-propertize-bookmark-names-flag)
               (version-control        (cl-case bookmark-version-control
                                         ((nil)      nil)
                                         (never      'never)
@@ -7272,59 +7131,20 @@ Does not change the original STRING."
 
 ;; For a name propertized with `bmkp-full-record', this is similar to `bmkp-assoc-delete-all'.
 (defun bmkp-delete-bookmark-name-from-list (delname bnames)
-  "Delete names that represent the same bookmark as DELNAME from BNAMES.
-This means that they are `string=' and they either have no property
-`bmkp-full-record' or that property has the same value.
-Return the modified list BNAMES."
-  ;; $$$$$$ Can we change `equal' to `eq' everywhere here?
-  (let ((delprop  (get-text-property 0 'bmkp-full-record delname))
-        bmkprop)
-    (if (not delprop)
-        (setq bnames  (delete delname bnames)) ; Unpropertized - just use `delete'.
-      ;; Propertized.  Delete names that are `string=' and have the same property value or none.
-      (while (and bnames  (string= delname (car bnames)) ; Delete those at list beginning.
-                  (or (not (setq bmkprop  (get-text-property 0 'bmkp-full-record (car bnames))))
-                      (equal delprop bmkprop)))
-        (setq bnames  (cdr bnames)))
-      (let ((tail  bnames)              ; Delete those not at list beginning.
-            tail-cdr)
-        (while (setq tail-cdr  (cdr tail))
-          (if (and (car tail-cdr)
-                   (string= delname (car tail-cdr))
-                   (or (not (setq bmkprop  (get-text-property 0 'bmkp-full-record (car tail-cdr))))
-                       (equal delprop bmkprop)))
-              (setcdr tail  (cdr tail-cdr))
-            (setq tail  tail-cdr))))
-      bnames)))
+  "Delete bookmark name DELNAME from list BNAMES.
+Names are unique within `bookmark-alist', so this is just `delete'.
+Returns the modified list BNAMES."
+  (delete delname bnames))
 
 (defun bmkp-bookmark-name-member (name names)
-  "Like `member', but tests also bookmark NAME's `bmkp-full-record' property.
-Return the tail of NAMES whose car is NAME with the property match.
-If NAME has no `bmkp-full-record' property then this is just `member'.
-If NAME has property `bmkp-full-record', then test whether both:
- a. NAME is a member of NAMES and
- b. NAME has the same `bmkp-full-record' value as an element of NAMES."
-  ;; $$$$$$ Can we change `equal' to `eq' here?
-  (let ((prop  (get-text-property 0 'bmkp-full-record name)))
-    (if (or (null name)  (not prop))
-        (member name names)             ; Unpropertized - just use `member'.
-      (while (and names  (not (and (stringp (car names))
-                                   (string= name (car names)) ; = `bmkp-names-same-bookmark-p'.
-                                   ;; If unpropertized in NAMES, then assume it's the one.
-                                   (or (not (get-text-property 0 'bmkp-full-record (car names)))
-                                       (equal prop (get-text-property 0 'bmkp-full-record (car names)))))))
-        (setq names  (cdr names)))
-      names)))
+  "Return the tail of NAMES whose car is `string=' to NAME, or nil.
+Bookmark names are unique, so this is just `member'."
+  (member name names))
 
 (defun bmkp-names-same-bookmark-p (name1 name2)
   "Return non-nil if the two strings name the same bookmark.
-The strings are `string=' and their `bmkp-full-record' property values
-for the first character are `equal'."
-
-  ;; $$$$$$ Can we change `equal' to `eq' here?
-  (and (string= name1 name2)
-       (equal (get-text-property 0 'bmkp-full-record name1)
-              (get-text-property 0 'bmkp-full-record name2))))
+Bookmark names are unique, so this is just `string='."
+  (string= name1 name2))
 
 (defun bmkp-read-buffers ()
 "Read names of buffers associated with bookmarks.
@@ -8850,11 +8670,7 @@ changing the name)."
         (progn                          ; Code similar to `bookmark-store'.
           (setcdr bookmark (cdr (bookmark-make-record)))
           (bmkp-maybe-save-bookmarks)
-          ;; Put the full bookmark on its name as property `bmkp-full-record'.
-          ;; Do this regardless of Emacs version and `bmkp-propertize-bookmark-names-flag'.
-          ;; If it needs to be stripped, that will be done when saving.
           (let ((bname  (bmkp-bookmark-name-from-record bookmark)))
-            (put-text-property 0 (length bname) 'bmkp-full-record bookmark bname)
             ;; This is the same as `add-to-list' with `EQ' (not available for Emacs 20-21).
             (unless (memq bookmark bmkp-modified-bookmarks)
               (setq bmkp-modified-bookmarks  (cons bookmark bmkp-modified-bookmarks)))
@@ -9202,9 +9018,7 @@ the file is an image file then the description includes the following:
   standard Emacs library `image-dired.el' for more information about
   `exiftool'."
   (setq bookmark  (bmkp-get-bookmark bookmark))
-  (let ((print-circle     bmkp-propertize-bookmark-names-flag) ; For `pp-to-string'
-        (print-gensym     bmkp-propertize-bookmark-names-flag) ; For `pp-to-string'
-        (print-length     nil)          ; For `pp-to-string'
+  (let ((print-length     nil)          ; For `pp-to-string'
         (print-level      nil)          ; For `pp-to-string'
         (bname            (bmkp-bookmark-name-from-record bookmark))
         (buf              (bmkp-get-buffer-name bookmark))
@@ -9437,8 +9251,6 @@ If it is a record then it need not belong to `bookmark-alist'."
   (let* ((bname         (copy-sequence (bmkp-bookmark-name-from-record bookmark)))
          (_IGNORE       (set-text-properties 0 (length bname) nil bname)) ; Strip properties from name.
          (bmk           (cons bname (bmkp-bookmark-data-from-record bookmark))) ; Fake bmk with stripped name.
-         (print-circle  bmkp-propertize-bookmark-names-flag) ; For `pp-to-string'
-         (print-gensym  bmkp-propertize-bookmark-names-flag) ; For `pp-to-string'
          (print-length  nil)            ; For `pp-to-string'
          (print-level   nil)            ; For `pp-to-string'
          (help-text     (format "Bookmark `%s'\n%s\n\n%s" bname (make-string (+ 11 (length bname)) ?-)
@@ -10472,9 +10284,7 @@ VARIABLES is the list of variables.  Each entry in VARIABLES is either
         (t (with-temp-buffer
              (condition-case nil
                  (let ((cl-print-readably  t) ; In `cl-print.el'.
-                       (print-level        nil)
-                       (print-circle       bmkp-propertize-bookmark-names-flag)
-                       (print-gensym       bmkp-propertize-bookmark-names-flag))
+                       (print-level        nil))
                    (prin1 value (current-buffer)) ; Print value into a buffer and try to read back.
                    (read (point-min-marker))
                    t)

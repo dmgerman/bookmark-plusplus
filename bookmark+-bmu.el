@@ -879,43 +879,6 @@ Each alist element has the form (SORT-ORDER . COMPARER):
                 (function :tag "Final Predicate"))))))
     :group 'bookmark-plus))
 
-(defcustom bmkp-propertize-bookmark-names-flag (> emacs-major-version 20)
-  "*Non-nil means to propertize bookmark names to hold full bookmark data.
-This means that you can effectively have more than one bookmark with
-the same name.
-
-___
-
-Just FYI, in case you're interested in Lisp things -
-
-If the value is non-nil and you examine the internal definitions of
-bookmarks (e.g. by opening your bookmark file or using `\\[describe-variable]
-bookmark-alist'), then you'll see the propertized strings written
-something like this (instead of just \"NAME\"), where NAME is the
-bookmark name:
-
-  #(\"NAME\" 0 15 (bmkp-full-record #1))
-
-\(If you examine the internal form of a bookmark using \\<bookmark-bmenu-mode-map>\
-`C-u \\[bmkp-bmenu-describe-this-bookmark]',
-then you won't see that.  The help output removes that noise, to just
-show you \"NAME\".)
-
-That propertized-string Lisp syntax shows that the bookmark-name
-string \"NAME\" has property `bmkp-full-record', whose value is in
-fact the list that is the full bookmark record, including that string
-itself!
-
-___
-
-Emacs 20 users: If you need to use your bookmarks with Emacs 20 then
-set this to nil.  In particular, if your bookmark file was written
-with this as non-nil, then it contains propertized strings which are
-unreadable by Emacs 20.  To convert the file to be usable with Emacs
-20 you must, in Emacs 21 or later, set this to nil and then do `M-x
-bookmark-save'."
-  :type 'boolean :group 'bookmark-plus)
- 
 ;;(@* "Internal Variables")
 ;;; Internal Variables -----------------------------------------------
 
@@ -1029,8 +992,6 @@ Non-interactively:
   (let* ((bname           (bookmark-bmenu-bookmark))
          (bmk             (bmkp-bookmark-record-from-name bname))
          (was-unmarked-p  nil))
-    ;; Put full bookmark on BNAME as property `bmkp-full-record'.
-    (put-text-property 0 (length bname) 'bmkp-full-record bmk bname)
     ;; This is the same as `add-to-list' with `eq' (not available for Emacs 20-21).
     (unless (memq bname bmkp-bmenu-marked-bookmarks)
       (setq bmkp-bmenu-marked-bookmarks  (cons bname bmkp-bmenu-marked-bookmarks)
@@ -1273,32 +1234,6 @@ Non-interactively:
          (setq bmkp-bmenu-first-time-p  nil)
          (let ((bookmark-alist  (bmkp-refresh-latest-bookmark-list))) ; This sets *-latest-* also.
            (bmkp-bmenu-list-1 'filteredp nil msg-p))
-         ;; Propertize bookmark names if not already propertized (lists saved with Emacs 20 or
-         ;; not `bmkp-propertize-bookmark-names-flag').  Check only the first, to guess propertized.
-         (when (and (consp bmkp-bmenu-marked-bookmarks)
-                    (not (get-text-property 0 'bmkp-full-record (car bmkp-bmenu-marked-bookmarks))))
-           (setq bmkp-bmenu-marked-bookmarks
-                 (condition-case nil
-                     (mapcar (lambda (bname)
-                               (if (get-text-property 0 'bmkp-full-record bname)
-                                   bname
-                                 (put-text-property 0 (length bname) 'bmkp-full-record
-                                                    (bmkp-bookmark-record-from-name bname) bname)
-                                 bname))
-                             bmkp-bmenu-marked-bookmarks)
-                   (error ()))))        ; Reset to () if any name is not a current bookmark.
-         (when (and (consp bmkp-bmenu-omitted-bookmarks)
-                    (not (get-text-property 0 'bmkp-full-record (car bmkp-bmenu-omitted-bookmarks))))
-           (setq bmkp-bmenu-omitted-bookmarks
-                 (condition-case nil
-                     (mapcar (lambda (bname)
-                               (if (get-text-property 0 'bmkp-full-record bname)
-                                   bname
-                                 (put-text-property 0 (length bname) 'bmkp-full-record
-                                                    (bmkp-bookmark-record-from-name bname) bname)
-                                 bname))
-                             bmkp-bmenu-omitted-bookmarks)
-                   (error ()))))        ; Reset to () if any name is not a current bookmark.
          (when bmkp-last-bmenu-bookmark
            (with-current-buffer (get-buffer bmkp-bmenu-buffer)
              (bmkp-bmenu-goto-bookmark-named bmkp-last-bmenu-bookmark))))
@@ -1395,14 +1330,12 @@ Non-nil INTERACTIVEP means `bookmark-bmenu-list' was called
 ;;
 (defun bookmark-bmenu-bookmark (&optional full)
   "Return the name of the bookmark on this line.
-Normally, the string returned is propertized with property
-`bmkp-full-record', which records the full bookmark record.
 Return nil if no bookmark on this line.
 Non-nil optional FULL means return the bookmark record, not the name."
   (condition-case nil
       (let ((name  (save-excursion (forward-line 0) (forward-char bmkp-bmenu-marks-width)
                                    (get-text-property (point) 'bmkp-bookmark-name))))
-        (if full (get-text-property 0 'bmkp-full-record name) name))
+        (if full (and name (assoc name bookmark-alist)) name))
     (error nil)))
 
 
@@ -4546,8 +4479,6 @@ Save the command definition in `bmkp-bmenu-commands-file'."
       (goto-char (point-max))
       (let ((print-length           nil)
             (print-level            nil)
-            (print-circle           bmkp-propertize-bookmark-names-flag)
-            (print-gensym           bmkp-propertize-bookmark-names-flag)
             (version-control        (cl-case bookmark-version-control
                                       ((nil)      nil)
                                       (never      'never)
@@ -4611,8 +4542,6 @@ Use the command at any time to restore them."
       (goto-char (point-max))
       (let ((print-length           nil)
             (print-level            nil)
-            (print-circle           bmkp-propertize-bookmark-names-flag)
-            (print-gensym           bmkp-propertize-bookmark-names-flag)
             (version-control        (cl-case bookmark-version-control
                                       ((nil)      nil)
                                       (never      'never)
@@ -4715,8 +4644,6 @@ the omit list and the sort & filter information."
       (goto-char (point-max))
       (let ((print-length           nil)
             (print-level            nil)
-            (print-circle           bmkp-propertize-bookmark-names-flag)
-            (print-gensym           bmkp-propertize-bookmark-names-flag)
             (version-control        (cl-case bookmark-version-control
                                       ((nil)      nil)
                                       (never      'never)
@@ -4733,11 +4660,8 @@ the omit list and the sort & filter information."
         (unless errorp (message "Command `%s' defined and saved in file `%s'"
                                 fn bmkp-bmenu-commands-file))))))
 
-;; We use this because Emacs 20 has no `print-circle' or `print-gensym'. and otherwise
-;; property `bmkp-full-record' would make the state file unreadable.
-;;
 (defun bmkp-maybe-unpropertize-bookmark-names (list &optional copy)
-  "Strip properties from the bookmark names in a copy of LIST.
+  "Strip text properties from the bookmark names in a copy of LIST.
 LIST is a bookmark alist or a list of bookmark names (strings).
 Return the updated copy.
 
@@ -4746,42 +4670,19 @@ stripped within any alist elements of the original LIST.
 
 Non-nil optional arg COPY means copy also each element of LIST.  Use
 this if, for example, you have bookmark lists that share bookmarks and
-you want to treat the shared bookmarks separately.
-
-Always strip property `face' and similar display properties.  Remove
-all text properties if option `bmkp-propertize-bookmark-names-flag' is
-non-nil."
-  (let ((new-list   (copy-sequence list))
-        (rem-all-p  (not bmkp-propertize-bookmark-names-flag)))
+you want to treat the shared bookmarks separately."
+  (let ((new-list  (copy-sequence list)))
     (dolist (bmk  new-list)
       (when (and (consp bmk)  (stringp (car bmk))) (setq bmk  (car bmk)))
       (when (stringp bmk)
-        (let ((len  (length bmk)))
-          (if rem-all-p
-              (set-text-properties 0 len nil bmk)
-            (remove-text-properties
-             0 len '(face            nil
-                     display         nil
-                     help-echo       nil
-                     rear-nonsticky  nil
-                     invisible       nil)
-             bmk)))))
+        (set-text-properties 0 (length bmk) nil bmk)))
     (if copy (mapcar #'copy-sequence new-list) new-list)))
 
 (defun bmkp-maybe-unpropertize-string (string &optional copy)
-  "Strip properties from STRING.
-Return the unpropertized STRING.
-Non-nil optional arg COPY means return a copy of the unpropertized
-STRING.  (STRING is modified before the copy is made.)
-
-Do nothing in Emacs 21 or later or if
-`bmkp-propertize-bookmark-names-flag' is non-nil.  In these cases,
-just return STRING unmodified."
-  (unless (and (> emacs-major-version 20) ; Emacs 21+.  Cannot just use (boundp 'print-circle).
-               bmkp-propertize-bookmark-names-flag)
-    (set-text-properties 0 (length string) nil string)
-    (when copy (setq string  (copy-sequence string))))
-  string)
+  "Strip text properties from STRING (destructively).
+Return STRING, or a fresh copy if optional COPY is non-nil."
+  (set-text-properties 0 (length string) nil string)
+  (if copy (copy-sequence string) string))
 
 ;; This is a general command.  It is in this file because it uses macro `bmkp-define-sort-command'
 ;; and it is used mainly in the bookmark list display.
@@ -4833,8 +4734,6 @@ If you use this function non-interactively, be sure to load library
       (goto-char (point-max))
       (let ((print-length           nil)
             (print-level            nil)
-            (print-circle           bmkp-propertize-bookmark-names-flag)
-            (print-gensym           bmkp-propertize-bookmark-names-flag)
             (version-control        (cl-case bookmark-version-control
                                       ((nil)      nil)
                                       (never      'never)
@@ -4899,16 +4798,12 @@ With a prefix arg you are instead prompted for the clone name."
   (bmkp-bmenu-barf-if-not-in-menu-list)
   (bookmark-bmenu-ensure-position)
   (let* ((orig     (bookmark-bmenu-bookmark))
-         ;; Remove any `bmkp-full-record' property from name.
-         (_IGNORE  (remove-text-properties 0 (length orig) '(bmkp-full-record nil) orig))
          (default  (concat orig "<2>"))
          (new      (if arg
                        (bmkp-completing-read-lax "Clone name" default)
                      default)))
     (while (equal orig new)
       (setq new  (bmkp-completing-read-lax "Clone name (must be different)" default)))
-    ;; Remove any `bmkp-full-record' property from name.
-    (remove-text-properties 0 (length new) '(bmkp-full-record nil) new)
     (bmkp-clone-bookmark orig new confirm-overwrite-p)))
 
 ;;;###autoload (autoload 'bmkp-bmenu-edit-bookmark-name-and-location "bookmark+")
@@ -5013,9 +4908,8 @@ Return the propertized string (the bookmark name)."
          (sudop           (and filep  (boundp 'tramp-file-name-regexp)
                                (bmkp-string-match-p tramp-file-name-regexp filep)
                                (bmkp-string-match-p bmkp-su-or-sudo-regexp filep))))
-    ;; Put the full bookmark itself on string `bookmark-name' as property `bmkp-full-record'.
-    ;; Then put that string on the name in the buffer text as property `bmkp-bookmark-name'.
-    (put-text-property 0 (length bookmark-name) 'bmkp-full-record bookmark bookmark-name)
+    ;; Tag the name span in the buffer with the bookmark name, so cursor-position
+    ;; lookups (`bookmark-bmenu-bookmark') can identify which bookmark is on this line.
     (put-text-property start end 'bmkp-bookmark-name bookmark-name)
     ;; Add faces, mouse face, and tooltips, to characterize the bookmark type.
     (add-text-properties
@@ -5130,17 +5024,13 @@ the internal lists that record menu-list markings."
   (quit-window))
 
 (defun bmkp-bmenu-goto-bookmark-named (name)
-  "Go to the first bookmark whose name matches NAME (a string).
-If NAME has non-nil property `bmkp-full-record' then go to the
-bookmark it indicates.  Otherwise, just go to the first bookmark with
-the same name."
+  "Go to the bookmark whose name is NAME (a string).
+Names are unique within `bookmark-alist', so a simple string match
+is precise."
   (goto-char (point-min)) (forward-line bmkp-bmenu-header-lines)
-  (let ((full  (get-text-property 0 'bmkp-full-record name)))
-    (while (and (not (eobp))
-                (not (if full
-                         (equal full (get-text-property 0 'bmkp-full-record (bookmark-bmenu-bookmark)))
-                       (equal name (bookmark-bmenu-bookmark)))))
-      (forward-line 1)))
+  (while (and (not (eobp))
+              (not (equal name (bookmark-bmenu-bookmark))))
+    (forward-line 1))
   (bookmark-bmenu-ensure-position))     ; Just in case we fall off the end.
 
 ;; This is a general function.  It is in this file because it is used only by the bmenu code.
@@ -5613,8 +5503,6 @@ prefix arg, any that are marked are included."
     (dolist (bmk  (bmkp-sort-omit (bmkp-bmenu-marked-or-this-or-all nil include-omitted-p)))
       (if defn
           (let* ((bname         (bmkp-bookmark-name-from-record bmk))
-                 (print-circle  bmkp-propertize-bookmark-names-flag) ; For `pp-to-string'
-                 (print-gensym  bmkp-propertize-bookmark-names-flag) ; For `pp-to-string'
                  (print-length  nil)    ; For `pp-to-string'
                  (print-level   nil)    ; For `pp-to-string'
                  (help-text     (format "%s\n%s\n\n%s"
@@ -6114,14 +6002,6 @@ are marked or ALLP is non-nil."
                              "Prompting for Tags When Setting"
                              "Prompting for tags when you set a bookmark is now %s"
                              "Toggle the value of option `bmkp-prompt-for-tags-flag'"))
-(define-key bmkp-bmenu-toggle-menu [bmkp-toggle-propertize-bookmark-names]
-  (bmkp-menu-bar-make-toggle bmkp-toggle-propertize-bookmark-names bmkp-propertize-bookmark-names-flag
-                             "Allowing Identical Bookmark Names"
-                             "Allowing multiple bookmarks with the same name is now %s"
-                             "Toggle the value of option `bmkp-propertize-bookmark-names-flag'"
-                             nil
-                             :visible (> emacs-major-version 20)))
-
 (define-key bmkp-bmenu-toggle-menu [sep4] '("--")) ; ------------ Jumping-behavior stuff
 (when (boundp 'bmkp-eww-allow-multiple-buffers-flag) ; Emacs 25+
   (define-key bmkp-bmenu-toggle-menu [bmkp-toggle-eww-allow-multiple-buffers]
