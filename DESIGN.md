@@ -48,26 +48,49 @@ property alist:
              ...)
 ```
 
-- `id` is opaque (`format "%s-%s" (format-time-string "%s") (random)`,
-  or a UUID, or `sha1`).
-- It is assigned at record creation by `bmkp-set`.
+- `id` is opaque (`format-time-string` plus random hex bits).
+- It is assigned at record creation by `bookmark-make-record-default`.
 - For records read from a file that lack `id` (created by the built-in,
   or by earlier bookmark++ versions), one is generated at load time
   and the alist is marked dirty so the next save writes them.
 - The built-in `bookmark.el` ignores `id` on read and preserves it on
   save. Round-trip is safe in both directions.
 
-Lookups split cleanly:
+Lookups:
 
 ```elisp
 (bmkp-get-by-id   ID)    ; → exactly one record, or nil
-(bmkp-get-by-name NAME)  ; → a list of records (zero, one, several)
+;; Name lookup is just (assoc NAME bookmark-alist) — names are unique.
 ```
 
-Internal code that needs "this specific bookmark" passes the record
-(cons cell) or the `id`. The name string is treated as a display
-label only. Same-named bookmarks coexist; the UI disambiguates them
-visually (file path, annotation, type).
+The `id` field is the **stable** identity that survives renames.
+Names are unique display labels, but they may change at any time
+(rename, auto-disambiguate). Anywhere we need "this specific bookmark
+even if it gets renamed later" (sequence bookmarks, bookmark-list
+bookmarks), we store the `id`, not the name.
+
+## Name uniqueness
+
+Bookmark names are enforced unique within `bookmark-alist`. Two
+mechanisms maintain this:
+
+1. **Auto-disambiguate on creation.** When `bookmark-store` is asked
+   to create a new bookmark (no-overwrite arg) whose name collides
+   with an existing one, the new bookmark is auto-renamed
+   `foo` → `foo<2>` → `foo<3>` → ... Callers that need to refer to
+   the bookmark afterward use the return value's `car`, not the
+   originally-requested name.
+2. **Deduplicate on load.** `bmkp-deduplicate-bookmark-names` runs
+   on `bmkp-read-bookmark-file-hook` and renames any duplicate names
+   found in a loaded bookmark file, marking the alist dirty so the
+   next save persists the new names. This covers files written by
+   the built-in `bookmark.el` (which doesn't enforce uniqueness) and
+   files written by older bookmark+ versions.
+
+This replaces the upstream Bookmark+ "same-named bookmarks coexist"
+feature. The same use cases (autofiles in multiple directories with
+the same basename) still work; they show as `README.md`,
+`README.md<2>`, etc.
 
 ## What goes away
 
@@ -143,19 +166,31 @@ file format becomes plain printable Lisp.
 
 Each phase ends with a clean compile and a working package.
 
-1. **id field + migration code.** New `bmkp-set` produces records
-   with `id`. New `bmkp-get-by-id`. Load-time migration assigns
-   `id` to records that lack one. Existing text-property machinery
-   remains untouched (parallel paths).
+1. **id field + migration code.** `bookmark-make-record-default`
+   produces records with `id`.  Add `bmkp-get-by-id`.  Load-time
+   migration assigns `id` to records that lack one.  Existing
+   text-property machinery remains untouched (parallel paths).
 
-2. **Switch internal lookups to id / record identity.** Mechanical
-   refactor: every internal `bmkp-get-bookmark` caller that needs
-   "this specific bookmark" gets the record (or id), not the name.
-   After this phase, the text-property trick is no longer load-bearing.
+2. **Enforce name uniqueness.** `bookmark-store` auto-disambiguates
+   colliding names (`foo` -> `foo<2>` -> ...); the caller in
+   `bookmark-set` captures the actual stored name from the return
+   value.  `bmkp-deduplicate-bookmark-names` runs on load to fix
+   duplicates inherited from older files.  With names guaranteed
+   unique, the text-property trick is no longer load-bearing:
+   `(assoc name bookmark-alist)` is precise.  Net code change is
+   small (~60 lines) because we chose uniqueness over preserving
+   the upstream "same-named bookmarks coexist" feature.
 
-3. **Drop the `bmkp-full-record` machinery.** Remove `print-circle`
-   plumbing, the defcustom, the property-stripping code, and the
-   `bookmark-get-bookmark*` redefinitions.
+3. **Drop the `bmkp-full-record` text-property machinery.** Remove
+   all `put-text-property 'bmkp-full-record` setter sites and the
+   `get-text-property` reader sites that follow them.  Remove the
+   `print-circle` / `print-gensym` binding around file writes, the
+   `bmkp-propertize-bookmark-names-flag` defcustom and its
+   branches, and the `bmkp-maybe-unpropertize-*` helpers.
+   `bmkp-get-bookmark` becomes a thin wrapper over `assoc`.  The
+   `bookmark-get-bookmark` and `bookmark-get-bookmark-record`
+   redefinitions can be dropped entirely.  Expected diff: ~300-400
+   lines removed.
 
 4. **Rename `bookmark-*` redefinitions to `bmkp-*`.** Bucket 2 from
    our analysis: `bookmark-set` / `-jump` / `-delete` / etc. become

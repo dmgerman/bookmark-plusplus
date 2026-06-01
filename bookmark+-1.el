@@ -2297,12 +2297,19 @@ bookmark file.  Saving the file depends on `bookmark-save-flag'."
     (unless (featurep 'xemacs)
       ;; XEmacs's `set-text-properties' does not work on free-standing strings, apparently.
       (set-text-properties 0 (length bname) () bname))
-    (if (or no-overwrite  (not (setq bmk  (bmkp-get-bookmark-in-alist bname 'NOERROR))))
-        (push (setq bmk  (cons bname data)) bookmark-alist) ; Add new bookmark.
-      (bookmark-set-name bmk bname)     ; Overwrite existing bookmark.
-      (when (and (boundp 'bookmark-set-fringe-mark)  bookmark-set-fringe-mark) ; Emacs 28+
-        (bookmark--remove-fringe-mark bmk))
-      (setcdr bmk data))
+    (cond ((and no-overwrite  (bmkp-get-bookmark-in-alist bname 'NOERROR))
+           ;; Phase 2: enforce unique names.  When the caller does not want to
+           ;; overwrite and BNAME already exists, auto-disambiguate the new one
+           ;; (foo -> foo<2> -> foo<3> ...) so each record has a unique name.
+           (setq bname  (bmkp-make-unique-name bname))
+           (push (setq bmk  (cons bname data)) bookmark-alist))
+          ((not (setq bmk  (bmkp-get-bookmark-in-alist bname 'NOERROR)))
+           (push (setq bmk  (cons bname data)) bookmark-alist)) ; Add new bookmark.
+          (t                            ; Overwrite existing bookmark.
+           (bookmark-set-name bmk bname)
+           (when (and (boundp 'bookmark-set-fringe-mark)  bookmark-set-fringe-mark) ; Emacs 28+
+             (bookmark--remove-fringe-mark bmk))
+           (setcdr bmk data)))
     ;; Put the full bookmark on its name as property `bmkp-full-record'.
     ;; Do this regardless of Emacs version and `bmkp-propertize-bookmark-names-flag'.
     ;; If it needs to be stripped, that will be done when saving.
@@ -2733,7 +2740,12 @@ From Lisp code:
                 (when (and (functionp pred)  (funcall pred bname))
                   (bmkp-make-bookmark-temporary record)
                   (throw 'bookmark-set t)))))
-          (bookmark-store bname (cdr record) (consp parg) no-refresh-p (not interactivep))
+          ;; `bookmark-store' may auto-disambiguate (foo -> foo<2>) when
+          ;; (consp parg) is non-nil and `bname' collides.  Update local
+          ;; `bname' to the stored bookmark's actual name so subsequent
+          ;; tag / light / annotate calls reference the right record.
+          (setq bname  (car (bookmark-store bname (cdr record) (consp parg)
+                                            no-refresh-p (not interactivep))))
           (when (and interactivep  bmkp-prompt-for-tags-flag)
             (bmkp-add-tags bname (bmkp-read-tags-completing) 'NO-UPDATE-P)) ; Do not update here.
           (cl-case (and (boundp 'bmkp-auto-light-when-set)  bmkp-auto-light-when-set)
@@ -4748,6 +4760,48 @@ so the next save writes the new ids to disk.  Intended for
     blist))
 
 (add-hook 'bmkp-read-bookmark-file-hook #'bmkp-ensure-record-ids)
+
+;;(@* "Unique bookmark names (phase 2)")
+;;; Unique bookmark names (phase 2) ---------------------------------
+;;
+;; Names are enforced unique within `bookmark-alist'.  When a user
+;; tries to create a bookmark with a name that already exists (and
+;; isn't overwriting), the new bookmark is auto-renamed
+;; `foo' -> `foo<2>' -> `foo<3>' ....  Stable identity is the `id'
+;; property (assigned in phase 1); names are display-only labels.
+
+(defun bmkp-make-unique-name (name &optional alist)
+  "Return NAME unchanged if free in ALIST; otherwise `NAME<N>' for the
+smallest N >= 2 that is free.  ALIST defaults to `bookmark-alist'."
+  (let ((al  (or alist  bookmark-alist)))
+    (if (not (assoc name al))
+        name
+      (let ((n  2))
+        (while (assoc (format "%s<%d>" name n) al) (setq n  (1+ n)))
+        (format "%s<%d>" name n)))))
+
+(defun bmkp-deduplicate-bookmark-names (blist &rest _ignored)
+  "Rename any duplicate names in BLIST so all names are unique.
+Keeps the first occurrence; suffixes later ones with `<N>'.  Bumps
+`bookmark-alist-modification-count' if any record was renamed, so the
+next save persists the new names.  Intended for
+`bmkp-read-bookmark-file-hook'."
+  (let ((seen     (make-hash-table :test #'equal))
+        renamed)
+    (dolist (bmk blist)
+      (let ((name  (car bmk)))
+        (when (gethash name seen)
+          (let ((new  (bmkp-make-unique-name name blist)))
+            (setcar bmk new)
+            (setq renamed  t
+                  name     new)))
+        (puthash name t seen)))
+    (when renamed
+      (setq bookmark-alist-modification-count
+            (1+ bookmark-alist-modification-count)))
+    blist))
+
+(add-hook 'bmkp-read-bookmark-file-hook #'bmkp-deduplicate-bookmark-names)
 
 
 (defun bmkp-default-bookmark-file ()
