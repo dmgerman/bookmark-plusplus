@@ -988,9 +988,6 @@ Returns nil if neither is available."
 (defvar repeat-previous-repeated-command) ; In `repeat.el'
 (defvar repeat-message-function)        ; In `repeat.el'
 (defvar last-repeatable-command)        ; In `repeat.el'
-(defvar w3m-current-title)              ; In `w3m.el'
-(defvar w3m-current-url)                ; In `w3m.el'
-(defvar w3m-mode-map)                   ; In `w3m.el'
 (defvar zz-izones-var)                  ; In `zones.el'
 (defvar woman-last-file-name)           ; In `woman.el'
 
@@ -1734,18 +1731,6 @@ is enabled.  Set this to nil or \"\" if you do not want any lighter."
           (const :tag "Do not activate bookmark region"                   nil)
           (const :tag "Activate bookmark region even during cycling"      cycling-too))
   :group 'bookmark-plus)
-
-;; We do not use `define-obsolete-variable-alias' so that byte-compilation in older Emacs
-;; works for newer Emacs too.
-;;;###autoload (autoload 'bmkp-w3m-allow-multiple-buffers-flag "bookmark+")
-(when (fboundp 'defvaralias)            ; Emacs 22+
-  (defvaralias 'bmkp-w3m-allow-multi-tabs-flag 'bmkp-w3m-allow-multiple-buffers-flag))
-(bmkp-make-obsolete-variable 'bmkp-w3m-allow-multi-tabs-flag 'bmkp-w3m-allow-multiple-buffers-flag
-                             "2017-01-10")
-
-(defcustom bmkp-w3m-allow-multiple-buffers-flag t
-  "*Non-nil means jump to a W3M bookmark in a new buffer."
-  :type 'boolean :group 'bookmark-plus)
 
 ;;;###autoload (autoload 'bmkp-write-bookmark-file-hook "bookmark+")
 (defcustom bmkp-write-bookmark-file-hook ()
@@ -2795,7 +2780,6 @@ From Lisp code:
                (defname  (cond ((and (eq major-mode 'eww-mode)
                                      (fboundp 'bmkp-make-eww-record) ; Emacs 25+
                                      (bmkp-eww-title)))
-                               ((eq major-mode 'w3m-mode) w3m-current-title)
                                ((eq major-mode 'gnus-summary-mode) (elt (gnus-summary-article-header) 1))
                                ((memq major-mode '(Man-mode woman-mode))
                                 (buffer-substring (point-min) (save-excursion (goto-char (point-min))
@@ -5139,21 +5123,18 @@ With a prefix arg, edit the complete bookmark record (the
            (new-location
             (cond (bmk-location
                    (cond ((not bmk-urlp) (read-string "New location: "))
-                         ((and (featurep 'w3m)  (bmkp-w3m-bookmark-p bmk-name))
-                          (w3m-input-url "New URL: " bmk-location))
                          ((and (fboundp 'bmkp-eww-bookmark-p)  (bmkp-eww-bookmark-p bmk-name))
                           (read-string "New URL: "))
+                         ((bmkp-w3m-bookmark-p bmk-name)
+                          (read-string "New URL: "))  ; Legacy w3m bookmark; treat URL as a string.
                          ((require 'ffap) (ffap-read-file-or-url "New URL: " bmk-location))
                          (t (read-string "New location: "))))
                   (bmk-filename
-                   (if (and (featurep 'w3m)
-                            (bmkp-w3m-bookmark-p bmk-name))
-                       (w3m-input-url "New url: " bmk-filename)
-                     (read-file-name
-                      "New file name (location): "
-                      (and bmk-filename
-                           (file-name-directory  bmk-filename))
-                      bmk-filename)))
+                   (read-file-name
+                    "New file name (location): "
+                    (and bmk-filename
+                         (file-name-directory  bmk-filename))
+                    bmk-filename))
                   (bmk-buffname
                    (read-buffer "New location: " bmk-buffname))
                   (t                    ; No current location.
@@ -10935,56 +10916,15 @@ bookmarks.  If it does not exist then it is created."
 
 ;; End of former (when (> emacs-major-version 24)) EWW-support block.
 
-;; W3M support
-(defun bmkp-make-w3m-record ()
-  "Make a special entry for w3m buffers."
-  (require 'w3m)                        ; For `w3m-current-url'.
-  `(,w3m-current-title
-    ,@(bookmark-make-record-default 'NO-FILE)
-    (location . ,w3m-current-url)
-    (handler . bmkp-jump-w3m)))
-
-(add-hook 'w3m-mode-hook (lambda () (set (make-local-variable 'bookmark-make-record-function)
-                                         'bmkp-make-w3m-record)))
-
-(defun bmkp-w3m-set-new-buffer-name ()
-  "Set the w3m buffer name according to the number of W3M buffers already open."
-  (require 'w3m)                        ; For `w3m-list-buffers'.
-  (let ((len  (length (w3m-list-buffers 'nosort))))
-    (if (= len 0)  "*w3m*"  (format "*w3m*<%d>" (1+ len)))))
-
-(defalias 'bmkp-jump-w3m-new-session 'bmkp-jump-w3m-new-buffer)
-(defun bmkp-jump-w3m-new-buffer (bookmark)
-  "Jump to W3M bookmark BOOKMARK in a new buffer (in a new W3M tab)."
-  (require 'w3m)
-  (let ((buf   (bmkp-w3m-set-new-buffer-name)))
-    (w3m-browse-url (bookmark-location bookmark) 'newsession)
-    (while (not (get-buffer buf)) (sit-for 1)) ; Be sure we have the W3M buffer.
-    (with-current-buffer (get-buffer-create buf)
-      (goto-char (point-min))
-      ;; Wait until data arrives in buffer, before setting region.
-      (while (eq (line-beginning-position) (line-end-position)) (sit-for 1)))
-    (bookmark-default-handler `("" (buffer . ,buf) . ,(bmkp-bookmark-data-from-record bookmark)))))
-
-(defalias 'bmkp-jump-w3m-only-one-tab 'bmkp-jump-w3m-only-one-buffer)
-(defun bmkp-jump-w3m-only-one-buffer (bookmark)
-  "Close all W3M sessions and jump to BOOKMARK in a new W3M buffer."
-  (require 'w3m)
-  (w3m-quit 'force)                     ; Be sure we start with an empty W3M buffer.
-  (w3m-browse-url (bookmark-location bookmark))
-  (with-current-buffer (get-buffer-create "*w3m*") (while (eq (point-min) (point-max)) (sit-for 1)))
-  (bookmark-default-handler `("" (buffer . "*w3m*") . ,(bmkp-bookmark-data-from-record bookmark))))
-
+;; W3M support: legacy compatibility only.
+;; w3m.el (emacs-w3m) is effectively dead.  This fork does not create new
+;; w3m bookmarks, but recognises existing ones and routes them through the
+;; EWW handler so they keep working.
 (defalias 'bmkext-jump-w3m 'bmkp-jump-w3m)
 (defun bmkp-jump-w3m (bookmark)
-  "Handler function for record returned by `bmkp-make-w3m-record'.
-BOOKMARK is a bookmark name or a bookmark record.
-Use a new buffer (tab) if `bmkp-w3m-allow-multiple-buffers-flag' is
-non-nil."
-  (require 'w3m)
-  (if bmkp-w3m-allow-multiple-buffers-flag
-      (bmkp-jump-w3m-new-buffer bookmark)
-    (bmkp-jump-w3m-only-one-buffer bookmark)))
+  "Legacy handler for w3m bookmarks: open BOOKMARK's URL in EWW.
+BOOKMARK is a bookmark name or a bookmark record."
+  (bmkp-jump-eww bookmark))
 
 
 ;; GNUS support for Emacs < 24.  More or less the same as `gnus-summary-bookmark-make-record' in Emacs 24+.

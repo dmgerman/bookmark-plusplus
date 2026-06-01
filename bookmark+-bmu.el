@@ -6150,11 +6150,6 @@ are marked or ALLP is non-nil."
                              :visible (> emacs-major-version 20)))
 
 (define-key bmkp-bmenu-toggle-menu [sep4] '("--")) ; ------------ Jumping-behavior stuff
-(define-key bmkp-bmenu-toggle-menu [bmkp-toggle-w3m-allow-multiple-buffers]
-  (bmkp-menu-bar-make-toggle bmkp-toggle-w3m-allow-multiple-buffers bmkp-w3m-allow-multiple-buffers-flag
-                             "Using Multiple Buffers for W3M"
-                             "Using a new buffer when jumping to a W3M bookmark is now %s"
-                             "Toggle the value of option `bmkp-w3m-allow-multiple-buffers-flag'"))
 (when (boundp 'bmkp-eww-allow-multiple-buffers-flag) ; Emacs 25+
   (define-key bmkp-bmenu-toggle-menu [bmkp-toggle-eww-allow-multiple-buffers]
     (bmkp-menu-bar-make-toggle bmkp-toggle-eww-allow-multiple-buffers bmkp-eww-allow-multiple-buffers-flag

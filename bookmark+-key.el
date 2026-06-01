@@ -218,8 +218,6 @@ there are such bookmarks can take a little time."
 (defvar Man-mode-map)                   ; In `man.el'.
 (defvar mouse-wheel-down-event)         ; In `mwheel.el'.
 (defvar mouse-wheel-up-event)           ; In `mwheel.el'.
-(defvar w3m-minor-mode-map)             ; In `w3m.el'.
-(defvar w3m-mode-map)                   ; In `w3m.el'.
 (defvar woman-menu)                     ; In `woman.el'.
 (defvar woman-mode-map)                 ; In `woman.el'.
  
@@ -843,14 +841,6 @@ Menu for bookmarks that target this file or buffer.")
                 '(menu-item "Jump to a `man'-page Bookmark" bmkp-man-jump
                   :help "Jump to a bookmarked `man' page")
                 'WoMan\.\.\.))))        ; Used by `woman.el' - corresponds to command `woman'.
-
-(add-hook 'w3m-minor-mode-hook
-          (lambda () (unless (lookup-key w3m-minor-mode-map "j")
-                       (define-key w3m-minor-mode-map "j" 'bmkp-w3m-jump))))
-
-(add-hook 'w3m-mode-hook
-          (lambda () (unless (lookup-key w3m-mode-map "j")
-                       (define-key w3m-mode-map "j" 'bmkp-w3m-jump))))
 
 
 ;;; Vanilla Emacs `Bookmarks' menu (see also [jump] from `Bookmark+' menu, below).
