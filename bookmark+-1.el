@@ -918,12 +918,22 @@ Returns nil if neither is available."
 (defvar bmkp-edit-bookmark-record-mode-map) ; Here, via `define-derived-mode'
 (defvar bmkp-edit-bookmark-records-mode-map) ; Here, via `define-derived-mode'
 (defvar bmkp-edit-tags-mode-map)        ; Here, via `define-derived-mode'
-(defvar bmkp-eww-auto-type)             ; Here (Emacs 25+)
-(defvar bmkp-eww-buffer-renaming)       ; Here (Emacs 25+)
-(defvar bmkp-eww-generate-buffer-flag)  ; Here (Emacs 25+)
-(defvar bmkp-eww-jumping-p)             ; Here (Emacs 25+)
-(defvar bmkp-eww-new-buf-name)          ; Here (Emacs 25+)
-(defvar bmkp-eww-replace-keys-flag)     ; Here (Emacs 25+)
+;; Obsolete-variable aliases for the two renamed EWW defcustoms.  These
+;; must be declared before the referent (i.e. before the forward defvar
+;; below as well as the actual defcustom much later in the file) so the
+;; byte-compiler does not emit "Alias should be declared before its
+;; referent" warnings.
+(defvaralias 'bmkp-eww-buffer-handling 'bmkp-eww-buffer-renaming)
+(bmkp-make-obsolete-variable 'bmkp-eww-buffer-handling 'bmkp-eww-buffer-renaming "2018-02-23")
+(defvaralias 'bmkp-replace-eww-keys-flag 'bmkp-eww-replace-keys-flag)
+(bmkp-make-obsolete-variable 'bmkp-replace-eww-keys-flag 'bmkp-eww-replace-keys-flag "2017-01-10")
+
+(defvar bmkp-eww-auto-type)             ; Defined later, if EWW is available.
+(defvar bmkp-eww-buffer-renaming)       ; Defined later, if EWW is available.
+(defvar bmkp-eww-generate-buffer-flag)  ; Defined later, if EWW is available.
+(defvar bmkp-eww-jumping-p)             ; Defined later, if EWW is available.
+(defvar bmkp-eww-new-buf-name)          ; Defined later, if EWW is available.
+(defvar bmkp-eww-replace-keys-flag)     ; Defined later, if EWW is available.
 (defvar bmkp-info-auto-type)            ; Here (Emacs 22+)
 (defvar bmkp-light-priorities)          ; In `bookmark+-lit.el'
 (defvar bmkp-setting-automatic-bmk-p)   ; Here, bound in `bmkp-set-automatic-bookmark'.
@@ -1337,8 +1347,6 @@ Non-nil values affect EWW behavior even when bookmarks are not used.
             ;; Any symbol other than `page' and nil is treated the same as `page'.
             (const :tag "Rename buffer to web-page title"                            page))
     :group 'bookmark-plus)
-  (defvaralias 'bmkp-eww-buffer-handling 'bmkp-eww-buffer-renaming)
-  (bmkp-make-obsolete-variable 'bmkp-eww-buffer-handling 'bmkp-eww-buffer-renaming "2018-02-23")
 
   (defcustom bmkp-eww-generate-buffer-flag nil
     "Whether to generate a new buffer when jumping to an EWW bookmark.
@@ -1351,8 +1359,6 @@ Non-nil values affect EWW behavior even when bookmarks are not used.
 If you change the value of this option then you must restart Emacs for
 it to take effect."
     :type 'boolean :group 'bookmark-plus)
-  (defvaralias 'bmkp-replace-eww-keys-flag 'bmkp-eww-replace-keys-flag)
-  (bmkp-make-obsolete-variable 'bmkp-replace-eww-keys-flag 'bmkp-eww-replace-keys-flag "2017-01-10")
   )
 
 ;;;###autoload (autoload 'bmkp-annotation-modes-inherit-from "bookmark+")
