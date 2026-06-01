@@ -2106,9 +2106,9 @@ See `bookmark-jump' for info about the prefix arg."
 ;; REPLACES ORIGINAL in `bookmark.el'.
 ;;
 ;; 1. Added optional arg MSG-P.
-;; 2. Call `bookmark-show-annotation' with arg MSG-P.
+;; 2. Call `bmkp-show-annotation' with arg MSG-P.
 ;; 3. Raise error if not in buffer `*Bookmark List*'.
-;; 4. Doc string reflects enhanced behavior of `bookmark-show-annotation'.
+;; 4. Doc string reflects enhanced behavior of `bmkp-show-annotation'.
 ;;
 ;;;###autoload (autoload 'bookmark-bmenu-show-annotation "bookmark+")
 (defun bookmark-bmenu-show-annotation (&optional msg-p) ; Bound to `a a' in bookmark list
@@ -2120,7 +2120,7 @@ Non-interactively, non-nil MSG-P means display messages."
   (bookmark-bmenu-ensure-position)
   (let ((bmk  (bookmark-bmenu-bookmark)))
     (unless bmk (error "No bookmark here"))
-    (bookmark-show-annotation bmk msg-p)))
+    (bmkp-show-annotation bmk msg-p)))
 
 
 ;; REPLACES ORIGINAL in `bookmark.el'.
@@ -4197,7 +4197,7 @@ arg, any that are marked are included."
   ;; If we do it, then do it also for `bookmark-bmenu-edit-annotation' (which is just vanilla, so far).
   (let ((bmks  (bmkp-bmenu-marked-or-this-or-all allp include-omitted-p)))
     (unless bmks (error "No marked bookmarks"))
-    (dolist (bmk  (bmkp-sort-omit bmks)) (bookmark-edit-annotation bmk))))
+    (dolist (bmk  (bmkp-sort-omit bmks)) (bmkp-edit-annotation bmk))))
 
 ;;;###autoload (autoload 'bmkp-bmenu-show-or-edit-annotation "bookmark+")
 (defun bmkp-bmenu-show-or-edit-annotation (editp msg-p) ; Not bound anymore.
@@ -4238,7 +4238,7 @@ Unlike `bookmark-bmenu-select', this command:
     ;; (run-hooks 'bookmark-after-jump-hook)
     (let ((jump-fn  (bmkp-get-tag-value bmk "bmkp-jump")))
       (when jump-fn (funcall jump-fn)))
-    (when bookmark-automatically-show-annotations (bookmark-show-annotation bmk))))
+    (when bookmark-automatically-show-annotations (bmkp-show-annotation bmk))))
 
 ;;;###autoload (autoload 'bmkp-bmenu-w32-jump-to-marked "bookmark+")
 (defun bmkp-bmenu-w32-jump-to-marked ()    ; Bound to `M-o' in bookmark-list.

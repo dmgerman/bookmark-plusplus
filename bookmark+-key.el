@@ -330,9 +330,9 @@ there are such bookmarks can take a little time."
 (define-key bmkp-annotate-map "a" 'bmkp-annotate-bookmark)                     ; `C-x x a a'
 (define-key bmkp-annotate-map "b" 'bmkp-annotate-bookmark-this-file/buffer)    ; `C-x x a b'
 (define-key bmkp-annotate-map "B" 'bmkp-annotate-all-bookmarks-this-file/buffer) ; `C-x x a B'
-(define-key bmkp-annotate-map "e" 'bookmark-edit-annotation)                   ; `C-x x a e'
-(define-key bmkp-annotate-map "s" 'bookmark-show-annotation)                   ; `C-x x a s'
-(define-key bmkp-annotate-map "S" 'bookmark-show-all-annotations)              ; `C-x x a S'
+(define-key bmkp-annotate-map "e" 'bmkp-edit-annotation)                   ; `C-x x a e'
+(define-key bmkp-annotate-map "s" 'bmkp-show-annotation)                   ; `C-x x a s'
+(define-key bmkp-annotate-map "S" 'bmkp-show-all-annotations)              ; `C-x x a S'
 
 
 ;; `bmkp-set-map': prefix `C-x x c'
@@ -854,14 +854,14 @@ Menu for bookmarks that target this file or buffer.")
   '(menu-item "Clone (Duplicate) Bookmark" bmkp-clone-bookmark
     :help "Duplicate a bookmark.  (`\\[bmkp-edit-bookmark-record]' to edit definition.)")
   'separator-edit)
-(define-key-after menu-bar-bookmark-map [bookmark-edit-annotation]
-  '(menu-item "Edit Bookmark Annotation" bookmark-edit-annotation
+(define-key-after menu-bar-bookmark-map [bmkp-edit-annotation]
+  '(menu-item "Edit Bookmark Annotation" bmkp-edit-annotation
     :help "Edit annotation for a bookmark (create if none)")
   'bmkp-clone-bookmark)
 (define-key-after menu-bar-bookmark-map [bmkp-edit-bookmark-name-and-location]
   '(menu-item "Rename, Relocate Bookmark..." bmkp-edit-bookmark-name-and-location
     :help "Rename and/or relocate a bookmark")
-  'bookmark-edit-annotation)
+  'bmkp-edit-annotation)
 (define-key-after menu-bar-bookmark-map [bmkp-edit-bookmark-record]
   '(menu-item "Edit Bookmark Record (Lisp)..." bmkp-edit-bookmark-record
     :help "Edit the full record (Lisp sexp) of a bookmark")
@@ -947,11 +947,11 @@ Menu for bookmarks that target this file or buffer.")
   "`Annotate' submenu for menu-bar `Bookmarks' menu.")
 (define-key menu-bar-bookmark-map [annotate] (cons "Annotate" bmkp-annotate-menu))
 
-(define-key bmkp-annotate-menu [bookmark-show-all-annotations]
-  '(menu-item "Show All Annotations" bookmark-show-all-annotations
+(define-key bmkp-annotate-menu [bmkp-show-all-annotations]
+  '(menu-item "Show All Annotations" bmkp-show-all-annotations
               :help "Show the annotations for all bookmarks"))
-(define-key bmkp-annotate-menu [bookmark-show-annotation]
-  '(menu-item "Show an Annotation" bookmark-show-annotation
+(define-key bmkp-annotate-menu [bmkp-show-annotation]
+  '(menu-item "Show an Annotation" bmkp-show-annotation
               :help "Show the annotation for a bookmark, or follow it if external"))
 (define-key bmkp-annotate-menu [bmkp-annotate-all-bookmarks-this-file/buffer]
   '(menu-item "Annotate All Bookmarks Here" bmkp-annotate-all-bookmarks-this-file/buffer
