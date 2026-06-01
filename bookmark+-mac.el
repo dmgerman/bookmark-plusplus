@@ -12,7 +12,7 @@
 ;; URL: https://www.emacswiki.org/emacs/download/bookmark%2b-mac.el
 ;; Doc URL: https://www.emacswiki.org/emacs/BookmarkPlus
 ;; Keywords: bookmarks, bookmark+, placeholders, annotations, search, info, url, eww, w3m, gnus
-;; Compatibility: GNU Emacs: 20.x, 21.x, 22.x, 23.x, 24.x, 25.x, 26.x
+;; Compatibility: GNU Emacs: 30.x and later
 ;;
 ;; Features that might be required by this library:
 ;;
@@ -169,23 +169,16 @@
 ;;; This is also defined in `bookmark+-bmu.el'.  It is used here to produce the code for
 ;;; `bmkp-define-show-only-command' and `bmkp-define-sort-command'.
 ;;;
-(defun bmkp-replace-regexp-in-string (regexp rep string &optional fixedcase literal subexp start)
-  "Replace all matches for REGEXP with REP in STRING and return STRING."
-  (if (fboundp 'replace-regexp-in-string) ; Emacs > 20.
-      (replace-regexp-in-string regexp rep string fixedcase literal subexp start)
-    (if (string-match regexp string) (replace-match rep nil nil string) string))) ; Emacs 20
+(defalias 'bmkp-replace-regexp-in-string #'replace-regexp-in-string)
  
 ;;(@* "Macros")
 
 ;;; Macros -----------------------------------------------------------
 
-;; Same as `icicle-with-help-window' in `icicles-mac.el'.
 ;;;###autoload (autoload 'bmkp-with-help-window "bookmark+")
 (defmacro bmkp-with-help-window (buffer &rest body)
-  "`with-help-window', if available; else `with-output-to-temp-buffer'."
-  (if (fboundp 'with-help-window)
-      `(with-help-window ,buffer ,@body)
-    `(with-output-to-temp-buffer ,buffer ,@body)))
+  "Like `with-help-window', for the side-effect of `*Help*' navigation."
+  `(with-help-window ,buffer ,@body))
 
 (put 'bmkp-with-help-window 'common-lisp-indent-function '(4 &body))
 
@@ -544,7 +537,6 @@ the TYPE bookmarks, in the bookmark-list display."
             (bmkp-define-show-only-command ,type ,show-only-doc ,alist-only-fn)
             (bmkp-define-history-variables))))
 
-;; This is compatible with Emacs 20 and later.
 ;;;###autoload (autoload 'bmkp-menu-bar-make-toggle "bookmark+")
 (defmacro bmkp-menu-bar-make-toggle (command variable item-name message help
                                      &optional setting-sexp &rest keywords)
@@ -577,8 +569,7 @@ by \"Save Options\" in Custom buffers.")
       ;; `customize-mark-as-set' must only be called when a variable is set interactively,
       ;; because the purpose is to mark the variable as a candidate for `Save Options', and we
       ;; do not want to save options that the user has already set explicitly in the init file.
-      (when (and interactively  (fboundp 'customize-mark-as-set))
-        (customize-mark-as-set ',variable)))
+      (when interactively (customize-mark-as-set ',variable)))
     '(menu-item ,item-name ,command
       :help ,help
       :button (:toggle . (and (default-boundp ',variable) (default-value ',variable)))
@@ -595,23 +586,12 @@ If BOOKMARK has no location then use nil as `default-directory'."
                                (if (file-directory-p loc) loc (file-name-directory loc)))))
     ,@body))
 
-;; These are needed because Emacs 29 removed `lexical-let[*]'.
+;; All files in this package use `lexical-binding: t', so these expand
+;; to plain `let' / `let*'.  Kept as macros only to avoid touching the
+;; many call sites in `bookmark+-1.el'.
 ;;
-(defmacro bmkp-lexlet (&rest all)
-  "`lexical-let', if available and not `lexical-binding'; else `let'."
-  (if (and (fboundp 'lexical-let)              ; Emacs < 29
-           (or (not (boundp 'lexical-binding)) ; Emacs <  24.something
-               (not lexical-binding)))         ; Emacs >= 24.something
-      `(lexical-let ,@all)
-    `(let ,@all)))                      ; Emacs 29+
-
-(defmacro bmkp-lexlet* (&rest all)
-  "`lexical-let*', if available and not `lexical-binding'; else `let*'."
-  (if (and (fboundp 'lexical-let*)             ; Emacs < 29
-           (or (not (boundp 'lexical-binding)) ; Emacs <  24.something
-               (not lexical-binding)))         ; Emacs >= 24.something
-      `(lexical-let* ,@all)
-    `(let* ,@all)))
+(defmacro bmkp-lexlet  (&rest all) `(let  ,@all))
+(defmacro bmkp-lexlet* (&rest all) `(let* ,@all))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -174,7 +174,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 
-(require 'bookmark)                     ; Vanilla Emacs.
+(when (< emacs-major-version 30)
+  (error "Bookmark++ requires Emacs 30 or newer (this is Emacs %s)"
+         emacs-version))
+
+(require 'bookmark)                     ; Built-in.
 
 ;;;###autoload (autoload 'bmkp-version-number "bookmark+")
 (defconst bmkp-version-number "2023.10.26")
