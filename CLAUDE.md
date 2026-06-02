@@ -17,6 +17,12 @@ under the parent `.emacs.d` repo; the `.git` file points to
 - `doc/bookmark-plusplus.texi` — user manual (texinfo source).
   Build with `make -C doc` to produce `doc/bookmark-plusplus.info`.
 - `doc/Makefile` — `make` builds info; `make html` / `make pdf` available.
+- `test/` — ERT test suite.  Run with `make test` from the repo root.
+  Tests are isolated: each one rebinds `bookmark-alist`,
+  `bookmark-default-file`, and friends to a unique temp file, so the
+  user's real bookmarks are never touched.  See `test/bmkpp-test-helper.el`
+  for the `bmkpp-test-with-clean-bookmarks` macro every test uses.
+- `Makefile` (repo root) — `make test`, `make compile`, `make clean`.
 - `readme.org`, `doc/reference.org` — locally-authored quickstart and
   command-table references (kept alongside the Info manual; the manual
   is the authoritative user doc).
