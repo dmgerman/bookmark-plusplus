@@ -17,7 +17,7 @@ START-INFO-DIR-ENTRY
 END-INFO-DIR-ENTRY
 
 
-File: bookmark-plusplus.info,  Node: Top,  Next: Introduction,  Up: (dir)
+File: bookmark-plusplus.info,  Node: Top,  Next: Preface,  Up: (dir)
 
 Bookmark++
 **********
@@ -47,6 +47,7 @@ later version published by the Free Software Foundation.
 
 * Menu:
 
+* Preface::                     What this fork is.
 * Introduction::                What Bookmark++ is and how it relates to ‘bookmark.el’.
 * Tutorial::                    A guided first session.
 * Concepts::                    The bookmark list, file, and display.
@@ -74,10 +75,10 @@ later version published by the Free Software Foundation.
 * Concept Index::
 
 
-File: bookmark-plusplus.info,  Node: Introduction,  Next: Tutorial,  Prev: Top,  Up: Top
+File: bookmark-plusplus.info,  Node: Preface,  Next: Introduction,  Prev: Top,  Up: Top
 
-1 Introduction
-**************
+1 Preface
+*********
 
 “Bookmark++” is a fork of Drew Adams' Bookmark+ package, modernized for
 GNU Emacs 30 and later.  Bookmark+ supports the entire span of GNU Emacs
@@ -106,9 +107,21 @@ through ‘bmkp-jump-eww’ so they keep working, and no new W3M bookmarks
 are created.  This fork also adds an optional Casual Transient menu.
 *Note Migration::, for the complete change list.
 
-   The rest of this chapter describes what the original Bookmark+ does.
+   The goal of this fork is to retain the original functionality of
+Bookmark+.  The only major exception is that it does not replace the
+bookmark package by replacing its functionality.  Instead, it provides
+functions that are equivalent to it.  For example, ‘bmkp-list’ and
+‘bmkp-jump’ instead of redefining ‘bookmark-list’ and ‘bookmark-jump’.
+This way, both packages can coexist.  In fact, built-in Bookmark can
+read bookmark files created by Bookmark+ and vice-versa.
 
-   Bookmark+ is a substantial extension of GNU Emacs's built-in
+
+File: bookmark-plusplus.info,  Node: Introduction,  Next: Tutorial,  Prev: Preface,  Up: Top
+
+2 Introduction
+**************
+
+Bookmark+ is a substantial extension of GNU Emacs's built-in
 ‘bookmark.el’.  It keeps every concept from built-in bookmarks--named,
 persistent placeholders into files, buffers, Info nodes, and so on--but
 makes bookmarks useful as persistent records, not just saved positions.
@@ -149,13 +162,13 @@ bookmark file format, so you can use either at any time.
 
 File: bookmark-plusplus.info,  Node: Tutorial,  Next: Concepts,  Prev: Introduction,  Up: Top
 
-2 Tutorial
+3 Tutorial
 **********
 
 This chapter walks through a typical first session.  Open a few files
 you actually use, then follow along.
 
-2.1 Creating Your First Bookmark
+3.1 Creating Your First Bookmark
 ================================
 
 Place point somewhere in a file you visit often--say, midway through a
@@ -168,7 +181,7 @@ bookmark name; type ‘readme top RET’.  The bookmark is set at point, and
 the bookmark file is updated on disk (if ‘bookmark-save-flag’ is ‘t’,
 which is the default).
 
-2.2 Opening the Bookmark List
+3.2 Opening the Bookmark List
 =============================
 
 Type ‘C-x x e’ (or ‘M-x bmkp-list’).  Buffer ‘*Bmkp List*’ appears.  You
@@ -190,7 +203,7 @@ see one row per bookmark, in a marked, sortable display.
 ‘q’
      Quit.  The buffer is hidden; your bookmarks stay in memory.
 
-2.3 Adding a Tag
+3.3 Adding a Tag
 ================
 
 In ‘*Bmkp List*’, place point on the bookmark you just created.  Type ‘T
@@ -200,7 +213,7 @@ line, indicating it is tagged.
 
    To list only tagged bookmarks: ‘T S’.  To show all again: ‘.’.
 
-2.4 Jumping
+3.4 Jumping
 ===========
 
 You can jump from anywhere in Emacs:
@@ -215,7 +228,7 @@ is loaded, you get live preview as you move through candidates.
 bookmarks of a specific type (Dired, Info, EWW, ...), use ‘C-x j :’ and
 choose the type.
 
-2.5 Filtering and Sorting
+3.5 Filtering and Sorting
 =========================
 
 Open ‘*Bmkp List*’ (‘C-x x e’) and try:
@@ -236,7 +249,7 @@ Open ‘*Bmkp List*’ (‘C-x x e’) and try:
 ‘M-t’
      Toggle the location column (file or buffer name).
 
-2.6 Multiple Bookmarks at Once
+3.6 Multiple Bookmarks at Once
 ==============================
 
 Mark several bookmarks with ‘m’ (or ‘M-m’ to mark all).  Then:
@@ -250,7 +263,7 @@ Mark several bookmarks with ‘m’ (or ‘M-m’ to mark all).  Then:
 ‘Y > +’
      Copy the marked bookmarks into another bookmark file.
 
-2.7 Live Preview Mode
+3.7 Live Preview Mode
 =====================
 
 Type ‘M-p’ in ‘*Bmkp List*’.  The mode-line lighter changes to ‘ Pv’.
@@ -259,7 +272,7 @@ destination in another window--without selecting it.  Press ‘M-p’ again
 to turn the mode off; the window configuration is restored to what it
 was when you entered the mode.
 
-2.8 Saving and Switching Bookmark Files
+3.8 Saving and Switching Bookmark Files
 =======================================
 
 Your bookmarks live in ‘bookmark-default-file’ (‘~/.emacs.d/bookmarks’
@@ -273,7 +286,7 @@ reference: each chapter covers one feature in detail.
 
 File: bookmark-plusplus.info,  Node: Concepts,  Next: Setting Bookmarks,  Prev: Tutorial,  Up: Top
 
-3 Concepts: list, file, display
+4 Concepts: list, file, display
 *******************************
 
 Three different things are commonly confused.  Understanding them is the
@@ -307,7 +320,7 @@ from the file.
 
 File: bookmark-plusplus.info,  Node: Prefix Keys,  Next: Standard Keys,  Up: Concepts
 
-3.1 Prefix Keys
+4.1 Prefix Keys
 ===============
 
 Bookmark+ allocates dedicated prefix keys for bookmarking, separate from
@@ -343,7 +356,7 @@ customize.
 
 File: bookmark-plusplus.info,  Node: Standard Keys,  Prev: Prefix Keys,  Up: Concepts
 
-3.2 Binding Bookmark+ to the Standard Keys
+4.2 Binding Bookmark+ to the Standard Keys
 ==========================================
 
 Loading Bookmark+ does not redefine any built-in command.  If you want
@@ -366,7 +379,7 @@ remove the lines (or call ‘advice-remove’) to reverse them.
 
 File: bookmark-plusplus.info,  Node: Setting Bookmarks,  Next: Jumping,  Prev: Concepts,  Up: Top
 
-4 Setting Bookmarks
+5 Setting Bookmarks
 *******************
 
 ‘bmkp-bookmark-set-confirm-overwrite’ (‘C-x x m’, ‘C-x x c m’) is the
@@ -380,7 +393,7 @@ enhanced replacement for ‘bookmark-set’:
    • Existing tags and annotations are preserved when you re-set a
      bookmark (see ‘bmkp-properties-to-keep’).
 
-4.1 Type-Specific Creation Commands
+5.1 Type-Specific Creation Commands
 ===================================
 
 The ‘bmkp-set-map’ (default prefix ‘C-x x c’) groups commands that
@@ -406,7 +419,7 @@ Command                        Key           Creates
 ‘bmkp-toggle-autonamed-bookmark-set/delete’‘C-x x cSet or delete the autonamed
                                <RET>’        bookmark here.
 
-4.2 Bookmarking Without Visiting
+5.2 Bookmarking Without Visiting
 ================================
 
 You can bookmark targets without first opening them:
@@ -428,7 +441,7 @@ You can bookmark targets without first opening them:
 
 File: bookmark-plusplus.info,  Node: Jumping,  Next: The Bmkp List Buffer,  Prev: Setting Bookmarks,  Up: Top
 
-5 Jumping to Bookmarks
+6 Jumping to Bookmarks
 **********************
 
 ‘bmkp-jump’ (‘C-x j j’) is the generic bookmark jump command; completion
@@ -436,7 +449,7 @@ offers every bookmark.  ‘bmkp-jump-other-window’ (‘C-x 4 j j’) is its
 other-window twin.  Inside ‘*Bmkp List*’, <RET> or ‘f’ calls
 ‘bmkp-list-this-window’, and ‘o’ calls ‘bmkp-list-other-window’.
 
-5.1 Type-Specific Jump Commands
+6.1 Type-Specific Jump Commands
 ===============================
 
 Each bookmark type has its own jump command that offers only bookmarks
@@ -466,7 +479,7 @@ Snippet                ‘C-x j M-w’          ‘C-x 4 j M-w’
 It first asks for the type, then offers only bookmarks of that type.
 Useful when you do not want to remember the type-specific keys.
 
-5.2 ‘find-file’-Style Jumping
+6.2 ‘find-file’-Style Jumping
 =============================
 
 ‘bmkp-find-file’ (‘C-x j C-f’) acts like ‘find-file’, but obeys
@@ -478,7 +491,7 @@ argument it also creates an autofile bookmark for the file.
 t C-f ...’) that filter by tags while reading a file name with
 ‘read-file-name’, so you can browse directories.
 
-5.3 Mode-Specific ‘j’
+6.3 Mode-Specific ‘j’
 =====================
 
 Several modes bind ‘j’ to the corresponding type-specific jump:
@@ -493,7 +506,7 @@ Buffer-menu               Non-file bookmark.
 Dired (‘C-j’)             Dired bookmark whose directory is the current
                           one.
 
-5.4 Tag-Based Jumping
+6.4 Tag-Based Jumping
 =====================
 
 Tag-aware jump commands combine three ideas: which bookmark family
@@ -519,7 +532,7 @@ Command                        Key              Meaning
 
 File: bookmark-plusplus.info,  Node: The Bmkp List Buffer,  Next: Bookmark Types,  Prev: Jumping,  Up: Top
 
-6 The ‘*Bmkp List*’ Buffer
+7 The ‘*Bmkp List*’ Buffer
 **************************
 
 Open it with ‘bmkp-list’ (‘C-x x e’).  This buffer is the heart of the
@@ -528,7 +541,7 @@ highlighting, editing--everything happens here.
 
    Major mode: ‘bmkp-list-mode’, derived from ‘special-mode’.
 
-6.1 Header and Mark Columns
+7.1 Header and Mark Columns
 ===========================
 
 The header shows the current bookmark file and a “title” describing the
@@ -549,7 +562,7 @@ Mark        Meaning
 ‘X’         Temporary--will not be saved.
 ‘*’         Modified since the last save of the bookmark file.
 
-6.2 Primary Navigation
+7.2 Primary Navigation
 ======================
 
 Key         Command                       What it does
@@ -567,7 +580,7 @@ Key         Command                       What it does
                                           from file).
 ‘q’         ‘bmkp-bmenu-quit’             Quit.
 
-6.3 Marking and Flagging
+7.3 Marking and Flagging
 ========================
 
 The marking scheme follows Dired conventions:
@@ -593,7 +606,7 @@ Key         Command                       What it does
    The pair ‘d’/‘x’ flags then executes; ‘D’ deletes the ‘>’-marked
 bookmarks in one step (after confirmation).
 
-6.4 Filtering and Showing
+7.4 Filtering and Showing
 =========================
 
 ‘.’
@@ -605,7 +618,7 @@ bookmarks in one step (after confirmation).
 ‘M-t’
      Toggle the file/buffer location column.
 
-6.4.1 Filter by Type
+7.4.1 Filter by Type
 --------------------
 
 Keys ending in ‘S’ show only bookmarks of one type; the matching ‘M’
@@ -623,7 +636,7 @@ keys mark them instead.  Examples:
      T S    tagged bookmarks         T U    untagged bookmarks
      H S    highlighted bookmarks    - S    omitted bookmarks
 
-6.4.2 Incremental Pattern Matching
+7.4.2 Incremental Pattern Matching
 ----------------------------------
 
 Type ‘P PREFIX REGEXP’ and the display narrows as you type.  Press a
@@ -638,7 +651,7 @@ non-self-inserting key (e.g. <RET>) to commit.
 ‘P T’
      Filter by tag.
 
-6.5 Omitting (vs. Filtering)
+7.5 Omitting (vs. Filtering)
 ============================
 
 Omitting is a stronger form of hiding: omitted bookmarks are hidden from
@@ -651,7 +664,7 @@ every view except the dedicated omit view.
 ‘- U’
      ‘bmkp-unomit-all’--can also be invoked outside ‘*Bmkp List*’.
 
-6.6 Sorting
+7.6 Sorting
 ===========
 
 Repeat ‘s s’ (‘bmkp-bmenu-change-sort-order-repeat’) to cycle through
@@ -673,7 +686,7 @@ Command                        Key         Sort by
    Sorting is governed by option ‘bmkp-sort-comparer’; the built-in
 ‘bookmark-sort-flag’ is ignored.
 
-6.7 Editing
+7.7 Editing
 ===========
 
 Command                        Key         Edits
@@ -686,7 +699,7 @@ Command                        Key         Edits
                                            in ‘<2>’.
 ‘bmkp-bmenu-edit-tags’         ‘T e’       This bookmark's tags.
 
-6.8 Acting on Marked Bookmarks
+7.8 Acting on Marked Bookmarks
 ==============================
 
    • ‘bmkp-bmenu-delete-marked’ (‘D’) deletes them.
@@ -710,7 +723,7 @@ Command                        Key         Edits
      bookmark file from marked bookmarks (*note Multiple Bookmark
      Files::).
 
-6.9 Describe / Inspect
+7.9 Describe / Inspect
 ======================
 
 Command                        Key              Shows
@@ -725,7 +738,7 @@ with ‘C-u’                     ‘C-u C-h         Internal Lisp form.
 ‘bmkp-bmenu-describe-this+move-down’‘C-<down>’  Move + describe.
 ‘bmkp-bmenu-describe-this+move-up’‘C-<up>’      Same, going up.
 
-6.10 Defining Commands From the View
+7.10 Defining Commands From the View
 ====================================
 
 ‘C-c C-c’
@@ -741,13 +754,13 @@ with ‘C-u’                     ‘C-u C-h         Internal Lisp form.
    Defined commands are appended to ‘bmkp-bmenu-commands-file’, which is
 loaded automatically on first opening ‘*Bmkp List*’.
 
-6.11 Preview Mode
+7.11 Preview Mode
 =================
 
 ‘M-p’ (‘bmkp-list-preview-mode’) toggles live preview of the bookmark on
 point.  *Note Live Preview::, for details.
 
-6.12 Casual Menu
+7.12 Casual Menu
 ================
 
 ‘c’ (‘casual-bmkp-tmenu’) opens a Transient-based menu UI if the
@@ -756,7 +769,7 @@ point.  *Note Live Preview::, for details.
 
 File: bookmark-plusplus.info,  Node: Bookmark Types,  Next: Tags,  Prev: The Bmkp List Buffer,  Up: Top
 
-7 Bookmark Types
+8 Bookmark Types
 ****************
 
 A bookmark “type” is really just a “handler”: a function that "jumps to"
@@ -767,7 +780,7 @@ session.  ‘bmkp-jump-to-type’ (‘C-x j :’) lets you pick a type
 interactively.  Predicates of the form ‘bmkp-TYPE-bookmark-p’ recognize
 each type.
 
-7.1 Location / File Bookmarks
+8.1 Location / File Bookmarks
 =============================
 
    • *File / local file / remote file.*  Jumping visits the file.
@@ -781,7 +794,7 @@ each type.
      ‘bmkp-region-jump-narrow-indirect-other-window’ (‘C-x 4 j R’)
      narrows the region into a cloned indirect buffer.
 
-7.2 Autofile Bookmarks
+8.2 Autofile Bookmarks
 ======================
 
 An “autofile” is a bookmark whose name is the non-directory part of its
@@ -791,7 +804,7 @@ options: ‘bmkp-autofile-filecache’ (advise ‘file-cache-add-file’ to also
 create autofiles), ‘bmkp-autofile-access-invokes-bookmark-flag’ (make
 ‘find-file’ also "visit" the autofile, updating its visit count).
 
-7.3 Dired and Dired-Tree Bookmarks
+8.3 Dired and Dired-Tree Bookmarks
 ==================================
 
 A Dired bookmark records:
@@ -808,7 +821,7 @@ bookmark whose components are Dired bookmarks for a directory and its
 descendants.  ‘diredp-do-bookmark-dirs-recursive’ (from ‘dired+.el’)
 creates one for the current Dired buffer.
 
-7.4 Info, ‘man’, EWW, Gnus
+8.4 Info, ‘man’, EWW, Gnus
 ==========================
 
    • *Info.*  ‘bmkp-info-jump’ (‘C-x j i’, or ‘j’ in Info mode).  Mode
@@ -825,7 +838,7 @@ creates one for the current Dired buffer.
      saved by earlier versions of Bookmark+, but opens them in EWW. This
      fork does not create new W3M bookmarks.
 
-7.5 Image Bookmarks
+8.5 Image Bookmarks
 ===================
 
 When you bookmark an image-file target, Emacs's image handler is used
@@ -833,13 +846,13 @@ automatically.  ‘bmkp-image-jump’ (‘C-x j M-i’) jumps to one; the
 description (‘C-h <RET>’) shows the full EXIF metadata (requires
 ‘exiftool’).
 
-7.6 URL Bookmarks
+8.6 URL Bookmarks
 =================
 
 ‘bmkp-url-target-set’ (‘C-x x c u’) and ‘bmkp-url-jump’ (‘C-x j u’).
 The handler is typically ‘browse-url’.
 
-7.7 Desktop Bookmarks
+8.7 Desktop Bookmarks
 =====================
 
 ‘bmkp-set-desktop-bookmark’ (‘C-x x K’) captures a desktop (from
@@ -852,7 +865,7 @@ The handler is typically ‘browse-url’.
    • ‘bmkp-desktop-save-as-last’--add to ‘kill-emacs-hook’ to remember
      the last jumped-to desktop.
 
-7.8 Sequence (Composite) Bookmarks
+8.8 Sequence (Composite) Bookmarks
 ==================================
 
 A “sequence bookmark” invokes each member bookmark in turn.
@@ -861,7 +874,7 @@ and the member bookmark names.  ‘bmkp-bmenu-make-sequence-from-marked’
 turns the marked bookmarks into a sequence in their current order.
 Members may themselves be sequence bookmarks.
 
-7.9 Function and Keyboard-Macro Bookmarks
+8.9 Function and Keyboard-Macro Bookmarks
 =========================================
 
 ‘bmkp-make-function-bookmark’ (‘C-x x c F’) records a function symbol or
@@ -871,14 +884,14 @@ a lambda expression.  With a prefix argument it captures
 sequence bookmark that first invokes another bookmark and then plays the
 macro.
 
-7.10 Variable-List Bookmarks
+8.10 Variable-List Bookmarks
 ============================
 
 ‘bmkp-set-variable-list-bookmark’ records a set of variables and their
 current values.  ‘bmkp-jump-variable-list’ (‘C-x j v’) restores them in
 the bookmark's buffer.
 
-7.11 Snippet Bookmarks
+8.11 Snippet Bookmarks
 ======================
 
 ‘bmkp-set-snippet-bookmark’ (‘C-x x M-w’) saves the active region's text
@@ -886,7 +899,7 @@ under a bookmark name.  At any time, in any Emacs session,
 ‘bmkp-snippet-to-kill-ring’ (‘C-x j M-w’) yanks the saved snippet to the
 kill ring.
 
-7.12 Bookmark-List Bookmarks
+8.12 Bookmark-List Bookmarks
 ============================
 
 A “bookmark-list bookmark” records the state of ‘*Bmkp List*’ (sort
@@ -894,14 +907,14 @@ order, filter, regexp pattern, title, omit list).  Jumping to it
 restores that state.  Defined as either a real bookmark or as a command
 via ‘C-c C-c’ (‘bmkp-bmenu-define-command’).
 
-7.13 Bookmark-File Bookmarks
+8.13 Bookmark-File Bookmarks
 ============================
 
 Created by ‘bmkp-set-bookmark-file-bookmark’ (‘C-x x c y’).  "Jumping"
 to one _loads_ the referenced bookmark file.  With ‘C-u’, jumping
 _switches_ to it.
 
-7.14 Defining Your Own Types
+8.14 Defining Your Own Types
 ============================
 
 Define a handler function and set ‘bookmark-make-record-function’ (or
@@ -915,7 +928,7 @@ of this and also generates a predicate ‘bmkp-TYPE-bookmark-p’ and a
 
 File: bookmark-plusplus.info,  Node: Tags,  Next: Annotations,  Prev: Bookmark Types,  Up: Top
 
-8 Tags
+9 Tags
 ******
 
 A bookmark “tag” is a string (or a string plus a Lisp value) attached to
@@ -924,7 +937,7 @@ tag; one bookmark can have many.  Tags define _sets_ of bookmarks
 (‘blue’, ‘vacation/2024/photos’, ‘todo’, ...) and most Bookmark+
 commands can operate on those sets.
 
-8.1 Adding and Removing Tags
+9.1 Adding and Removing Tags
 ============================
 
 Command                        Global key       Bmenu      Action
@@ -959,7 +972,7 @@ Command                        Global key       Bmenu      Action
 commands treat that as "any tag at all").  Use ‘C-q C-j’ to include a
 newline in a tag.
 
-8.2 Marking by Tag in ‘*Bmkp List*’
+9.2 Marking by Tag in ‘*Bmkp List*’
 ===================================
 
 The tag-based mark and unmark commands live under ‘T m’ / ‘T u’:
@@ -979,7 +992,7 @@ Command                            Key         Marks/unmarks bookmarks
 
    A prefix argument flips "some" / "not all" and "all" / "none."
 
-8.3 Tag Values
+9.3 Tag Values
 ==============
 
 Use ‘bmkp-set-tag-value’ (‘T v’ in ‘*Bmkp List*’) to give a tag any
@@ -993,7 +1006,7 @@ value is a function, that function is called just after
 
    Tag names prefixed with ‘bmkp-’ are reserved.
 
-8.4 Pseudo-Hierarchical Tags
+9.4 Pseudo-Hierarchical Tags
 ============================
 
 A simple convention--tag names that look like paths
@@ -1004,8 +1017,8 @@ to descend the "tree."
 
 File: bookmark-plusplus.info,  Node: Annotations,  Next: Multiple Bookmark Files,  Prev: Tags,  Up: Top
 
-9 Annotations
-*************
+10 Annotations
+**************
 
 An annotation is free-text metadata attached to a bookmark.
 
@@ -1032,8 +1045,8 @@ An annotation is free-text metadata attached to a bookmark.
    • ‘bookmark-automatically-show-annotations’--if non-nil, jumping to a
      bookmark pops up its annotation.
 
-9.1 External Annotations ("Annotation Forwards")
-================================================
+10.1 External Annotations ("Annotation Forwards")
+=================================================
 
 Keep the inline annotation short and "forward" to a file, URL, or
 another bookmark.  Put one of these as the first non-blank line:
@@ -1045,8 +1058,8 @@ another bookmark.  Put one of these as the first non-blank line:
    When you _show_ the annotation, Bookmark+ follows the forward.  When
 you _edit_ it (‘a e’), you still see the literal text.
 
-9.2 Annotation Commands in ‘*Bmkp List*’
-========================================
+10.2 Annotation Commands in ‘*Bmkp List*’
+=========================================
 
 Command                            Key         Meaning
 ---------------------------------------------------------------------------
@@ -1065,7 +1078,7 @@ Command                            Key         Meaning
 
 File: bookmark-plusplus.info,  Node: Multiple Bookmark Files,  Next: Highlighting,  Prev: Annotations,  Up: Top
 
-10 Multiple Bookmark Files
+11 Multiple Bookmark Files
 **************************
 
 A bookmark file is a physical file on disk containing complete bookmark
@@ -1078,7 +1091,7 @@ records.  Bookmark+ makes it easy to:
      ‘bookmark-write’ (‘C-x x w’).
    • Create an empty bookmark file with ‘bmkp-empty-file’ (‘C-x x 0’).
 
-10.1 Switching
+11.1 Switching
 ==============
 
 Command                            Key           Meaning
@@ -1095,7 +1108,7 @@ Command                            Key           Meaning
 ‘bmkp-bmenu-load-marked-bookmark-file-bookmarks’‘M-l’Load every marked
                                                  bookmark-file bookmark.
 
-10.2 Copying / Moving / Creating
+11.2 Copying / Moving / Creating
 ================================
 
 Command                            Key         Meaning
@@ -1105,13 +1118,13 @@ Command                            Key         Meaning
 ‘bmkp-bmenu-move-marked-to-bookmark-file’‘Y > -’Move them.
 ‘bmkp-bmenu-create-bookmark-file-from-marked’‘Y > 0’New file from marked.
 
-10.3 Bookmark-File Bookmarks
+11.3 Bookmark-File Bookmarks
 ============================
 
 Created with ‘bmkp-set-bookmark-file-bookmark’ (‘C-x x c y’).  "Jumping"
 to one _loads_ that bookmark file; with ‘C-u’ it _switches_ to it.
 
-10.4 Default for the Next Session
+11.4 Default for the Next Session
 =================================
 
 The default bookmark file for the next Emacs session is the one in use
@@ -1125,14 +1138,14 @@ independent thereafter.
 
 File: bookmark-plusplus.info,  Node: Highlighting,  Next: Live Preview,  Prev: Multiple Bookmark Files,  Up: Top
 
-11 Highlighting Bookmark Locations
+12 Highlighting Bookmark Locations
 **********************************
 
 Optional--requires ‘bookmark+-lit.el’ on your ‘load-path’.  Bookmark+
 can draw a persistent “highlight” at the position (or region, or line,
 or fringe) of a bookmark in its buffer.
 
-11.1 Styles
+12.1 Styles
 ===========
 
 Style                  Effect
@@ -1154,7 +1167,7 @@ Style                  Effect
 ‘bmkp-light-style-autonamed-region’  ‘region’
 ‘bmkp-light-style-non-autonamed-region’‘region’
 
-11.2 Per-Bookmark Overrides (in ‘*Bmkp List*’)
+12.2 Per-Bookmark Overrides (in ‘*Bmkp List*’)
 ==============================================
 
 Command                            Key         Meaning
@@ -1177,7 +1190,7 @@ to be highlighted.  Returning ‘:no-light’ suppresses the highlight.  The
 sexp may refer to free variables ‘this-bookmark’ and
 ‘this-bookmark-name’.
 
-11.3 Automatic Highlighting
+12.3 Automatic Highlighting
 ===========================
 
    • ‘bmkp-auto-light-when-set’--highlight automatically when a bookmark
@@ -1188,7 +1201,7 @@ sexp may refer to free variables ‘this-bookmark’ and
 ‘non-autonamed-bookmark’, ‘any-bookmark’, ‘autonamed-in-buffer’,
 ‘non-autonamed-in-buffer’, ‘all-in-buffer’, ‘nil’ (off).
 
-11.4 Pulse Highlight on Jump
+12.4 Pulse Highlight on Jump
 ============================
 
 If ‘bmkp-highlight-on-jump-flag’ is non-nil (the default), jumping to a
@@ -1198,13 +1211,13 @@ via the built-in ‘pulse.el’.
 
 File: bookmark-plusplus.info,  Node: Live Preview,  Next: Casual Integration,  Prev: Highlighting,  Up: Top
 
-12 Live Preview
+13 Live Preview
 ***************
 
 Live preview shows the bookmark's destination without committing to a
 jump.  Two surfaces are provided.
 
-12.1 In ‘*Bmkp List*’: ‘bmkp-list-preview-mode’
+13.1 In ‘*Bmkp List*’: ‘bmkp-list-preview-mode’
 ===============================================
 
 A buffer-local minor mode in ‘*Bmkp List*’, modeled on the built-in
@@ -1222,7 +1235,7 @@ A buffer-local minor mode in ‘*Bmkp List*’, modeled on the built-in
 ‘bmkp-list-preview-display-action’ (default: some other window,
 ‘inhibit-same-window’).
 
-12.2 On Demand: ‘C-o’ and <TAB>
+13.2 On Demand: ‘C-o’ and <TAB>
 ===============================
 
 In ‘*Bmkp List*’, ‘C-o’ and <TAB> both invoke
@@ -1230,7 +1243,7 @@ In ‘*Bmkp List*’, ‘C-o’ and <TAB> both invoke
 leaving the cursor in the list buffer.  Useful for one-off peeking
 without entering the full preview mode.
 
-12.3 In the Minibuffer: consult Integration
+13.3 In the Minibuffer: consult Integration
 ===========================================
 
 When the ‘consult’ package is loaded and ‘bmkp-preview-use-consult-flag’
@@ -1246,14 +1259,14 @@ preview as you move through completion candidates.
 
 File: bookmark-plusplus.info,  Node: Casual Integration,  Next: Cycling,  Prev: Live Preview,  Up: Top
 
-13 Casual Integration
+14 Casual Integration
 *********************
 
 The optional file ‘casual-bmkp.el’ provides a discoverable
 Transient-based menu UI for ‘*Bmkp List*’, in the style of the Casual
 suite (https://github.com/kickingvegas/casual).
 
-13.1 Activation
+14.1 Activation
 ===============
 
 Requires the ‘casual-lib’ package (from MELPA, part of the Casual
@@ -1271,7 +1284,7 @@ automatically and binds:
    If ‘casual-lib’ is not installed, Bookmark+ runs unchanged and ‘c’ is
 unbound.
 
-13.2 Menu Layout
+14.2 Menu Layout
 ================
 
 The main menu groups commands by intent: Move, Mark, Delete, Filter and
@@ -1281,14 +1294,14 @@ in-Emacs help (‘?’ in the transient) for the live list.
 
 File: bookmark-plusplus.info,  Node: Cycling,  Next: Automatic Bookmarking,  Prev: Casual Integration,  Up: Top
 
-14 Cycling: the Navigation List
+15 Cycling: the Navigation List
 *******************************
 
 Bookmark+ lets you _cycle_ through a set of bookmarks--like "favorites"
 buttons on a TV remote.  The set being cycled is the “navigation list”
 (navlist).
 
-14.1 Defining the Navlist
+15.1 Defining the Navlist
 =========================
 
 ‘bmkp-choose-navlist-of-type’
@@ -1301,7 +1314,7 @@ buttons on a TV remote.  The set being cycled is the “navigation list”
 the current bookmarks (or of bookmarks for the current file/buffer, for
 the file/buffer-specific cycling keys).
 
-14.2 Cycling Commands
+15.2 Cycling Commands
 =====================
 
 Command                        Forward key          Backward key
@@ -1322,10 +1335,10 @@ Command                        Forward key          Backward key
 
 File: bookmark-plusplus.info,  Node: Automatic Bookmarking,  Next: Autonamed Bookmarks,  Prev: Cycling,  Up: Top
 
-15 Automatic Bookmarking
+16 Automatic Bookmarking
 ************************
 
-15.1 On a Hook
+16.1 On a Hook
 ==============
 
 Add ‘bmkp-set-automatic-bookmark’ to any hook to create a bookmark
@@ -1335,7 +1348,7 @@ whenever that hook runs:
 
    The bookmark created is an autonamed bookmark.
 
-15.2 Idle-Period Bookmarking
+16.2 Idle-Period Bookmarking
 ============================
 
 ‘bmkp-automatic-bookmark-mode’ is a buffer-local minor mode that sets an
@@ -1352,7 +1365,7 @@ is still only created for the currently selected buffer).
      characters) from the nearest existing automatic bookmark.
    • ‘bmkp-automatic-bookmark-set-function’--which command to use.
 
-15.3 Automatic Info Bookmarking
+16.3 Automatic Info Bookmarking
 ===============================
 
 Enable ‘bmkp-info-auto-bookmark-mode’ and every Info node you visit
@@ -1366,7 +1379,7 @@ Elisp / Emacs / ... manuals."
 
 File: bookmark-plusplus.info,  Node: Autonamed Bookmarks,  Next: Temporary Bookmarks,  Prev: Automatic Bookmarking,  Up: Top
 
-16 Autonamed Bookmarks
+17 Autonamed Bookmarks
 **********************
 
 An “autonamed” bookmark is a regular, persistent bookmark whose name is
@@ -1404,13 +1417,13 @@ buffer name within the format.
 
 File: bookmark-plusplus.info,  Node: Temporary Bookmarks,  Next: Bookmark Records,  Prev: Autonamed Bookmarks,  Up: Top
 
-17 Temporary Bookmarks
+18 Temporary Bookmarks
 **********************
 
 A “temporary” bookmark is one that will not be written to the bookmark
 file.  It exists only for the current session.
 
-17.1 Temporary-Bookmarking Mode
+18.1 Temporary-Bookmarking Mode
 ===============================
 
 ‘bmkp-temporary-bookmarking-mode’ (‘M-L’ in ‘*Bmkp List*’) turns on a
@@ -1422,7 +1435,7 @@ minor mode that:
    Every bookmark you create in this mode is therefore session-local.
 The mode-line indicator changes to ‘TEMPORARY Bookmarking’.
 
-17.2 Per-Bookmark Temporary Flag
+18.2 Per-Bookmark Temporary Flag
 ================================
 
 Command                            Key           Meaning
@@ -1436,7 +1449,7 @@ Temporary mark/show commands       ‘X M’ / ‘X    Mark / show only
 ‘bmkp-toggle-autotemp-on-set’      ‘C-x x x’     Toggle: make every new
                                                  bookmark temporary.
 
-17.3 Autotemp Predicates
+18.3 Autotemp Predicates
 ========================
 
 ‘bmkp-autotemp-bookmark-predicates’ is a list of predicates-- typically
@@ -1452,7 +1465,7 @@ current list at once.
 
 File: bookmark-plusplus.info,  Node: Bookmark Records,  Next: Customization,  Prev: Temporary Bookmarks,  Up: Top
 
-18 Bookmark Records
+19 Bookmark Records
 *******************
 
 A bookmark is a list whose ‘car’ is its name (a string) and whose ‘cdr’
@@ -1478,7 +1491,7 @@ writes them.
    *Note Migration::, for why the ‘id’ field exists and how it relates
 to bookmark identity.
 
-18.1 Lookup Helpers
+19.1 Lookup Helpers
 ===================
 
 ‘bmkp-get-bookmark’
@@ -1486,7 +1499,7 @@ to bookmark identity.
 ‘bmkp-get-by-id’
      Find a record by id.  Useful when a bookmark name may have changed.
 
-18.2 Name Uniqueness
+19.2 Name Uniqueness
 ====================
 
 Bookmark names are enforced unique within ‘bookmark-alist’.  Two
@@ -1499,17 +1512,67 @@ mechanisms maintain this:
      ‘bmkp-read-bookmark-file-hook’ and renames any duplicate names
      found in a loaded bookmark file.
 
+19.3 Reading and Writing Bookmark Files
+=======================================
+
+Bookmark files written by this fork are plain printable Lisp.  No
+‘print-circle’ markers, no shared structure: just the bookmark alist as
+a single readable form.
+
+   The format is identical to what built-in ‘bookmark.el’ writes, with
+one extra alist entry per record:
+
+     (id . "20260601T144831-3f5a7c")
+
+   The built-in ignores this entry on read and preserves it on write.
+
+19.3.1 Caveat: the Built-in Strips Metadata on Re-Set
+-----------------------------------------------------
+
+The interop is safe _as long as the built-in does not modify the
+record_.  When the built-in only loads a file, displays it, and saves it
+back, every alist entry that built-in ‘bookmark.el’ does not recognise
+is preserved verbatim -- including the ‘id’, tags, annotation, visit
+count, last-access time, lighting override, and any other Bookmark++
+property.
+
+   However, the built-in's ‘bookmark-set’ (and the commands that call
+it, including ‘C-x r m’) does not _update_ an existing record: it
+_rebuilds_ it from scratch using ‘bookmark-make-record-default’.
+Built-in ‘bookmark-make-record-default’ only knows about the standard
+‘bookmark.el’ properties.  The result: if you have a bookmark named
+‘notes’ carrying Bookmark++ metadata (tags, ‘annotation’, ‘id’, etc.)
+and you re-set it from a vanilla Emacs session via ‘C-x r m notes RET’,
+the new record overwrites the old, and all of those properties are gone.
+When the file is saved next, the metadata is lost on disk too.
+
+   To avoid this:
+
+   • If you have to edit a Bookmark++ file from a vanilla Emacs session,
+     treat it as read-only -- jump to bookmarks, but do not ‘C-x r m’ to
+     update one in place.
+   • If you regularly use both vanilla Emacs and Bookmark++ on the same
+     machine, keep them on _different_ bookmark files.  *Note Multiple
+     Bookmark Files::, for how to switch.
+   • If you accidentally re-set a bookmark from a vanilla session, you
+     can recover from a backup written by Bookmark++ (set
+     ‘bookmark-version-control’ to ‘t’; backups are kept next to the
+     bookmark file as ‘~/.emacs.bmk.~1~’ etc.).
+
+   *Note Migration::, for the rationale behind the ‘id’ field and the
+file-format simplification.
+
 
 File: bookmark-plusplus.info,  Node: Customization,  Next: Migration,  Prev: Bookmark Records,  Up: Top
 
-19 Customization
+20 Customization
 ****************
 
 Run ‘M-x customize-group RET bookmark-plus RET’ for the full customize
 interface.  This section enumerates the most commonly tweaked options.
 Many more are listed in ‘customize-group’.
 
-19.1 Bookmark Naming and Properties
+20.1 Bookmark Naming and Properties
 ===================================
 
 ‘bmkp-new-bookmark-default-names’
@@ -1525,7 +1588,7 @@ Many more are listed in ‘customize-group’.
      If non-nil, update the recorded position to the actual destination
      after a relocated jump.
 
-19.2 Tags
+20.2 Tags
 =========
 
 ‘bmkp-prompt-for-tags-flag’
@@ -1534,7 +1597,7 @@ Many more are listed in ‘customize-group’.
      Which tags are completion candidates: ‘current’ (the default), a
      list of specific tags, or a list of bookmark files.
 
-19.3 Annotations
+20.3 Annotations
 ================
 
 ‘bookmark-automatically-show-annotations’
@@ -1543,7 +1606,7 @@ Many more are listed in ‘customize-group’.
 ‘bmkp-annotation-modes-inherit-from’
      Major mode for the annotation edit buffer (default ‘org-mode’).
 
-19.4 Sorting
+20.4 Sorting
 ============
 
 ‘bmkp-sort-comparer’
@@ -1552,7 +1615,7 @@ Many more are listed in ‘customize-group’.
 ‘bmkp-sort-orders-for-cycling-alist’
      The orders cycled by ‘s s’.
 
-19.5 ‘*Bmkp List*’ State
+20.5 ‘*Bmkp List*’ State
 ========================
 
 ‘bmkp-bmenu-state-file’
@@ -1561,7 +1624,7 @@ Many more are listed in ‘customize-group’.
      Where defined commands are appended (‘C-c C-c’, ‘C-c C-S-c’, ‘C-c
      C-j’).
 
-19.6 Bookmark Files
+20.6 Bookmark Files
 ===================
 
 ‘bmkp-last-as-first-bookmark-file’
@@ -1575,7 +1638,7 @@ Many more are listed in ‘customize-group’.
      (Built-in.)  Recommended ‘t’ so Bookmark+'s save-time backups
      accumulate cleanly.
 
-19.7 Live Preview
+20.7 Live Preview
 =================
 
 ‘bmkp-preview-use-consult-flag’
@@ -1584,7 +1647,7 @@ Many more are listed in ‘customize-group’.
 ‘bmkp-list-preview-display-action’
      ‘display-buffer’ action used by ‘bmkp-list-preview-mode’.
 
-19.8 Highlighting
+20.8 Highlighting
 =================
 
 ‘bmkp-light-style-autonamed’
@@ -1612,30 +1675,167 @@ Many more are listed in ‘customize-group’.
 
 File: bookmark-plusplus.info,  Node: Migration,  Next: GNU GPL,  Prev: Customization,  Up: Top
 
-20 Migration from Upstream Bookmark+
+21 Migration from Upstream Bookmark+
 ************************************
 
 This is a fork of Drew Adams' Bookmark+, modernized for Emacs 30+.  If
 you are coming from the original, here is what changed.
 
-20.1 Sibling, Not Replacement
+21.1 Sibling, Not Replacement
 =============================
 
 Upstream Bookmark+ _replaced_ many built-in ‘bookmark.el’ functions in
-place, using a ‘bmkp-full-record’ text-property trick to support
-multiple bookmarks with the same name.
+place: ‘bookmark-set’, ‘bookmark-store’, ‘bookmark-get-bookmark’, the
+bmenu rendering, and more.  The replacements were richer, but they also
+tightly coupled Bookmark+ to every change in the built-in.
 
-   This fork is an *additive sibling* of the built-in.  No built-in
-function is redefined.  Every Bookmark+ command lives under the ‘bmkp-’
-prefix.  Both systems coexist and operate on the same ‘bookmark-alist’
-and on-disk bookmark file.
+   This fork is an *additive sibling*.  No built-in function is
+redefined.  Every command lives under the ‘bmkp-’ prefix.  Both systems
+coexist and operate on the same ‘bookmark-alist’ and the same on-disk
+bookmark file; you can call either at any time.
 
-   The ‘bmkp-full-record’ text-property trick is gone.  The same use
-cases (autofiles with the same basename in different directories) work
-via auto-disambiguation: ‘README.md’, ‘README.md<2>’, ‘README.md<3>’,
-...
+   The architectural change that made this possible is the new ‘id’
+field, described next.
 
-20.2 No Compatibility Aliases
+21.2 The ‘id’ Field: Identity in This Fork
+==========================================
+
+The single most important difference between this fork and upstream
+Bookmark+ is how bookmarks are identified internally.  Understanding
+this matters if you write Emacs Lisp that manipulates bookmarks; it
+matters less for interactive use.
+
+21.2.1 What Upstream Did
+------------------------
+
+The user-visible effect upstream achieved was simple: *two bookmarks
+could have the exact same display name*.  This was useful for the
+“autofile” pattern -- creating bookmarks named after files (e.g. many
+‘README.md’ files, one per project), all sharing the same short name.
+
+   Internally, upstream got this by attaching a hidden tag to each
+bookmark's name string.  Even though two name strings displayed as the
+same text, they carried different hidden tags pointing to different
+records, so the code could still tell them apart.  Emacs calls these
+hidden tags “text properties” on strings; the specific tag was called
+‘bmkp-full-record’.
+
+   The same hidden-tag trick also bought upstream three pieces of
+internal speed and convenience that did not affect what the user saw,
+but mattered to the implementation:
+
+  1. Going from a name to its record was a single hidden-tag read
+     instead of a search through the bookmark list.
+  2. Programs holding an old name string still worked after the bookmark
+     was renamed in the list -- the hidden tag still pointed at the same
+     record.
+  3. Each row in ‘*Bmkp List*’ carried its own record in the hidden tag
+     of the displayed name, so the bmenu code didn't need to look up the
+     name to find the record.
+
+   The cost was paid in the on-disk file format.  Hidden tags on shared
+strings can only be saved if Emacs is told to preserve shared-structure
+(‘print-circle’); the resulting bookmark file contained markers like
+‘#1=#1#’.  Files written this way could not be safely read and
+re-written by Emacs's built-in ‘bookmark.el’, which does not turn on
+shared-structure preservation when it writes.
+
+21.2.2 What This Fork Does
+--------------------------
+
+Every bookmark record carries an opaque ‘(id . STRING)’ property:
+
+     ("README.md"
+      (id . "20260601T144831-3f5a7c")
+      (filename . "/home/me/proj/README.md")
+      (position . 1234)
+      ...)
+
+   The id is generated by ‘bookmark-make-record-default’ at record
+creation time.  It uses ‘format-time-string’ plus a few random hex bits,
+giving an opaque, sortable, collision-resistant key.  Records read from
+a file that lack an id (written by built-in ‘bookmark.el’ or older
+Bookmark+) have one generated at load time, and the alist is marked
+dirty so the next save persists them.
+
+   Names are now enforced unique within ‘bookmark-alist’ by
+auto-disambiguation: if ‘bmkp-store’ is asked to create a new bookmark
+whose name collides with an existing one, the new bookmark is renamed
+‘foo’ ⇒ ‘foo<2>’ ⇒ ‘foo<3>’ ⇒ ... before being added.  Files written by
+older versions with duplicate names are deduplicated on load by
+‘bmkp-deduplicate-bookmark-names’.
+
+21.2.3 What Changed in Practice
+-------------------------------
+
+Compared with upstream:
+
+Capability                       This fork
+--------------------------------------------------------------------------
+Display-identical duplicate      Auto-disambiguated as ‘foo’, ‘foo<2>’,
+names                            ...
+Looking up a record from its     Search through the list (was a
+name                             constant-time tag read)
+Programs holding a name across   Should hold the ‘id’ instead (see
+a rename                         Practical Guidance)
+Each ‘*Bmkp List*’ row as its    Read the line, then look up the name
+own record handle
+
+   The first row is the only user-visible change.  An autofile use case
+(many ‘README.md’ in different directories) that previously showed two
+identical-looking rows now shows ‘README.md’ and ‘README.md<2>’.  The
+behavior is the same; the visual is different.
+
+   The other three rows are invisible to interactive users.
+Programmatic callers may need adjustment -- see Practical Guidance
+below.
+
+21.2.4 What This Fork Gained
+----------------------------
+
+   • *Plain printable file format.*  No ‘print-circle’ markers, no
+     shared-structure tricks.  Bookmark files are valid input to ‘read’
+     under any settings.  About 300-400 lines of property machinery,
+     file-write gymnastics, and "maybe-unpropertize" helpers were
+     deleted from the source.
+   • *Interop with the built-in.*  A file written by this fork is read
+     by built-in ‘bookmark.el’; a file written by the built-in is read
+     by this fork (and the ‘bmkp-read-bookmark-file-hook’ backfills any
+     missing ‘id’ fields at load time).  Records the built-in does not
+     modify are written back unchanged.  See *note Round Trip Caveat::,
+     for the one important caveat when the built-in _modifies_ a record.
+   • *The sibling architecture itself.*  Without giving up the
+     hidden-tag trick, this fork could not stop redefining
+     ‘bookmark-store’, ‘bookmark-get-bookmark’, and friends.  The id
+     field made the sibling design possible.
+   • *Identity that survives rename.*  The id lives in the record, so
+     renaming a bookmark in place preserves the id.  Sequence bookmarks
+     and bookmark-list bookmarks can safely reference their components
+     by id rather than by name.
+
+21.2.5 Practical Guidance for Lisp Callers
+------------------------------------------
+
+If you write Emacs Lisp that holds a reference to a bookmark across
+edits, renames, file reloads, or sessions: *hold the id, not the name*.
+The name is a display label and may change at any time; the id is
+stable.
+
+     ;; Save:
+     (let ((id (bookmark-prop-get "my-bookmark" 'id)))
+       ;; ... stash id somewhere ...
+       )
+
+     ;; Retrieve later, even if "my-bookmark" was renamed:
+     (let ((rec (bmkp-get-by-id stored-id)))
+       (when rec
+         (bmkp-jump (bookmark-name-from-full-record rec))))
+
+   For ad-hoc interactive use the name is fine; the rename window is
+small and the consequences of staleness are usually just a ‘No such
+bookmark’ error.
+
+21.3 No Compatibility Aliases
 =============================
 
 Where this fork renamed an upstream symbol (for example, the bmenu
@@ -1647,14 +1847,14 @@ always refer to the built-in.
    If you had user code that called ‘bookmark-bmenu-foo’, point it at
 the corresponding ‘bmkp-list-foo’ or ‘bmkp-bmenu-foo’.
 
-20.3 Emacs 30 or Newer Required
+21.4 Emacs 30 or Newer Required
 ===============================
 
 Loading the package on Emacs < 30 signals an error at load time.  Many
 polyfills for older Emacs (cl-puthash dispatch, find-tag-default
 fallbacks, Emacs-21 fringe-style guards, ...) have been deleted.
 
-20.4 Dropped External Dependencies
+21.5 Dropped External Dependencies
 ==================================
 
 Replaced with built-in equivalents:
@@ -1680,14 +1880,14 @@ integration
 
    ‘dired+.el’ is still recognised as an optional dependency.
 
-20.5 File Format
+21.6 File Format
 ================
 
 Bookmark files are now plain printable Lisp--no ‘print-circle’/‘#1=#1#’
 markers, no ‘bmkp-full-record’ text property on names.  Files round-trip
 through built-in ‘bookmark.el’ losslessly.
 
-20.6 New Capabilities
+21.7 New Capabilities
 =====================
 
    • Live preview in ‘*Bmkp List*’ via ‘bmkp-list-preview-mode’ (*Note
@@ -1813,12 +2013,15 @@ Concept Index
 * automatic bookmarking:                 Automatic Bookmarking.
                                                               (line   6)
 * autonamed bookmarks:                   Autonamed Bookmarks. (line   6)
+* bmkp-full-record (upstream):           Migration.           (line  28)
 * bmkp-list-mode:                        The Bmkp List Buffer.
                                                               (line   6)
 * bookmark browse buffer:                The Bmkp List Buffer.
                                                               (line   6)
 * bookmark file:                         Concepts.            (line   6)
+* bookmark file, format:                 Bookmark Records.    (line  53)
 * bookmark files, tutorial:              Tutorial.            (line 116)
+* bookmark identity:                     Migration.           (line  28)
 * bookmark list:                         Concepts.            (line   6)
 * bookmark record format:                Bookmark Records.    (line   6)
 * bookmark types:                        Bookmark Types.      (line   6)
@@ -1829,7 +2032,8 @@ Concept Index
 * bookmark-jump override:                Standard Keys.       (line   6)
 * bookmark-list bookmarks:               Bookmark Types.      (line 136)
 * bookmark-list display:                 Concepts.            (line   6)
-* Bookmark++ versus bookmark.el:         Introduction.        (line   6)
+* Bookmark+ versus bookmark.el:          Introduction.        (line   6)
+* Bookmark++ and to Bookmark+:           Preface.             (line   6)
 * bookmarking without visiting:          Setting Bookmarks.   (line  46)
 * C-x r b:                               Standard Keys.       (line   6)
 * Casual:                                Casual Integration.  (line   6)
@@ -1850,11 +2054,11 @@ Concept Index
 * desktop bookmarks:                     Bookmark Types.      (line  89)
 * differences from upstream:             Migration.           (line   6)
 * Dired bookmarks:                       Bookmark Types.      (line  41)
-* dropped dependencies:                  Migration.           (line  48)
+* dropped dependencies:                  Migration.           (line 185)
 * editing bookmarks:                     The Bmkp List Buffer.
                                                               (line 160)
-* Emacs 30 requirement:                  Migration.           (line  41)
-* file format:                           Migration.           (line  74)
+* Emacs 30 requirement:                  Migration.           (line 178)
+* file format:                           Migration.           (line 211)
 * filter by type:                        The Bmkp List Buffer.
                                                               (line  92)
 * filtering:                             The Bmkp List Buffer.
@@ -1866,15 +2070,17 @@ Concept Index
                                                               (line  54)
 * flags:                                 The Bmkp List Buffer.
                                                               (line  15)
-* fork of Bookmark+:                     Introduction.        (line   6)
+* fork of Bookmark+:                     Preface.             (line   6)
 * header line:                           The Bmkp List Buffer.
                                                               (line  15)
 * hierarchical tags:                     Tags.                (line  84)
 * highlighting bookmarks:                Highlighting.        (line   6)
+* id field:                              Migration.           (line  28)
 * id property:                           Bookmark Records.    (line  19)
 * image bookmarks:                       Bookmark Types.      (line  75)
 * incremental filtering:                 The Bmkp List Buffer.
                                                               (line 110)
+* interop warning:                       Bookmark Records.    (line  67)
 * introduction:                          Introduction.        (line   6)
 * jumping:                               Jumping.             (line   6)
 * jumping, tutorial:                     Tutorial.            (line  57)
@@ -1885,6 +2091,7 @@ Concept Index
                                                               (line  54)
 * marks:                                 The Bmkp List Buffer.
                                                               (line  15)
+* metadata loss:                         Bookmark Records.    (line  67)
 * migration:                             Migration.           (line   6)
 * mode-specific j bindings:              Jumping.             (line  56)
 * multiple bookmark files:               Multiple Bookmark Files.
@@ -1894,21 +2101,23 @@ Concept Index
                                                               (line  36)
 * navigation list:                       Cycling.             (line   6)
 * navlist:                               Cycling.             (line   6)
-* new capabilities:                      Migration.           (line  81)
-* no compat aliases:                     Migration.           (line  29)
+* new capabilities:                      Migration.           (line 218)
+* no compat aliases:                     Migration.           (line 166)
 * omitting:                              The Bmkp List Buffer.
                                                               (line 125)
 * opening *Bmkp List*, tutorial:         Tutorial.            (line  25)
+* preface:                               Preface.             (line   6)
 * prefix keys:                           Prefix Keys.         (line   6)
 * preview:                               Live Preview.        (line   6)
 * preview mode:                          Live Preview.        (line  12)
 * preview mode, in *Bmkp List*:          The Bmkp List Buffer.
                                                               (line 228)
 * preview mode, tutorial:                Tutorial.            (line 107)
-* relationship to bookmark.el:           Introduction.        (line  62)
+* relationship to bookmark.el:           Introduction.        (line  33)
+* round-trip:                            Bookmark Records.    (line  67)
 * sequence bookmarks:                    Bookmark Types.      (line 102)
 * setting bookmarks:                     Setting Bookmarks.   (line   6)
-* sibling design:                        Introduction.        (line  62)
+* sibling design:                        Introduction.        (line  33)
 * sibling design <1>:                    Migration.           (line  12)
 * snippet bookmarks:                     Bookmark Types.      (line 128)
 * sorting:                               The Bmkp List Buffer.
@@ -1931,33 +2140,35 @@ Concept Index
 
 Tag Table:
 Node: Top694
-Node: Introduction3323
-Node: Tutorial7300
-Node: Concepts11182
-Node: Prefix Keys12407
-Node: Standard Keys13801
-Node: Setting Bookmarks14709
-Node: Jumping17809
-Node: The Bmkp List Buffer22190
-Node: Bookmark Types32343
-Node: Tags38881
-Node: Annotations43434
-Node: Multiple Bookmark Files45997
-Node: Highlighting48694
-Node: Live Preview51903
-Node: Casual Integration53778
-Node: Cycling54922
-Node: Automatic Bookmarking56650
-Node: Autonamed Bookmarks58262
-Node: Temporary Bookmarks59927
-Node: Bookmark Records61864
-Node: Customization63743
-Node: Migration67484
-Node: GNU GPL71265
-Node: Key Index72107
-Node: Command Index72226
-Node: Variable Index73167
-Node: Concept Index76096
+Node: Preface3369
+Node: Introduction5727
+Node: Tutorial7875
+Node: Concepts11757
+Node: Prefix Keys12982
+Node: Standard Keys14376
+Node: Setting Bookmarks15284
+Node: Jumping18384
+Node: The Bmkp List Buffer22765
+Node: Bookmark Types32918
+Node: Tags39456
+Node: Annotations44009
+Node: Multiple Bookmark Files46578
+Node: Highlighting49275
+Node: Live Preview52484
+Node: Casual Integration54359
+Node: Cycling55503
+Node: Automatic Bookmarking57231
+Node: Autonamed Bookmarks58843
+Node: Temporary Bookmarks60508
+Node: Bookmark Records62445
+Ref: Round Trip Caveat64791
+Node: Customization66668
+Node: Migration70409
+Node: GNU GPL80455
+Node: Key Index81297
+Node: Command Index81416
+Node: Variable Index82357
+Node: Concept Index85286
 
 End Tag Table
 

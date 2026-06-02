@@ -55,6 +55,7 @@ Bookmark+ and want a summary of what changed in this fork.
 @end ifnottex
 
 @menu
+* Preface::                     What this fork is.
 * Introduction::                What Bookmark++ is and how it relates to @file{bookmark.el}.
 * Tutorial::                    A guided first session.
 * Concepts::                    The bookmark list, file, and display.
@@ -1581,6 +1582,68 @@ collides with an existing one, the new bookmark is auto-renamed
 found in a loaded bookmark file.
 @end itemize
 
+@section Reading and Writing Bookmark Files
+@cindex bookmark file, format
+
+Bookmark files written by this fork are plain printable Lisp.  No
+@code{print-circle} markers, no shared structure: just the bookmark
+alist as a single readable form.
+
+The format is identical to what built-in @file{bookmark.el} writes,
+with one extra alist entry per record:
+
+@example
+(id . "20260601T144831-3f5a7c")
+@end example
+
+The built-in ignores this entry on read and preserves it on write.
+
+@anchor{Round Trip Caveat}
+@subsection Caveat: the Built-in Strips Metadata on Re-Set
+@cindex round-trip
+@cindex metadata loss
+@cindex interop warning
+
+The interop is safe @emph{as long as the built-in does not modify
+the record}.  When the built-in only loads a file, displays it, and
+saves it back, every alist entry that built-in @file{bookmark.el}
+does not recognise is preserved verbatim --- including the
+@code{id}, tags, annotation, visit count, last-access time, lighting
+override, and any other Bookmark++ property.
+
+However, the built-in's @code{bookmark-set} (and the commands that
+call it, including @kbd{C-x r m}) does not @emph{update} an existing
+record: it @emph{rebuilds} it from scratch using
+@code{bookmark-make-record-default}.  Built-in
+@code{bookmark-make-record-default} only knows about the standard
+@file{bookmark.el} properties.  The result: if you have a bookmark
+named @samp{notes} carrying Bookmark++ metadata (tags,
+@code{annotation}, @code{id}, etc.) and you re-set it from a vanilla
+Emacs session via @kbd{C-x r m notes RET}, the new record overwrites
+the old, and all of those properties are gone.  When the file is
+saved next, the metadata is lost on disk too.
+
+To avoid this:
+
+@itemize
+@item
+If you have to edit a Bookmark++ file from a vanilla Emacs session,
+treat it as read-only --- jump to bookmarks, but do not @kbd{C-x r m}
+to update one in place.
+@item
+If you regularly use both vanilla Emacs and Bookmark++ on the same
+machine, keep them on @emph{different} bookmark files.
+@xref{Multiple Bookmark Files}, for how to switch.
+@item
+If you accidentally re-set a bookmark from a vanilla session, you
+can recover from a backup written by Bookmark++ (set
+@code{bookmark-version-control} to @code{t}; backups are kept next
+to the bookmark file as @samp{~/.emacs.bmk.~1~} etc.).
+@end itemize
+
+@xref{Migration}, for the rationale behind the @code{id} field and
+the file-format simplification.
+
 
 @node Customization
 @chapter Customization
@@ -1710,18 +1773,172 @@ you are coming from the original, here is what changed.
 @cindex sibling design
 
 Upstream Bookmark+ @emph{replaced} many built-in @file{bookmark.el}
-functions in place, using a @code{bmkp-full-record} text-property trick
-to support multiple bookmarks with the same name.
+functions in place: @code{bookmark-set}, @code{bookmark-store},
+@code{bookmark-get-bookmark}, the bmenu rendering, and more.  The
+replacements were richer, but they also tightly coupled Bookmark+ to
+every change in the built-in.
 
-This fork is an @strong{additive sibling} of the built-in.  No built-in
-function is redefined.  Every Bookmark+ command lives under the
-@code{bmkp-} prefix.  Both systems coexist and operate on the same
-@code{bookmark-alist} and on-disk bookmark file.
+This fork is an @strong{additive sibling}.  No built-in function is
+redefined.  Every command lives under the @code{bmkp-} prefix.  Both
+systems coexist and operate on the same @code{bookmark-alist} and the
+same on-disk bookmark file; you can call either at any time.
 
-The @code{bmkp-full-record} text-property trick is gone.  The same
-use cases (autofiles with the same basename in different directories)
-work via auto-disambiguation: @samp{README.md}, @samp{README.md<2>},
-@samp{README.md<3>}, @dots{}
+The architectural change that made this possible is the new
+@code{id} field, described next.
+
+
+@section The @code{id} Field: Identity in This Fork
+@cindex @code{id} field
+@cindex bookmark identity
+@cindex @code{bmkp-full-record} (upstream)
+
+The single most important difference between this fork and upstream
+Bookmark+ is how bookmarks are identified internally.  Understanding
+this matters if you write Emacs Lisp that manipulates bookmarks; it
+matters less for interactive use.
+
+@subsection What Upstream Did
+
+The user-visible effect upstream achieved was simple: @strong{two
+bookmarks could have the exact same display name}.  This was useful
+for the @dfn{autofile} pattern --- creating bookmarks named after
+files (e.g.@: many @samp{README.md} files, one per project), all
+sharing the same short name.
+
+Internally, upstream got this by attaching a hidden tag to each
+bookmark's name string.  Even though two name strings displayed as
+the same text, they carried different hidden tags pointing to
+different records, so the code could still tell them apart.  Emacs
+calls these hidden tags @dfn{text properties} on strings; the
+specific tag was called @code{bmkp-full-record}.
+
+The same hidden-tag trick also bought upstream three pieces of
+internal speed and convenience that did not affect what the user
+saw, but mattered to the implementation:
+
+@enumerate
+@item
+Going from a name to its record was a single hidden-tag read
+instead of a search through the bookmark list.
+@item
+Programs holding an old name string still worked after the bookmark
+was renamed in the list --- the hidden tag still pointed at the
+same record.
+@item
+Each row in @file{*Bmkp List*} carried its own record in the hidden
+tag of the displayed name, so the bmenu code didn't need to look up
+the name to find the record.
+@end enumerate
+
+The cost was paid in the on-disk file format.  Hidden tags on
+shared strings can only be saved if Emacs is told to preserve
+shared-structure (@code{print-circle}); the resulting bookmark file
+contained markers like @samp{#1=#1#}.  Files written this way could
+not be safely read and re-written by Emacs's built-in
+@file{bookmark.el}, which does not turn on shared-structure
+preservation when it writes.
+
+@subsection What This Fork Does
+
+Every bookmark record carries an opaque @code{(id . STRING)}
+property:
+
+@example
+("README.md"
+ (id . "20260601T144831-3f5a7c")
+ (filename . "/home/me/proj/README.md")
+ (position . 1234)
+ @dots{})
+@end example
+
+The id is generated by @code{bookmark-make-record-default} at record
+creation time.  It uses @code{format-time-string} plus a few random
+hex bits, giving an opaque, sortable, collision-resistant key.
+Records read from a file that lack an id (written by built-in
+@file{bookmark.el} or older Bookmark+) have one generated at load
+time, and the alist is marked dirty so the next save persists them.
+
+Names are now enforced unique within @code{bookmark-alist} by
+auto-disambiguation: if @code{bmkp-store} is asked to create a new
+bookmark whose name collides with an existing one, the new bookmark
+is renamed @samp{foo} @result{} @samp{foo<2>} @result{}
+@samp{foo<3>} @result{} @dots{} before being added.  Files written
+by older versions with duplicate names are deduplicated on load by
+@code{bmkp-deduplicate-bookmark-names}.
+
+@subsection What Changed in Practice
+
+Compared with upstream:
+
+@multitable @columnfractions .45 .55
+@headitem Capability @tab This fork
+@item Display-identical duplicate names           @tab Auto-disambiguated as @samp{foo}, @samp{foo<2>}, @dots{}
+@item Looking up a record from its name           @tab Search through the list (was a constant-time tag read)
+@item Programs holding a name across a rename     @tab Should hold the @code{id} instead (see Practical Guidance)
+@item Each @file{*Bmkp List*} row as its own record handle @tab Read the line, then look up the name
+@end multitable
+
+The first row is the only user-visible change.  An autofile use case
+(many @samp{README.md} in different directories) that previously
+showed two identical-looking rows now shows @samp{README.md} and
+@samp{README.md<2>}.  The behavior is the same; the visual is
+different.
+
+The other three rows are invisible to interactive users.
+Programmatic callers may need adjustment --- see Practical Guidance
+below.
+
+@subsection What This Fork Gained
+
+@itemize
+@item
+@strong{Plain printable file format.}  No @code{print-circle}
+markers, no shared-structure tricks.  Bookmark files are valid input
+to @code{read} under any settings.  About 300--400 lines of property
+machinery, file-write gymnastics, and ``maybe-unpropertize''
+helpers were deleted from the source.
+@item
+@strong{Interop with the built-in.}  A file written by this fork is
+read by built-in @file{bookmark.el}; a file written by the built-in
+is read by this fork (and the @code{bmkp-read-bookmark-file-hook}
+backfills any missing @code{id} fields at load time).  Records the
+built-in does not modify are written back unchanged.  See @ref{Round
+Trip Caveat}, for the one important caveat when the built-in
+@emph{modifies} a record.
+@item
+@strong{The sibling architecture itself.}  Without giving up the
+hidden-tag trick, this fork could not stop redefining
+@code{bookmark-store}, @code{bookmark-get-bookmark}, and friends.
+The id field made the sibling design possible.
+@item
+@strong{Identity that survives rename.}  The id lives in the
+record, so renaming a bookmark in place preserves the id.  Sequence
+bookmarks and bookmark-list bookmarks can safely reference their
+components by id rather than by name.
+@end itemize
+
+@subsection Practical Guidance for Lisp Callers
+
+If you write Emacs Lisp that holds a reference to a bookmark across
+edits, renames, file reloads, or sessions: @strong{hold the id, not
+the name}.  The name is a display label and may change at any time;
+the id is stable.
+
+@example
+;; Save:
+(let ((id (bookmark-prop-get "my-bookmark" 'id)))
+  ;; @dots{} stash id somewhere @dots{}
+  )
+
+;; Retrieve later, even if "my-bookmark" was renamed:
+(let ((rec (bmkp-get-by-id stored-id)))
+  (when rec
+    (bmkp-jump (bookmark-name-from-full-record rec))))
+@end example
+
+For ad-hoc interactive use the name is fine; the rename window is
+small and the consequences of staleness are usually just a
+@samp{No such bookmark} error.
 
 @section No Compatibility Aliases
 @cindex no compat aliases
