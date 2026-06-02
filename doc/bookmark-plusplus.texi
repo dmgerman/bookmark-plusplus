@@ -7,8 +7,8 @@
 @c %**end of header
 
 @copying
-This manual documents Bookmark++, a fork and modernization of Drew
-Adams' Bookmark+ package, targeting GNU Emacs 30 and later.
+This manual documents Bookmark++, a fork of Drew
+Adams' Bookmark+ package, updated for GNU Emacs 30 and later.
 
 Copyright @copyright{} 2000--2025 Drew Adams (original Bookmark+ code).
 Manual text by the Bookmark++ contributors, derived in part from the
@@ -39,14 +39,17 @@ later version published by the Free Software Foundation.
 @node Top
 @top Bookmark++
 
-Bookmark++ extends Emacs's built-in @file{bookmark.el} with over 70
-bookmark types, tagging, a rich @file{*Bmkp List*} browse buffer,
-multiple bookmark files, region bookmarks, persistent per-bookmark
-highlighting, live preview, and more.
+Bookmark++ is a fork of Drew Adams' Bookmark+ package, updated for GNU
+Emacs 30 and later.  As the original Bookmark+, Bookmark++ extends the
+built-in functionality of @file{bookmark.el} with over 70 bookmark
+types, tagging, a rich @file{*Bmkp List*} browse buffer, multiple
+bookmark files, region bookmarks, persistent per-bookmark highlighting,
+live preview, and more.
 
 This manual is for users of GNU Emacs 30 or later.  It assumes you are
 already familiar with the basics of GNU Emacs (buffers, files, keymaps,
-the minibuffer).
+the minibuffer).  @xref{Migration}, if you are coming from upstream
+Bookmark+ and want a summary of what changed in this fork.
 
 @insertcopying
 @end ifnottex
@@ -80,18 +83,61 @@ the minibuffer).
 @end menu
 
 
+@node Preface
+@chapter Preface
+@cindex preface
+@cindex Bookmark++ and to Bookmark+
+@cindex fork of Bookmark+
+
+@dfn{Bookmark++} is a fork of Drew Adams' Bookmark+ package, modernized
+for GNU Emacs 30 and later. 
+Bookmark+ supports the entire span of GNU Emacs from
+version 20 through 26 — a quarter-century of Emacs history.  To run
+on each release the source carried many conditional execution paths, many fallback
+implementations of functions that became built-in years later,
+runtime probes for keymaps and faces that were not always present,
+and duplicated @code{defcustom} forms with different @code{:type}
+widgets for each Emacs generation.  This fork simplifies it. It requires GNU
+Emacs 30 or later and uses many of the modern built-ins that replaced coded functionality in Bookmark+.
+
+Upstream Bookmark+ shipped with two notable third-party integrations
+that no longer match how most users work in Emacs 30: a deep tie-in to
+Drew Adams' Icicles completion framework, and an active integration with
+@code{emacs-w3m} (a popular external web browser in the mid-2000s).
+This fork drops both.  In place of Icicles, Bookmark++ uses plain
+@code{completing-read} everywhere and assumes the user brings their own
+modern completion stack on top --- @code{vertico} and @code{consult}
+with @code{marginalia} and @code{orderless}, or @code{helm}, or
+@code{ivy}, all work without any package-specific glue (and
+@code{consult-bookmark} adds live preview for free; @pxref{Live
+Preview}).  In place of @code{emacs-w3m}, Bookmark++ uses the built-in
+@code{eww} browser: legacy W3M bookmarks saved by older sessions are
+still recognised by @code{bmkp-w3m-jump}, but their handler routes them
+through @code{bmkp-jump-eww} so they keep working, and no new W3M
+bookmarks are created.  This fork also adds an optional Casual Transient
+menu.  @xref{Migration}, for the complete change list.
+
+The goal of this fork is to retain the original functionality of
+Bookmark+.  The only major exception is that it does not replace the
+bookmark package by replacing its functionality. Instead, it provides
+functions that are equivalent to it.  For example, @code{bmkp-list} and
+@code{bmkp-jump} instead of redefining @code{bookmark-list} and
+@code{bookmark-jump}. This way, both packages can coexist.  In fact, 
+built-in Bookmark can read bookmark files created by Bookmark+ and vice-versa.
+
+
 @node Introduction
 @chapter Introduction
 @cindex introduction
-@cindex Bookmark++ versus @file{bookmark.el}
+@cindex Bookmark+ versus @file{bookmark.el}
 
-@dfn{Bookmark++} (this fork) is a substantial extension of GNU Emacs's
-built-in @file{bookmark.el}.  It keeps every concept from built-in
+Bookmark+ is a substantial extension of GNU Emacs's built-in
+@file{bookmark.el}.  It keeps every concept from built-in
 bookmarks---named, persistent placeholders into files, buffers, Info
 nodes, and so on---but makes bookmarks useful as persistent records,
 not just saved positions.
 
-Bookmark++ enlarges built-in bookmarks in three directions:
+Bookmark+ enlarges built-in bookmarks in three directions:
 
 @enumerate
 @item
@@ -102,7 +148,7 @@ they remember where they were even when the file has been edited.
 
 @item
 @strong{More kinds of bookmarks.}  In addition to bookmarks that ``go''
-to a location, Bookmark++ ships over 70 bookmark types: Dired buffers,
+to a location, Bookmark+ ships over 70 bookmark types: Dired buffers,
 Info nodes, Gnus articles, EWW pages, @command{man} pages, image files,
 URLs, desktops, keyboard macros, sets of variables, snippets of text,
 sequences of other bookmarks, whole bookmark files, and more.
@@ -118,16 +164,16 @@ cycle through arbitrary sets of bookmarks (``the navigation list'').
 
 @cindex sibling design
 @cindex relationship to @file{bookmark.el}
-@strong{Bookmark++ is an additive sibling of the built-in
+@strong{Bookmark+ is an additive sibling of the built-in
 @file{bookmark.el}.}  Loading this package does @emph{not} redefine any
-function from @file{bookmark.el}.  Every command in Bookmark++ lives
+function from @file{bookmark.el}.  Every command in Bookmark+ lives
 under the @code{bmkp-} prefix and is available from its own keymaps
 (@kbd{C-x x}, @kbd{C-x j}, @kbd{C-x 4 j}).  The standard
 @kbd{C-x r m}, @kbd{C-x r b} and @kbd{C-x r l} bindings still call the
 built-in.  Both systems read and write the same on-disk bookmark file
 format, so you can use either at any time.
 
-If you would like the standard keys to invoke Bookmark++ instead, see
+If you would like the standard keys to invoke Bookmark+ instead, see
 @ref{Standard Keys}.
 
 
@@ -275,7 +321,7 @@ reference: each chapter covers one feature in detail.
 @cindex bookmark-list display
 
 Three different things are commonly confused.  Understanding them is
-the single most important thing for using Bookmark++ effectively.
+the single most important thing for using Bookmark+ effectively.
 
 @table @asis
 @item The bookmark list
@@ -310,7 +356,7 @@ with a prefix argument (@kbd{C-u g}) it reloads from the file.
 @cindex prefix keys
 @cindex keymaps
 
-Bookmark++ allocates dedicated prefix keys for bookmarking, separate
+Bookmark+ allocates dedicated prefix keys for bookmarking, separate
 from the shared @kbd{C-x r} register prefix.
 
 @multitable @columnfractions .35 .15 .50
@@ -345,13 +391,13 @@ customize.
 
 
 @node Standard Keys
-@section Binding Bookmark++ to the Standard Keys
+@section Binding Bookmark+ to the Standard Keys
 @cindex standard keys
 @cindex @kbd{C-x r b}
 @cindex @code{bookmark-jump} override
 
-Loading Bookmark++ does not redefine any built-in command.  If you want
-@kbd{C-x r m}, @kbd{C-x r b}, @kbd{C-x r l} to run the Bookmark++
+Loading Bookmark+ does not redefine any built-in command.  If you want
+@kbd{C-x r m}, @kbd{C-x r b}, @kbd{C-x r l} to run the Bookmark+
 versions, add this to your init file:
 
 @lisp
@@ -362,7 +408,7 @@ versions, add this to your init file:
 
 If you also want programmatic callers (@code{consult-bookmark},
 @code{helm-bookmark}, Org-mode bookmark links, etc.) to pick up
-Bookmark++'s enhancements when they invoke @code{bookmark-jump}, add:
+Bookmark+'s enhancements when they invoke @code{bookmark-jump}, add:
 
 @lisp
 (advice-add 'bookmark-jump :override #'bmkp-jump)
@@ -790,7 +836,7 @@ the @code{casual-lib} package is installed.  @xref{Casual Integration}.
 @cindex types of bookmark
 
 A bookmark @dfn{type} is really just a @dfn{handler}: a function that
-``jumps to'' (acts on) the bookmark.  Bookmark++ ships handlers for
+``jumps to'' (acts on) the bookmark.  Bookmark+ ships handlers for
 around 70 of them.
 
 Run @kbd{M-x bmkp-types-alist} to list every type registered in your
@@ -854,7 +900,7 @@ creates or updates an Info bookmark every time you visit a node.
 @item @strong{EWW.}  @code{bmkp-eww-jump} (@kbd{C-x j e}).  EWW can be
 configured so that visiting a page records a bookmark, via
 @code{bmkp-eww-replace-keys-flag} which rebinds the built-in EWW
-bookmark keys to Bookmark++'s.
+bookmark keys to Bookmark+'s.
 @item @strong{Gnus.}  @code{bmkp-gnus-jump} bookmarks a Gnus article
 (group, article, message-id).
 @item @strong{Legacy W3M.}  @code{bmkp-w3m-jump} still recognises legacy
@@ -959,7 +1005,7 @@ A bookmark @dfn{tag} is a string (or a string plus a Lisp value)
 attached to a bookmark.  Tags are persistent.  Multiple bookmarks can
 share the same tag; one bookmark can have many.  Tags define @emph{sets}
 of bookmarks (@samp{blue}, @samp{vacation/2024/photos}, @samp{todo},
-@dots{}) and most Bookmark++ commands can operate on those sets.
+@dots{}) and most Bookmark+ commands can operate on those sets.
 
 @section Adding and Removing Tags
 
@@ -1005,7 +1051,7 @@ A prefix argument flips ``some'' / ``not all'' and ``all'' / ``none.''
 
 Use @code{bmkp-set-tag-value} (@kbd{T v} in @file{*Bmkp List*}) to give
 a tag any readable Lisp value: number, string, list, etc.  A tag with
-a value is internally @code{(NAME . VALUE)}.  Most Bookmark++ commands
+a value is internally @code{(NAME . VALUE)}.  Most Bookmark+ commands
 ignore values; you can use them from your own Lisp.
 
 A single predefined tag has special behaviour: @code{bmkp-jump}.  If
@@ -1066,7 +1112,7 @@ bmkp-annot-url: "URL"       ; opens with browse-url
 bmkp-annot-url: "BOOKMARK"  ; jumps to the named bookmark
 @end example
 
-When you @emph{show} the annotation, Bookmark++ follows the forward.
+When you @emph{show} the annotation, Bookmark+ follows the forward.
 When you @emph{edit} it (@kbd{a e}), you still see the literal text.
 
 @section Annotation Commands in @file{*Bmkp List*}
@@ -1089,7 +1135,7 @@ Annotated bookmarks are flagged with @kbd{a} in the display.
 @cindex multiple bookmark files
 
 A bookmark file is a physical file on disk containing complete bookmark
-records.  Bookmark++ makes it easy to:
+records.  Bookmark+ makes it easy to:
 
 @itemize
 @item Switch to a different bookmark file (replacing the current
@@ -1145,7 +1191,7 @@ independent thereafter.
 @cindex highlighting bookmarks
 
 Optional---requires @file{bookmark+-lit.el} on your @code{load-path}.
-Bookmark++ can draw a persistent @dfn{highlight} at the position (or
+Bookmark+ can draw a persistent @dfn{highlight} at the position (or
 region, or line, or fringe) of a bookmark in its buffer.
 
 @section Styles
@@ -1292,7 +1338,7 @@ Casual menu.
 @code{bmkp-list-mode} that is already taken by
 @code{bmkp-list-switch-other-window}.  @kbd{c} was free.)
 
-If @code{casual-lib} is not installed, Bookmark++ runs unchanged and
+If @code{casual-lib} is not installed, Bookmark+ runs unchanged and
 @kbd{c} is unbound.
 
 @section Menu Layout
@@ -1308,7 +1354,7 @@ in-Emacs help (@kbd{?} in the transient) for the live list.
 @cindex navigation list
 @cindex navlist
 
-Bookmark++ lets you @emph{cycle} through a set of bookmarks---like
+Bookmark+ lets you @emph{cycle} through a set of bookmarks---like
 ``favorites'' buttons on a TV remote.  The set being cycled is the
 @dfn{navigation list} (navlist).
 
@@ -1612,7 +1658,7 @@ Start each Emacs session with the last bookmark file used.  Set to
 never, @code{t} = on every change, integer = after that many
 modifications).
 @item bookmark-version-control
-(Built-in.)  Recommended @code{t} so Bookmark++'s save-time backups
+(Built-in.)  Recommended @code{t} so Bookmark+'s save-time backups
 accumulate cleanly.
 @end vtable
 
@@ -1668,7 +1714,7 @@ functions in place, using a @code{bmkp-full-record} text-property trick
 to support multiple bookmarks with the same name.
 
 This fork is an @strong{additive sibling} of the built-in.  No built-in
-function is redefined.  Every Bookmark++ command lives under the
+function is redefined.  Every Bookmark+ command lives under the
 @code{bmkp-} prefix.  Both systems coexist and operate on the same
 @code{bookmark-alist} and on-disk bookmark file.
 
@@ -1683,7 +1729,7 @@ work via auto-disambiguation: @samp{README.md}, @samp{README.md<2>},
 Where this fork renamed an upstream symbol (for example, the bmenu
 buffer became @file{*Bmkp List*} and many @code{bookmark-bmenu-*}
 defuns became @code{bmkp-list-*}), no compatibility alias was kept.
-The user-visible Bookmark++ commands are all @code{bmkp-*}; the
+The user-visible Bookmark+ commands are all @code{bmkp-*}; the
 built-in @code{bookmark-*} names always refer to the built-in.
 
 If you had user code that called @code{bookmark-bmenu-foo}, point it at
