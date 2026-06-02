@@ -1,0 +1,1775 @@
+\input texinfo  @c -*- mode: texinfo; coding: utf-8 -*-
+@c %**start of header
+@setfilename bookmark-plusplus.info
+@settitle Bookmark++ User Manual
+@documentencoding UTF-8
+@documentlanguage en
+@c %**end of header
+
+@copying
+This manual documents Bookmark++, a fork and modernization of Drew
+Adams' Bookmark+ package, targeting GNU Emacs 30 and later.
+
+Copyright @copyright{} 2000--2025 Drew Adams (original Bookmark+ code).
+Manual text by the Bookmark++ contributors, derived in part from the
+upstream commentary.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License, Version 3 or any
+later version published by the Free Software Foundation.
+@end copying
+
+@dircategory Emacs
+@direntry
+* Bookmark++: (bookmark-plusplus). Extended bookmarks for Emacs 30+.
+@end direntry
+
+@titlepage
+@title Bookmark++
+@subtitle Extended bookmarks for GNU Emacs 30+
+@author The Bookmark++ contributors
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+
+@contents
+
+@ifnottex
+@node Top
+@top Bookmark++
+
+Bookmark++ extends Emacs's built-in @file{bookmark.el} with over 70
+bookmark types, tagging, a rich @file{*Bmkp List*} browse buffer,
+multiple bookmark files, region bookmarks, persistent per-bookmark
+highlighting, live preview, and more.
+
+This manual is for users of GNU Emacs 30 or later.  It assumes you are
+already familiar with the basics of GNU Emacs (buffers, files, keymaps,
+the minibuffer).
+
+@insertcopying
+@end ifnottex
+
+@menu
+* Introduction::                What Bookmark++ is and how it relates to @file{bookmark.el}.
+* Tutorial::                    A guided first session.
+* Concepts::                    The bookmark list, file, and display.
+* Setting Bookmarks::           Commands that create bookmarks.
+* Jumping::                     Visiting bookmarks.
+* The Bmkp List Buffer::        @file{*Bmkp List*} mode.
+* Bookmark Types::              The 70+ kinds of bookmark.
+* Tags::                        Tagging and tag-based operations.
+* Annotations::                 Free-text metadata.
+* Multiple Bookmark Files::     Switching, copying, and merging.
+* Highlighting::                Persistent per-bookmark highlights.
+* Live Preview::                Previewing destinations before committing.
+* Casual Integration::          The Transient menu UI.
+* Cycling::                     The navigation list.
+* Automatic Bookmarking::       Hook- and idle-driven bookmark creation.
+* Autonamed Bookmarks::         Bookmarks whose names are generated.
+* Temporary Bookmarks::         Session-only bookmarks.
+* Bookmark Records::            What a bookmark looks like internally.
+* Customization::               Options most users want to know.
+* Migration::                   Coming from upstream Bookmark+.
+* GNU GPL::                     Distribution license.
+* Key Index::
+* Command Index::
+* Variable Index::
+* Concept Index::
+@end menu
+
+
+@node Introduction
+@chapter Introduction
+@cindex introduction
+@cindex Bookmark++ versus @file{bookmark.el}
+
+@dfn{Bookmark++} (this fork) is a substantial extension of GNU Emacs's
+built-in @file{bookmark.el}.  It keeps every concept from built-in
+bookmarks---named, persistent placeholders into files, buffers, Info
+nodes, and so on---but makes bookmarks useful as persistent records,
+not just saved positions.
+
+Bookmark++ enlarges built-in bookmarks in three directions:
+
+@enumerate
+@item
+@strong{Richer bookmarks.}  Bookmarks can carry tags, annotations,
+region information, visit counts, last-access timestamps, and arbitrary
+user data.  They can be highlighted in the buffer they point to, and
+they remember where they were even when the file has been edited.
+
+@item
+@strong{More kinds of bookmarks.}  In addition to bookmarks that ``go''
+to a location, Bookmark++ ships over 70 bookmark types: Dired buffers,
+Info nodes, Gnus articles, EWW pages, @command{man} pages, image files,
+URLs, desktops, keyboard macros, sets of variables, snippets of text,
+sequences of other bookmarks, whole bookmark files, and more.
+
+@item
+@strong{More to do with bookmarks.}  The @file{*Bmkp List*} buffer is
+significantly enhanced.  You can mark, sort, filter, omit, search,
+query-replace, tag, retag, edit, clone, highlight, describe, and
+copy/move bookmarks across multiple bookmark files.  You can save
+bookmark-list views, define your own jump commands and sort orders, and
+cycle through arbitrary sets of bookmarks (``the navigation list'').
+@end enumerate
+
+@cindex sibling design
+@cindex relationship to @file{bookmark.el}
+@strong{Bookmark++ is an additive sibling of the built-in
+@file{bookmark.el}.}  Loading this package does @emph{not} redefine any
+function from @file{bookmark.el}.  Every command in Bookmark++ lives
+under the @code{bmkp-} prefix and is available from its own keymaps
+(@kbd{C-x x}, @kbd{C-x j}, @kbd{C-x 4 j}).  The standard
+@kbd{C-x r m}, @kbd{C-x r b} and @kbd{C-x r l} bindings still call the
+built-in.  Both systems read and write the same on-disk bookmark file
+format, so you can use either at any time.
+
+If you would like the standard keys to invoke Bookmark++ instead, see
+@ref{Standard Keys}.
+
+
+@node Tutorial
+@chapter Tutorial
+@cindex tutorial
+@cindex first session
+
+This chapter walks through a typical first session.  Open a few files
+you actually use, then follow along.
+
+@section Creating Your First Bookmark
+@cindex creating bookmarks, tutorial
+
+Place point somewhere in a file you visit often---say, midway through
+a long @file{README}.  Type:
+
+@example
+M-x bmkp-bookmark-set-confirm-overwrite RET
+@end example
+
+(The shorter key sequence is @kbd{C-x x m}.)  Emacs prompts for a
+bookmark name; type @kbd{readme top RET}.  The bookmark is set at
+point, and the bookmark file is updated on disk (if @code{bookmark-save-flag}
+is @code{t}, which is the default).
+
+@section Opening the Bookmark List
+@cindex opening @file{*Bmkp List*}, tutorial
+
+Type @kbd{C-x x e} (or @kbd{M-x bmkp-list}).  Buffer
+@file{*Bmkp List*} appears.  You see one row per bookmark, in a marked,
+sortable display.
+
+Try the basics:
+
+@table @kbd
+@item n
+Next line.
+@item p
+Previous line.
+@item @key{RET}
+Open the bookmark on the current line in the same window.
+@item o
+Open it in another window.
+@item @key{TAB}
+@itemx C-o
+@emph{Preview} it in another window without leaving @file{*Bmkp List*}.
+@item q
+Quit.  The buffer is hidden; your bookmarks stay in memory.
+@end table
+
+@section Adding a Tag
+@cindex tagging, tutorial
+
+In @file{*Bmkp List*}, place point on the bookmark you just created.
+Type @kbd{T +} (@code{bmkp-add-tags}).  At the @samp{Tag(s):} prompt
+type @kbd{doc RET RET} (the empty entry ends the list).  A small
+@samp{t} now appears on that bookmark's line, indicating it is tagged.
+
+To list only tagged bookmarks: @kbd{T S}.  To show all again: @kbd{.}.
+
+@section Jumping
+@cindex jumping, tutorial
+
+You can jump from anywhere in Emacs:
+
+@example
+C-x j j RET readme top RET
+@end example
+
+@code{bmkp-jump} prompts you with completion; type the bookmark name
+or use your usual completion machinery to pick.  If the @code{consult}
+package is loaded, you get live preview as you move through candidates.
+
+To jump in the other window, use @kbd{C-x 4 j j}.  To jump only among
+bookmarks of a specific type (Dired, Info, EWW, @dots{}), use
+@kbd{C-x j :} and choose the type.
+
+@section Filtering and Sorting
+@cindex filtering, tutorial
+@cindex sorting, tutorial
+
+Open @file{*Bmkp List*} (@kbd{C-x x e}) and try:
+
+@table @kbd
+@item s s
+Cycle through sort orders.  Repeat until something useful.
+@item s n
+Sort by bookmark name.
+@item s d
+Sort by last bookmark access (most recent first).
+@item < @r{/} >
+Show only unmarked / marked bookmarks.
+@item P B
+Incremental filter on bookmark name.  Type a regexp; press @key{RET} to
+commit.
+@item .
+Show all bookmarks again.
+@item M-t
+Toggle the location column (file or buffer name).
+@end table
+
+@section Multiple Bookmarks at Once
+@cindex marked bookmarks, tutorial
+
+Mark several bookmarks with @kbd{m} (or @kbd{M-m} to mark all).  Then:
+
+@table @kbd
+@item T > +
+Add tags to all marked bookmarks at once.
+@item D
+Delete all marked bookmarks (after confirmation).
+@item M-d >
+Open Dired on every local file among the marked bookmarks.
+@item Y > +
+Copy the marked bookmarks into another bookmark file.
+@end table
+
+@section Live Preview Mode
+@cindex preview mode, tutorial
+
+Type @kbd{M-p} in @file{*Bmkp List*}.  The mode-line lighter changes to
+@samp{ Pv}.  Now moving point onto a row immediately opens that
+bookmark's destination in another window---without selecting it.  Press
+@kbd{M-p} again to turn the mode off; the window configuration is
+restored to what it was when you entered the mode.
+
+@section Saving and Switching Bookmark Files
+@cindex bookmark files, tutorial
+
+Your bookmarks live in @code{bookmark-default-file}
+(@file{~/.emacs.d/bookmarks} by default), and are saved automatically.
+To save explicitly: @kbd{S} in @file{*Bmkp List*}.  To switch to a
+different bookmark file: @kbd{L} (@code{bmkp-switch-bookmark-file-create}).
+
+That is the core workflow.  The rest of this manual reads as a
+reference: each chapter covers one feature in detail.
+
+
+@node Concepts
+@chapter Concepts: list, file, display
+@cindex concepts
+@cindex bookmark list
+@cindex bookmark file
+@cindex bookmark-list display
+
+Three different things are commonly confused.  Understanding them is
+the single most important thing for using Bookmark++ effectively.
+
+@table @asis
+@item The bookmark list
+The in-memory set of bookmarks.  It is the value of internal variable
+@code{bookmark-alist}.  Adding, renaming, deleting, or jumping to a
+bookmark updates this list.
+
+@item The bookmark file
+An on-disk persistent record of a set of bookmarks.  Its default
+location is @code{bookmark-default-file}.  Multiple bookmark files may
+exist; only one is @emph{current} at a time.
+
+@item The bookmark-list display
+Buffer @file{*Bmkp List*}.  It is a snapshot view of the bookmark list,
+rendered with markings, sort order, filters, and so on.
+@end table
+
+These three can be out of sync.  The @emph{list} rules during an Emacs
+session.  The @emph{file} rules across sessions (it is all that survives
+when Emacs exits).  In the display,
+@code{bmkp-bmenu-refresh-menu-list} (@kbd{g}) refreshes from the list;
+with a prefix argument (@kbd{C-u g}) it reloads from the file.
+
+@menu
+* Prefix Keys::
+* Standard Keys::
+@end menu
+
+
+@node Prefix Keys
+@section Prefix Keys
+@cindex prefix keys
+@cindex keymaps
+
+Bookmark++ allocates dedicated prefix keys for bookmarking, separate
+from the shared @kbd{C-x r} register prefix.
+
+@multitable @columnfractions .35 .15 .50
+@headitem Keymap @tab Default key @tab Purpose
+@item @code{bookmark-map}              @tab @kbd{C-x x}    @tab General bookmark commands.
+@item @code{bmkp-set-map}              @tab @kbd{C-x x c}  @tab Create (set) new bookmarks.
+@item @code{bmkp-tags-map}             @tab @kbd{C-x x t}  @tab Tag commands.
+@item @code{bmkp-annotate-map}         @tab @kbd{C-x x a}  @tab Annotation commands.
+@item @code{bmkp-jump-map}             @tab @kbd{C-x j}    @tab Jump (visit) bookmarks (same window).
+@item @code{bmkp-jump-other-window-map} @tab @kbd{C-x 4 j} @tab Jump (other window).
+@item built-in other-frame jump        @tab @kbd{C-x 5 j}  @tab Jump (other frame).
+@end multitable
+
+These prefixes are themselves customizable through three list-valued
+options:
+
+@vindex bmkp-bookmark-map-prefix-keys
+@vindex bmkp-jump-map-prefix-keys
+@vindex bmkp-jump-other-window-map-prefix-keys
+@table @code
+@item bmkp-bookmark-map-prefix-keys
+Default @code{(list (kbd "C-x x"))}.
+@item bmkp-jump-map-prefix-keys
+Default @code{(list (kbd "C-x j"))}.
+@item bmkp-jump-other-window-map-prefix-keys
+Default @code{(list (kbd "C-x 4 j"))}.
+@end table
+
+Because they are lists, you can bind a keymap under several prefixes at
+once.  The setter function rebinds the keys automatically when you
+customize.
+
+
+@node Standard Keys
+@section Binding Bookmark++ to the Standard Keys
+@cindex standard keys
+@cindex @kbd{C-x r b}
+@cindex @code{bookmark-jump} override
+
+Loading Bookmark++ does not redefine any built-in command.  If you want
+@kbd{C-x r m}, @kbd{C-x r b}, @kbd{C-x r l} to run the Bookmark++
+versions, add this to your init file:
+
+@lisp
+(define-key bookmark-map "m" #'bmkp-bookmark-set-confirm-overwrite)
+(define-key bookmark-map "b" #'bmkp-jump)
+(define-key bookmark-map "l" #'bmkp-list)
+@end lisp
+
+If you also want programmatic callers (@code{consult-bookmark},
+@code{helm-bookmark}, Org-mode bookmark links, etc.) to pick up
+Bookmark++'s enhancements when they invoke @code{bookmark-jump}, add:
+
+@lisp
+(advice-add 'bookmark-jump :override #'bmkp-jump)
+@end lisp
+
+No helper command is required.  These are plain Emacs primitives;
+remove the lines (or call @code{advice-remove}) to reverse them.
+
+
+@node Setting Bookmarks
+@chapter Setting Bookmarks
+@cindex setting bookmarks
+@cindex creating bookmarks
+
+@findex bmkp-bookmark-set-confirm-overwrite
+@code{bmkp-bookmark-set-confirm-overwrite} (@kbd{C-x x m},
+@kbd{C-x x c m}) is the enhanced replacement for @code{bookmark-set}:
+
+@itemize
+@item
+Completion candidates default to bookmarks in the current buffer (or
+all bookmarks if there are none), so you can easily update a nearby
+bookmark.  A numeric prefix argument expands completion to all
+bookmarks.
+@item
+Overwriting prompts for confirmation.
+@item
+Existing tags and annotations are preserved when you re-set a bookmark
+(see @code{bmkp-properties-to-keep}).
+@end itemize
+
+@section Type-Specific Creation Commands
+@cindex creation commands by type
+
+The @code{bmkp-set-map} (default prefix @kbd{C-x x c}) groups commands
+that create specific kinds of bookmark:
+
+@multitable @columnfractions .42 .18 .40
+@headitem Command @tab Key @tab Creates
+@item @code{bmkp-bookmark-set-confirm-overwrite}  @tab @kbd{C-x x c m} @tab A normal bookmark at point.
+@item @code{bmkp-autofile-set}                    @tab @kbd{C-x x c a} @tab An autofile bookmark for a file.
+@item @code{bmkp-file-target-set}                 @tab @kbd{C-x x c f} @tab A file bookmark (file name at point).
+@item @code{bmkp-url-target-set}                  @tab @kbd{C-x x c u} @tab A URL bookmark.
+@item @code{bmkp-make-function-bookmark}          @tab @kbd{C-x x c F} @tab A function or last-kbd-macro bookmark.
+@item @code{bmkp-set-desktop-bookmark}            @tab @kbd{C-x x c K} @tab A desktop bookmark.
+@item @code{bmkp-set-sequence-bookmark}           @tab @kbd{C-x x c s} @tab A composite bookmark.
+@item @code{bmkp-set-bookmark-file-bookmark}      @tab @kbd{C-x x c y} @tab A bookmark-file bookmark.
+@item @code{bmkp-set-snippet-bookmark}            @tab @kbd{C-x x M-w} @tab A snippet bookmark from the region.
+@item @code{bmkp-wrap-bookmark-with-last-kbd-macro} @tab @kbd{C-x x c C-k} @tab A sequence: a bookmark + the last kbd macro.
+@item @code{bmkp-toggle-autonamed-bookmark-set/delete} @tab @kbd{C-x x c @key{RET}} @tab Set or delete the autonamed bookmark here.
+@end multitable
+
+@section Bookmarking Without Visiting
+@cindex bookmarking without visiting
+
+You can bookmark targets without first opening them:
+
+@itemize
+@item
+@strong{A file or URL at point.}  @code{bmkp-file-target-set}
+(@kbd{C-x x c f}) and @code{bmkp-url-target-set} (@kbd{C-x x c u}) read
+a file or URL with the text at point as the default.
+@item
+@strong{Compilation, grep, occur hits.}  In @file{*compilation*},
+@file{*grep*}, @file{*Occur*}, and @file{*Multi-Occur*} buffers,
+@code{bmkp-compilation-target-set} or @code{bmkp-occur-target-set}
+(@kbd{C-c C-b}) bookmarks the target of the hit at point.  The
+@kbd{C-c C-M-b} variant bookmarks every hit;
+@code{bmkp-occur-create-autonamed-bookmarks} (@kbd{C-c C-M-B} in Occur)
+creates an autonamed bookmark per hit.
+@item
+@strong{Marked files in Dired} (requires @file{dired+.el}).
+@code{diredp-do-bookmark} (@kbd{M-b}) bookmarks each marked file as an
+autofile.
+@end itemize
+
+
+@node Jumping
+@chapter Jumping to Bookmarks
+@cindex jumping
+@cindex visiting bookmarks
+
+@findex bmkp-jump
+@findex bmkp-jump-other-window
+@code{bmkp-jump} (@kbd{C-x j j}) is the generic bookmark jump command;
+completion offers every bookmark.  @code{bmkp-jump-other-window}
+(@kbd{C-x 4 j j}) is its other-window twin.  Inside @file{*Bmkp List*},
+@key{RET} or @kbd{f} calls @code{bmkp-list-this-window}, and @kbd{o}
+calls @code{bmkp-list-other-window}.
+
+@section Type-Specific Jump Commands
+@cindex type-specific jump
+
+Each bookmark type has its own jump command that offers only bookmarks
+of that type as completion candidates.  They live on
+@code{bmkp-jump-map} (default @kbd{C-x j}) and
+@code{bmkp-jump-other-window-map} (default @kbd{C-x 4 j}).  A small
+sampler:
+
+@multitable @columnfractions .30 .28 .42
+@headitem Type @tab Same-window @tab Other-window
+@item File           @tab @kbd{C-x j f} @tab @kbd{C-x 4 j f}
+@item Local file     @tab @kbd{C-x j l} @tab @kbd{C-x 4 j l}
+@item Remote file    @tab @kbd{C-x j n} @tab @kbd{C-x 4 j n}
+@item Autofile       @tab @kbd{C-x j a} @tab @kbd{C-x 4 j a}
+@item Non-file       @tab @kbd{C-x j b} @tab @kbd{C-x 4 j b}
+@item Dired          @tab @kbd{C-x j d} @tab @kbd{C-x 4 j d}
+@item Info           @tab @kbd{C-x j i} @tab @kbd{C-x 4 j i}
+@item @command{man}  @tab @kbd{C-x j m} @tab @kbd{C-x 4 j m}
+@item EWW            @tab @kbd{C-x j e} @tab @kbd{C-x 4 j e}
+@item Gnus           @tab @kbd{C-x j g} @tab @kbd{C-x 4 j g}
+@item Image          @tab @kbd{C-x j M-i} @tab @kbd{C-x 4 j M-i}
+@item Region         @tab @kbd{C-x j r} @tab @kbd{C-x 4 j r}
+@item URL            @tab @kbd{C-x j u} @tab @kbd{C-x 4 j u}
+@item Highlighted    @tab @kbd{C-x j h} @tab @kbd{C-x 4 j h}
+@item Snippet        @tab @kbd{C-x j M-w} @tab @kbd{C-x 4 j M-w}
+@end multitable
+
+The generic ``any type'' command is @code{bmkp-jump-to-type}
+(@kbd{C-x j :}).  It first asks for the type, then offers only
+bookmarks of that type.  Useful when you do not want to remember the
+type-specific keys.
+
+@section @code{find-file}-Style Jumping
+@cindex @code{find-file}-style jumping
+
+@findex bmkp-find-file
+@code{bmkp-find-file} (@kbd{C-x j C-f}) acts like @code{find-file}, but
+obeys @code{bmkp-default-handlers-for-file-types}---so HTML files open
+in @code{browse-url}, Word docs in @code{w32-browser}, and so on.  With
+a prefix argument it also creates an autofile bookmark for the file.
+
+There is a family of @code{bmkp-find-file-...-tags} commands (under
+@kbd{C-x j t C-f ...}) that filter by tags while reading a file name
+with @code{read-file-name}, so you can browse directories.
+
+@section Mode-Specific @kbd{j}
+@cindex mode-specific @kbd{j} bindings
+
+Several modes bind @kbd{j} to the corresponding type-specific jump:
+
+@multitable @columnfractions .35 .65
+@headitem Mode @tab @kbd{j} jumps to a@dots{}
+@item Info             @tab Info bookmark.
+@item Gnus summary     @tab Gnus bookmark.
+@item @command{man} / @command{woman} @tab @command{man}-page bookmark.
+@item EWW              @tab EWW bookmark.
+@item Buffer-menu      @tab Non-file bookmark.
+@item Dired (@kbd{C-j}) @tab Dired bookmark whose directory is the current one.
+@end multitable
+
+@section Tag-Based Jumping
+@cindex tag-based jumping
+
+Tag-aware jump commands combine three ideas: which bookmark family
+(file, autofile, this-dir-file, find-file), how many tags must match
+(all = @kbd{*}, some = @kbd{+}), and whether matching is literal or
+against a regexp (@kbd{%}).
+
+@multitable @columnfractions .42 .22 .36
+@headitem Command @tab Key @tab Meaning
+@item @code{bmkp-all-tags-jump}             @tab @kbd{C-x j t *}     @tab With all given tags.
+@item @code{bmkp-some-tags-jump}            @tab @kbd{C-x j t +}     @tab With at least one tag.
+@item @code{bmkp-all-tags-regexp-jump}      @tab @kbd{C-x j t % *}   @tab Every tag matches a regexp.
+@item @code{bmkp-some-tags-regexp-jump}     @tab @kbd{C-x j t % +}   @tab Some tag matches a regexp.
+@item @code{bmkp-file-all-tags-jump}        @tab @kbd{C-x j t f *}   @tab File bookmark with all tags.
+@item @code{bmkp-find-file-all-tags}        @tab @kbd{C-x j t C-f *} @tab @code{read-file-name} version.
+@end multitable
+
+Each command has an @code{-other-window} twin under
+@kbd{C-x 4 j t ...}.
+
+
+@node The Bmkp List Buffer
+@chapter The @file{*Bmkp List*} Buffer
+@cindex @file{*Bmkp List*}
+@cindex bmkp-list-mode
+@cindex bookmark browse buffer
+
+Open it with @code{bmkp-list} (@kbd{C-x x e}).  This buffer is the
+heart of the interactive workflow: filtering, marking, sorting,
+tagging, highlighting, editing---everything happens here.
+
+Major mode: @code{bmkp-list-mode}, derived from @code{special-mode}.
+
+@section Header and Mark Columns
+@cindex header line
+@cindex marks
+@cindex flags
+
+The header shows the current bookmark file and a @dfn{title}
+describing the current filter (e.g.@: @samp{File and Directory
+Bookmarks} or @samp{All Bookmarks}).  The mode line shows counts:
+marked (@kbd{>}), flagged for deletion (@kbd{D}), tagged (@kbd{t}),
+temporary (@kbd{X}), annotated (@kbd{a}), modified-unsaved (@kbd{*}),
+plus the sort order.  When a counter is split, @samp{N/M} means ``N up
+to and including the current line, of M total.''
+
+Per-line flags:
+
+@multitable @columnfractions .15 .85
+@headitem Mark @tab Meaning
+@item @kbd{>}   @tab Marked.
+@item @kbd{D}   @tab Flagged for deletion.
+@item @kbd{a}   @tab Has an annotation.
+@item @kbd{t}   @tab Has at least one tag.
+@item @kbd{X}   @tab Temporary---will not be saved.
+@item @kbd{*}   @tab Modified since the last save of the bookmark file.
+@end multitable
+
+@section Primary Navigation
+@cindex navigation in @file{*Bmkp List*}
+
+@multitable @columnfractions .15 .40 .45
+@headitem Key @tab Command @tab What it does
+@item @kbd{n}                   @tab @code{next-line}                  @tab Next line.
+@item @kbd{p}                   @tab @code{previous-line}              @tab Previous line.
+@item @key{RET} @r{or} @kbd{f}  @tab @code{bmkp-list-this-window}      @tab Open in current window.
+@item @kbd{o}                   @tab @code{bmkp-list-other-window}     @tab Open in other window.
+@item @kbd{C-o} @r{or} @key{TAB} @tab @code{bmkp-list-switch-other-window} @tab Preview in other window; cursor stays here.
+@item @kbd{1}                   @tab @code{bmkp-list-1-window}         @tab Display in only one window.
+@item @kbd{2}                   @tab @code{bmkp-list-2-window}         @tab Display in two windows.
+@item @kbd{g}                   @tab @code{bmkp-bmenu-refresh-menu-list} @tab Refresh (with @kbd{C-u}: reload from file).
+@item @kbd{q}                   @tab @code{bmkp-bmenu-quit}            @tab Quit.
+@end multitable
+
+@section Marking and Flagging
+@cindex marking bookmarks
+@cindex flagging for deletion
+
+The marking scheme follows Dired conventions:
+
+@multitable @columnfractions .15 .40 .45
+@headitem Key @tab Command @tab What it does
+@item @kbd{m}     @tab @code{bmkp-list-mark}           @tab Mark this bookmark with @kbd{>}.
+@item @kbd{u}     @tab @code{bmkp-list-unmark}         @tab Unmark this bookmark.
+@item @kbd{M-m}   @tab @code{bmkp-bmenu-mark-all}      @tab Mark all bookmarks.
+@item @kbd{U}     @tab @code{bmkp-bmenu-unmark-all}    @tab Unmark all (or only @kbd{>}, or only @kbd{D}).
+@item @kbd{M-@key{DEL}} @tab @code{bmkp-bmenu-unmark-all} @tab Same as @kbd{U}.
+@item @kbd{t}     @tab @code{bmkp-bmenu-toggle-marks}  @tab Swap marked / unmarked.
+@item @kbd{% m}   @tab @code{bmkp-bmenu-regexp-mark}   @tab Mark by regexp.
+@item @kbd{d} @r{or} @kbd{k} @tab @code{bmkp-bmenu-flag-for-deletion} @tab Flag for deletion (@kbd{D}).
+@item @kbd{C-d}   @tab @code{bmkp-bmenu-flag-for-deletion-backwards} @tab Flag and move up.
+@item @kbd{x}     @tab @code{bmkp-list-execute-deletions} @tab Delete all bookmarks flagged @kbd{D}.
+@item @kbd{D}     @tab @code{bmkp-bmenu-delete-marked}    @tab Delete all bookmarks marked @kbd{>} (with confirmation).
+@end multitable
+
+@cindex @kbd{x} versus @kbd{D}
+The pair @kbd{d}/@kbd{x} flags then executes; @kbd{D} deletes the
+@kbd{>}-marked bookmarks in one step (after confirmation).
+
+@section Filtering and Showing
+@cindex filtering
+
+@table @kbd
+@item .
+Show all bookmarks (clear any filter).
+@item >
+Toggle ``show only marked.''
+@item <
+Toggle ``show only unmarked.''
+@item M-t
+Toggle the file/buffer location column.
+@end table
+
+@subsection Filter by Type
+@cindex filter by type
+
+Keys ending in @kbd{S} show only bookmarks of one type; the matching
+@kbd{M} keys mark them instead.  Examples:
+
+@example
+F S    file/dir bookmarks       A S    autofile bookmarks
+B S    non-file bookmarks       Y S    bookmark-file bookmarks
+R S    region bookmarks         Z S    bookmark-list bookmarks
+I S    Info bookmarks           K S    desktop bookmarks
+G S    Gnus bookmarks           V S    variable-list bookmarks
+M S    @command{man}-page bookmarks  N S    non-invokable bookmarks
+W E S  EWW bookmarks            w S    snippet bookmarks
+X S    temporary bookmarks      O S    orphaned local-file bookmarks
+# S    autonamed bookmarks      M-d M-s  Dired bookmarks
+T S    tagged bookmarks         T U    untagged bookmarks
+H S    highlighted bookmarks    - S    omitted bookmarks
+@end example
+
+@subsection Incremental Pattern Matching
+@cindex incremental filtering
+
+Type @kbd{P PREFIX REGEXP} and the display narrows as you type.  Press
+a non-self-inserting key (e.g.@: @key{RET}) to commit.
+
+@table @kbd
+@item P B
+Filter by bookmark name.
+@item P F
+Filter by file name.
+@item P A
+Filter by annotation.
+@item P T
+Filter by tag.
+@end table
+
+@section Omitting (vs. Filtering)
+@cindex omitting
+
+Omitting is a stronger form of hiding: omitted bookmarks are hidden
+from every view except the dedicated omit view.
+
+@table @kbd
+@item - >
+@code{bmkp-bmenu-omit/unomit-marked}---move marked to/from the omit list.
+@item - S
+@code{bmkp-bmenu-show-only-omitted-bookmarks}.
+@item - U
+@code{bmkp-unomit-all}---can also be invoked outside @file{*Bmkp List*}.
+@end table
+
+@section Sorting
+@cindex sorting
+
+Repeat @kbd{s s} (@code{bmkp-bmenu-change-sort-order-repeat}) to cycle
+through every available sort order.  Or pick one directly:
+
+@multitable @columnfractions .42 .15 .43
+@headitem Command @tab Key @tab Sort by
+@item @code{bmkp-bmenu-sort-by-bookmark-name}     @tab @kbd{s n}   @tab Bookmark name.
+@item @code{bmkp-bmenu-sort-by-last-bookmark-access} @tab @kbd{s d} @tab Last bookmark access.
+@item @code{bmkp-bmenu-sort-by-last-buffer-or-file-access} @tab @kbd{s b} @tab Last buffer/file access.
+@item @code{bmkp-bmenu-sort-by-bookmark-type}     @tab @kbd{s k}   @tab Bookmark type (kind).
+@item @code{bmkp-bmenu-sort-by-file-name}         @tab @kbd{s f n} @tab File name.
+@item @code{bmkp-bmenu-sort-by-creation-time}     @tab @kbd{s 0}   @tab Creation time.
+@item @code{bmkp-bmenu-sort-annotated-before-unannotated} @tab @kbd{s a} @tab Annotated first.
+@item @code{bmkp-bmenu-sort-flagged-before-unflagged} @tab @kbd{s D} @tab Flagged @kbd{D} first.
+@item @code{bmkp-bmenu-sort-marked-before-unmarked} @tab @kbd{s >} @tab Marked @kbd{>} first.
+@item @code{bmkp-reverse-sort-order}              @tab @kbd{s r}   @tab Reverse direction.
+@end multitable
+
+Sorting is governed by option @code{bmkp-sort-comparer}; the built-in
+@code{bookmark-sort-flag} is ignored.
+
+@section Editing
+@cindex editing bookmarks
+
+@multitable @columnfractions .42 .15 .43
+@headitem Command @tab Key @tab Edits
+@item @code{bmkp-bmenu-edit-bookmark-name-and-location} @tab @kbd{r} @tab Name and target file (minibuffer).
+@item @code{bmkp-bmenu-edit-bookmark-record}      @tab @kbd{e}   @tab Full record (Lisp sexp).
+@item @code{bmkp-bmenu-edit-marked}               @tab @kbd{E}   @tab Records of all marked.
+@item @code{bmkp-bmenu-clone-bookmark}            @tab @kbd{M-n} @tab Duplicate; default name ends in @samp{<2>}.
+@item @code{bmkp-bmenu-edit-tags}                 @tab @kbd{T e} @tab This bookmark's tags.
+@end multitable
+
+@section Acting on Marked Bookmarks
+@cindex acting on marked bookmarks
+
+@itemize
+@item @code{bmkp-bmenu-delete-marked} (@kbd{D}) deletes them.
+@item @code{bmkp-bmenu-dired-marked} (@kbd{M-d >}) opens Dired on the
+local files among them.
+@item @code{bmkp-bmenu-query-replace-marked-bookmarks-regexp} (@kbd{M-q})
+query-replaces across their targets, in the current sort order.
+@item @code{bmkp-bmenu-search-marked-bookmarks-regexp} (@kbd{M-s a M-s})
+regexp-searches across their targets.
+@item Isearch commands (@kbd{M-s a C-s} / @kbd{M-s a M-C-s}) search
+marked targets incrementally.
+@item Tag commands (@kbd{T > +/-}) add or remove tags on the marked
+bookmarks.
+@item @code{bmkp-bmenu-list-tags-of-marked} (@kbd{T > l}) lists the
+union of tags of marked bookmarks.
+@item @code{bmkp-bmenu-edit-annotations-for-marked} (@kbd{a >}) edits
+annotations of marked bookmarks.
+@item @code{bmkp-bmenu-toggle-marked-temporary/savable} (@kbd{M-X})
+toggles temporary / savable on marked bookmarks.
+@item Bookmark-file commands (@kbd{Y > +/-/0}) copy, move, or create a
+new bookmark file from marked bookmarks (@pxref{Multiple Bookmark Files}).
+@end itemize
+
+@section Describe / Inspect
+@cindex describing bookmarks
+
+@multitable @columnfractions .42 .22 .36
+@headitem Command @tab Key @tab Shows
+@item @code{bmkp-bmenu-mode-status-help}        @tab @kbd{?}, @kbd{C-h m} @tab Help, status, current file, legend.
+@item @code{bmkp-bmenu-describe-this-bookmark}  @tab @kbd{C-h @key{RET}} @tab Detailed description.
+@item with @kbd{C-u}                            @tab @kbd{C-u C-h @key{RET}} @tab Internal Lisp form.
+@item @code{bmkp-bmenu-describe-marked}         @tab @kbd{C-h >} @tab Descriptions of all marked.
+@item @code{bmkp-bmenu-describe-this+move-down} @tab @kbd{C-@key{down}} @tab Move + describe.
+@item @code{bmkp-bmenu-describe-this+move-up}   @tab @kbd{C-@key{up}} @tab Same, going up.
+@end multitable
+
+@section Defining Commands From the View
+@cindex defining commands from view
+
+@table @kbd
+@item C-c C-c
+@code{bmkp-bmenu-define-command}---define a command that restores the
+current display state (sort/filter/etc.).
+@item C-c C-S-c
+@code{bmkp-bmenu-define-full-snapshot-command}---restores the full
+bookmark list including marks.  Larger but complete.
+@item C-c C-j
+@code{bmkp-bmenu-define-jump-marked-command}---a type-specific jump
+command whose candidates are the marked bookmarks.
+@end table
+
+Defined commands are appended to @code{bmkp-bmenu-commands-file},
+which is loaded automatically on first opening @file{*Bmkp List*}.
+
+@section Preview Mode
+@cindex preview mode, in @file{*Bmkp List*}
+
+@kbd{M-p} (@code{bmkp-list-preview-mode}) toggles live preview of the
+bookmark on point.  @xref{Live Preview}, for details.
+
+@section Casual Menu
+@cindex Casual menu, in @file{*Bmkp List*}
+
+@kbd{c} (@code{casual-bmkp-tmenu}) opens a Transient-based menu UI if
+the @code{casual-lib} package is installed.  @xref{Casual Integration}.
+
+
+@node Bookmark Types
+@chapter Bookmark Types
+@cindex bookmark types
+@cindex types of bookmark
+
+A bookmark @dfn{type} is really just a @dfn{handler}: a function that
+``jumps to'' (acts on) the bookmark.  Bookmark++ ships handlers for
+around 70 of them.
+
+Run @kbd{M-x bmkp-types-alist} to list every type registered in your
+session.  @code{bmkp-jump-to-type} (@kbd{C-x j :}) lets you pick a type
+interactively.  Predicates of the form @code{bmkp-TYPE-bookmark-p}
+recognize each type.
+
+@section Location / File Bookmarks
+
+@itemize
+@item @strong{File / local file / remote file.}  Jumping visits the file.
+@item @strong{Directory.}  Like a file bookmark, but the destination is
+a directory.
+@item @strong{Non-file (buffer).}  Like a file bookmark for a buffer
+that is not visiting a file.
+@item @strong{Region.}  A bookmark with @code{front-context-string},
+@code{rear-context-string}, plus an @code{end-position} property.
+Jumping activates the region (controlled by @code{bmkp-use-region}).
+@code{bmkp-region-jump-narrow-indirect-other-window} (@kbd{C-x 4 j R})
+narrows the region into a cloned indirect buffer.
+@end itemize
+
+@section Autofile Bookmarks
+@cindex autofile
+
+An @dfn{autofile} is a bookmark whose name is the non-directory part of
+its file name.  @code{bmkp-autofile-set} (@kbd{C-x x c a}) creates one.
+Combined with tags this gives you a filesystem-wide metadata layer.
+Related options: @code{bmkp-autofile-filecache} (advise
+@code{file-cache-add-file} to also create autofiles),
+@code{bmkp-autofile-access-invokes-bookmark-flag} (make @code{find-file}
+also ``visit'' the autofile, updating its visit count).
+
+@section Dired and Dired-Tree Bookmarks
+@cindex Dired bookmarks
+
+A Dired bookmark records:
+
+@itemize
+@item the Dired directory,
+@item the @command{ls} switches,
+@item which files are marked,
+@item which subdirectories are inserted,
+@item which subdirectories are hidden.
+@end itemize
+
+Jumping reproduces the Dired buffer with the same markings, inserted
+subdirs, and hidden subdirs.  A @dfn{Dired-tree bookmark} is a sequence
+bookmark whose components are Dired bookmarks for a directory and its
+descendants.  @code{diredp-do-bookmark-dirs-recursive} (from
+@file{dired+.el}) creates one for the current Dired buffer.
+
+@section Info, @command{man}, EWW, Gnus
+
+@itemize
+@item @strong{Info.}  @code{bmkp-info-jump} (@kbd{C-x j i}, or @kbd{j}
+in Info mode).  Mode @code{bmkp-info-auto-bookmark-mode} automatically
+creates or updates an Info bookmark every time you visit a node.
+@item @strong{@command{man} / @command{woman}.}  @code{bmkp-man-jump}
+(@kbd{C-x j m}).
+@item @strong{EWW.}  @code{bmkp-eww-jump} (@kbd{C-x j e}).  EWW can be
+configured so that visiting a page records a bookmark, via
+@code{bmkp-eww-replace-keys-flag} which rebinds the built-in EWW
+bookmark keys to Bookmark++'s.
+@item @strong{Gnus.}  @code{bmkp-gnus-jump} bookmarks a Gnus article
+(group, article, message-id).
+@item @strong{Legacy W3M.}  @code{bmkp-w3m-jump} still recognises legacy
+W3M bookmarks saved by earlier versions of Bookmark+, but opens them in
+EWW.  This fork does not create new W3M bookmarks.
+@end itemize
+
+@section Image Bookmarks
+@cindex image bookmarks
+
+When you bookmark an image-file target, Emacs's image handler is used
+automatically.  @code{bmkp-image-jump} (@kbd{C-x j M-i}) jumps to one;
+the description (@kbd{C-h @key{RET}}) shows the full EXIF metadata
+(requires @command{exiftool}).
+
+@section URL Bookmarks
+
+@code{bmkp-url-target-set} (@kbd{C-x x c u}) and @code{bmkp-url-jump}
+(@kbd{C-x j u}).  The handler is typically @code{browse-url}.
+
+@section Desktop Bookmarks
+@cindex desktop bookmarks
+
+@code{bmkp-set-desktop-bookmark} (@kbd{C-x x K}) captures a desktop
+(from @file{desktop.el}).  Jumping restores the saved desktop.
+
+Options:
+@itemize
+@item @code{bmkp-desktop-no-save-vars}---variables to exclude.
+@item @code{bmkp-desktop-jump-save-before-flag}---save current desktop
+before jumping if it was reached by jumping.
+@item @code{bmkp-desktop-save-as-last}---add to @code{kill-emacs-hook}
+to remember the last jumped-to desktop.
+@end itemize
+
+@section Sequence (Composite) Bookmarks
+@cindex sequence bookmarks
+@cindex composite bookmarks
+
+A @dfn{sequence bookmark} invokes each member bookmark in turn.
+@code{bmkp-set-sequence-bookmark} (@kbd{C-x x c s}) prompts for a
+sequence name and the member bookmark names.
+@code{bmkp-bmenu-make-sequence-from-marked} turns the marked bookmarks
+into a sequence in their current order.  Members may themselves be
+sequence bookmarks.
+
+@section Function and Keyboard-Macro Bookmarks
+
+@code{bmkp-make-function-bookmark} (@kbd{C-x x c F}) records a function
+symbol or a lambda expression.  With a prefix argument it captures
+@code{last-kbd-macro}---a persistent way to replay a keyboard macro.
+@code{bmkp-wrap-bookmark-with-last-kbd-macro} (@kbd{C-x x c C-k})
+builds a sequence bookmark that first invokes another bookmark and
+then plays the macro.
+
+@section Variable-List Bookmarks
+
+@code{bmkp-set-variable-list-bookmark} records a set of variables and
+their current values.  @code{bmkp-jump-variable-list} (@kbd{C-x j v})
+restores them in the bookmark's buffer.
+
+@section Snippet Bookmarks
+@cindex snippet bookmarks
+
+@code{bmkp-set-snippet-bookmark} (@kbd{C-x x M-w}) saves the active
+region's text under a bookmark name.  At any time, in any Emacs
+session, @code{bmkp-snippet-to-kill-ring} (@kbd{C-x j M-w}) yanks the
+saved snippet to the kill ring.
+
+@section Bookmark-List Bookmarks
+@cindex bookmark-list bookmarks
+
+A @dfn{bookmark-list bookmark} records the state of @file{*Bmkp List*}
+(sort order, filter, regexp pattern, title, omit list).  Jumping to it
+restores that state.  Defined as either a real bookmark or as a
+command via @kbd{C-c C-c} (@code{bmkp-bmenu-define-command}).
+
+@section Bookmark-File Bookmarks
+@cindex bookmark-file bookmarks
+
+Created by @code{bmkp-set-bookmark-file-bookmark} (@kbd{C-x x c y}).
+``Jumping'' to one @emph{loads} the referenced bookmark file.  With
+@kbd{C-u}, jumping @emph{switches} to it.
+
+@section Defining Your Own Types
+
+Define a handler function and set @code{bookmark-make-record-function}
+(or pass a handler via your own bookmark setter).  To register a new
+type so @code{bmkp-jump-to-type} recognizes it, provide a function
+@code{bmkp-TYPE-alist-only} and call
+@code{(bmkp-define-history-variables)}.  The macro
+@code{bmkp-define-type-from-handler} (in @file{bookmark+-mac.el}) does
+all of this and also generates a predicate @code{bmkp-TYPE-bookmark-p}
+and a ``show only'' command @code{bmkp-bmenu-show-only-TYPE-bookmarks}.
+
+
+@node Tags
+@chapter Tags
+@cindex tags
+
+A bookmark @dfn{tag} is a string (or a string plus a Lisp value)
+attached to a bookmark.  Tags are persistent.  Multiple bookmarks can
+share the same tag; one bookmark can have many.  Tags define @emph{sets}
+of bookmarks (@samp{blue}, @samp{vacation/2024/photos}, @samp{todo},
+@dots{}) and most Bookmark++ commands can operate on those sets.
+
+@section Adding and Removing Tags
+
+@multitable @columnfractions .42 .22 .14 .22
+@headitem Command @tab Global key @tab Bmenu key @tab Action
+@item @code{bmkp-add-tags}              @tab @kbd{C-x x t + b} @tab @kbd{T +} @tab Add tags.
+@item @code{bmkp-remove-tags}           @tab @kbd{C-x x t - b} @tab @kbd{T -} @tab Remove tags.
+@item @code{bmkp-remove-all-tags}       @tab @kbd{C-x x t 0}   @tab @kbd{T 0} @tab Remove all tags.
+@item @code{bmkp-autofile-add-tags}     @tab @kbd{C-x x t + a} @tab (none)   @tab Tag a file (creates autofile).
+@item @code{bmkp-untag-a-file}          @tab @kbd{C-x x t - a} @tab (none)   @tab Untag a file.
+@item @code{bmkp-copy-tags}             @tab @kbd{C-x x t c}   @tab @kbd{T c} @tab Copy tags to a kill-ring-style slot.
+@item @code{bmkp-paste-add-tags}        @tab @kbd{C-x x t p}   @tab @kbd{T p} @tab Paste (additive).
+@item @code{bmkp-paste-replace-tags}    @tab @kbd{C-x x t q}   @tab @kbd{T q} @tab Paste (replace).
+@item @code{bmkp-rename-tag}            @tab @kbd{C-x x t r}   @tab @kbd{T r} @tab Rename a tag everywhere.
+@item @code{bmkp-edit-tags}             @tab @kbd{C-x x t e}   @tab @kbd{T e} @tab Edit a bookmark's tags.
+@item @code{bmkp-list-all-tags}         @tab @kbd{C-x x t l}   @tab @kbd{T l} @tab List every defined tag.
+@item @code{bmkp-set-tag-value}         @tab @kbd{C-x x t v}   @tab @kbd{T v} @tab Give a tag a value.
+@end multitable
+
+Press @kbd{@key{RET} @key{RET}} at the tag prompt to accept the empty
+set (many commands treat that as ``any tag at all'').  Use @kbd{C-q C-j}
+to include a newline in a tag.
+
+@section Marking by Tag in @file{*Bmkp List*}
+
+The tag-based mark and unmark commands live under @kbd{T m} / @kbd{T u}:
+
+@multitable @columnfractions .47 .15 .38
+@headitem Command @tab Key @tab Marks/unmarks bookmarks tagged...
+@item @code{bmkp-bmenu-mark-bookmarks-tagged-all}     @tab @kbd{T m *}   @tab with all of the given tags.
+@item @code{bmkp-bmenu-mark-bookmarks-tagged-some}    @tab @kbd{T m +}   @tab with some of them.
+@item @code{bmkp-bmenu-mark-bookmarks-tagged-not-all} @tab @kbd{T m ~ *} @tab not with all of them.
+@item @code{bmkp-bmenu-mark-bookmarks-tagged-none}    @tab @kbd{T m ~ +} @tab with none of them.
+@item @code{bmkp-bmenu-mark-bookmarks-tagged-regexp}  @tab @kbd{T m %}   @tab with a tag matching a regexp.
+@item @code{bmkp-bmenu-show-only-tagged-bookmarks}    @tab @kbd{T S}     @tab show only tagged.
+@item @code{bmkp-bmenu-show-only-untagged-bookmarks}  @tab @kbd{T U}     @tab show only untagged.
+@end multitable
+
+A prefix argument flips ``some'' / ``not all'' and ``all'' / ``none.''
+
+@section Tag Values
+@cindex tag values
+
+Use @code{bmkp-set-tag-value} (@kbd{T v} in @file{*Bmkp List*}) to give
+a tag any readable Lisp value: number, string, list, etc.  A tag with
+a value is internally @code{(NAME . VALUE)}.  Most Bookmark++ commands
+ignore values; you can use them from your own Lisp.
+
+A single predefined tag has special behaviour: @code{bmkp-jump}.  If
+its value is a function, that function is called just after
+@code{bookmark-after-jump-hook} runs for the tagged bookmark.
+
+Tag names prefixed with @code{bmkp-} are reserved.
+
+@section Pseudo-Hierarchical Tags
+@cindex hierarchical tags
+
+A simple convention---tag names that look like paths
+(@samp{vacation/2024/winter/photos})---gives you a tree-shaped
+organization without any special syntax.  Use completion (@key{TAB})
+on partial prefixes to descend the ``tree.''
+
+
+@node Annotations
+@chapter Annotations
+@cindex annotations
+
+An annotation is free-text metadata attached to a bookmark.
+
+@table @code
+@item bmkp-annotate-bookmark
+@kbd{C-x x a a}.  Prompts for a bookmark and opens an annotation edit buffer.
+@item bookmark-show-annotation
+@kbd{C-x x a s}.  Shows an annotation in read-only mode (@kbd{C-x C-q}
+toggles to edit mode).
+@item bookmark-show-all-annotations
+@kbd{C-x x a S}.
+@item bmkp-annotate-bookmark-this-file/buffer
+@kbd{C-x x a b}.
+@item bmkp-annotate-all-bookmarks-this-file/buffer
+@kbd{C-x x a B}.
+@end table
+
+In the edit buffer:
+
+@itemize
+@item @code{bookmark-send-edited-annotation} saves (@kbd{C-c C-c}; or
+@kbd{C-c C-M-c} when Org mode owns @kbd{C-c C-c}).
+@item @code{bookmark-kill-annotation} (@kbd{C-x C-k}) discards changes.
+@item The buffer's major mode is controlled by
+@code{bmkp-annotation-modes-inherit-from} (default @code{org-mode}).
+@item @code{bookmark-automatically-show-annotations}---if non-nil,
+jumping to a bookmark pops up its annotation.
+@end itemize
+
+@section External Annotations (``Annotation Forwards'')
+
+Keep the inline annotation short and ``forward'' to a file, URL, or
+another bookmark.  Put one of these as the first non-blank line:
+
+@example
+bmkp-annot-url: "FILE"      ; opens with find-file-other-window
+bmkp-annot-url: "URL"       ; opens with browse-url
+bmkp-annot-url: "BOOKMARK"  ; jumps to the named bookmark
+@end example
+
+When you @emph{show} the annotation, Bookmark++ follows the forward.
+When you @emph{edit} it (@kbd{a e}), you still see the literal text.
+
+@section Annotation Commands in @file{*Bmkp List*}
+
+@multitable @columnfractions .47 .15 .38
+@headitem Command @tab Key @tab Meaning
+@item @code{bmkp-list-show-annotation}                @tab @kbd{a a}     @tab Show this line's annotation.
+@item @code{bmkp-edit-annotation}                     @tab @kbd{a e}     @tab Edit this line's annotation.
+@item @code{bmkp-show-all-annotations}                @tab @kbd{a A}     @tab Show all annotations.
+@item @code{bmkp-bmenu-edit-annotations-for-marked}   @tab @kbd{a >}     @tab Edit annotations for marked.
+@item @code{bmkp-bmenu-show-this-annotation+move-down} @tab @kbd{M-@key{down}} @tab Move + show.
+@item @code{bmkp-bmenu-show-this-annotation+move-up}   @tab @kbd{M-@key{up}}   @tab Same, going up.
+@end multitable
+
+Annotated bookmarks are flagged with @kbd{a} in the display.
+
+
+@node Multiple Bookmark Files
+@chapter Multiple Bookmark Files
+@cindex multiple bookmark files
+
+A bookmark file is a physical file on disk containing complete bookmark
+records.  Bookmark++ makes it easy to:
+
+@itemize
+@item Switch to a different bookmark file (replacing the current
+in-memory set).
+@item Accumulate bookmarks by loading additional files.
+@item Save the current bookmarks to a different file with
+@code{bookmark-write} (@kbd{C-x x w}).
+@item Create an empty bookmark file with @code{bmkp-empty-file}
+(@kbd{C-x x 0}).
+@end itemize
+
+@section Switching
+
+@multitable @columnfractions .47 .18 .35
+@headitem Command @tab Key @tab Meaning
+@item @code{bmkp-switch-bookmark-file-create}  @tab @kbd{C-x x L} or @kbd{L} @tab Switch to another bookmark file.
+@item @code{bookmark-load} (no prefix)         @tab @kbd{C-x x l} @tab Add bookmarks from a file.
+@item @code{bookmark-load} (with prefix)       @tab @kbd{C-u C-x x l} @tab Equivalent to @kbd{L} (switch).
+@item @code{bmkp-switch-to-bookmark-file-this-file/buffer} @tab @kbd{C-x x C-l} @tab Switch to a file with only this buffer's bookmarks.
+@item @code{bmkp-bmenu-load-marked-bookmark-file-bookmarks} @tab @kbd{M-l} @tab Load every marked bookmark-file bookmark.
+@end multitable
+
+@section Copying / Moving / Creating
+
+@multitable @columnfractions .47 .15 .38
+@headitem Command @tab Key @tab Meaning
+@item @code{bmkp-bmenu-copy-marked-to-bookmark-file}     @tab @kbd{Y > +} @tab Copy marked to another bookmark file.
+@item @code{bmkp-bmenu-move-marked-to-bookmark-file}     @tab @kbd{Y > -} @tab Move them.
+@item @code{bmkp-bmenu-create-bookmark-file-from-marked} @tab @kbd{Y > 0} @tab New file from marked.
+@end multitable
+
+@section Bookmark-File Bookmarks
+@cindex bookmark-file bookmarks
+
+Created with @code{bmkp-set-bookmark-file-bookmark} (@kbd{C-x x c y}).
+``Jumping'' to one @emph{loads} that bookmark file; with @kbd{C-u} it
+@emph{switches} to it.
+
+@section Default for the Next Session
+@vindex bmkp-last-as-first-bookmark-file
+
+The default bookmark file for the next Emacs session is the one in use
+when you quit, controlled by @code{bmkp-last-as-first-bookmark-file}.
+Set this to @code{nil} to always start from @code{bookmark-default-file}.
+
+Bookmark files are @emph{physical}, not logical, groupings.  Copying a
+bookmark from one to another duplicates it; the two copies are
+independent thereafter.
+
+
+@node Highlighting
+@chapter Highlighting Bookmark Locations
+@cindex highlighting bookmarks
+
+Optional---requires @file{bookmark+-lit.el} on your @code{load-path}.
+Bookmark++ can draw a persistent @dfn{highlight} at the position (or
+region, or line, or fringe) of a bookmark in its buffer.
+
+@section Styles
+
+@multitable @columnfractions .30 .70
+@headitem Style @tab Effect
+@item @code{region}                 @tab Highlight the recorded region.
+@item @code{line}                   @tab Highlight the bookmark's line.
+@item @code{point}                  @tab Highlight the character at the bookmark position.
+@item @code{line-beginning}         @tab Highlight the first character on the line.
+@item @code{lfringe}                @tab Bitmap in the left fringe.
+@item @code{line+lfringe}           @tab Both.
+@item @code{rfringe}                @tab Bitmap in the right fringe.
+@item @code{line+rfringe}           @tab Both.
+@end multitable
+
+Default style per kind (option):
+
+@multitable @columnfractions .50 .50
+@item @code{bmkp-light-style-autonamed}             @tab @code{line+lfringe}
+@item @code{bmkp-light-style-non-autonamed}         @tab @code{line+rfringe}
+@item @code{bmkp-light-style-autonamed-region}      @tab @code{region}
+@item @code{bmkp-light-style-non-autonamed-region}  @tab @code{region}
+@end multitable
+
+@section Per-Bookmark Overrides (in @file{*Bmkp List*})
+
+@multitable @columnfractions .47 .15 .38
+@headitem Command @tab Key @tab Meaning
+@item @code{bmkp-bmenu-set-lighting}              @tab @kbd{H +}   @tab Set highlighting for this bookmark.
+@item @code{bmkp-bmenu-set-lighting-for-marked}   @tab @kbd{H > +} @tab For all marked.
+@item @code{bmkp-bmenu-light}                     @tab @kbd{H H}   @tab Highlight this bookmark.
+@item @code{bmkp-bmenu-light-marked}              @tab @kbd{H > H} @tab All marked.
+@item @code{bmkp-bmenu-unlight}                   @tab @kbd{H U}   @tab Unhighlight this bookmark.
+@item @code{bmkp-bmenu-unlight-marked}            @tab @kbd{H > U} @tab All marked.
+@item @code{bmkp-bmenu-mark-lighted-bookmarks}    @tab @kbd{H M}   @tab Mark highlighted bookmarks.
+@item @code{bmkp-bmenu-show-only-lighted-bookmarks} @tab @kbd{H S} @tab Show only highlighted.
+@end multitable
+
+Each setter command prompts for a style and face, and for a
+@emph{condition}---an Emacs-Lisp sexp evaluated whenever the bookmark
+is about to be highlighted.  Returning @code{:no-light} suppresses the
+highlight.  The sexp may refer to free variables @code{this-bookmark}
+and @code{this-bookmark-name}.
+
+@section Automatic Highlighting
+
+@itemize
+@item @code{bmkp-auto-light-when-set}---highlight automatically when a
+bookmark is created.
+@item @code{bmkp-auto-light-when-jump}---highlight automatically when
+you jump.
+@end itemize
+
+Both options accept the values: @code{autonamed-bookmark},
+@code{non-autonamed-bookmark}, @code{any-bookmark},
+@code{autonamed-in-buffer}, @code{non-autonamed-in-buffer},
+@code{all-in-buffer}, @code{nil} (off).
+
+@section Pulse Highlight on Jump
+@vindex bmkp-highlight-on-jump-flag
+
+If @code{bmkp-highlight-on-jump-flag} is non-nil (the default), jumping
+to a bookmark that has no region briefly pulse-highlights the landing
+line via the built-in @file{pulse.el}.
+
+
+@node Live Preview
+@chapter Live Preview
+@cindex preview
+@cindex live preview
+
+Live preview shows the bookmark's destination without committing to a
+jump.  Two surfaces are provided.
+
+@section In @file{*Bmkp List*}: @code{bmkp-list-preview-mode}
+@cindex preview mode
+@findex bmkp-list-preview-mode
+
+A buffer-local minor mode in @file{*Bmkp List*}, modeled on the
+built-in @code{next-error-follow-minor-mode}.  Toggle with @kbd{M-p}.
+
+When the mode is enabled:
+
+@itemize
+@item Moving point onto a bookmark line opens its destination in
+another window, without changing the selected window.
+@item The mode-line lighter is @samp{ Pv}.
+@item The window configuration is captured on mode-entry and restored
+on mode-exit.
+@end itemize
+
+@vindex bmkp-list-preview-display-action
+The display action used to show the destination is governed by
+@code{bmkp-list-preview-display-action} (default: some other window,
+@code{inhibit-same-window}).
+
+@section On Demand: @kbd{C-o} and @key{TAB}
+@findex bmkp-list-switch-other-window
+
+In @file{*Bmkp List*}, @kbd{C-o} and @key{TAB} both invoke
+@code{bmkp-list-switch-other-window}: open the bookmark in another
+window, leaving the cursor in the list buffer.  Useful for one-off
+peeking without entering the full preview mode.
+
+@section In the Minibuffer: consult Integration
+@cindex consult integration
+@vindex bmkp-preview-use-consult-flag
+
+When the @code{consult} package is loaded and
+@code{bmkp-preview-use-consult-flag} is non-nil (the default), the
+interactive bookmark-name read for @code{bmkp-jump} (and its
+other-window and other-frame variants) is routed through
+@code{consult--read} with @code{consult--bookmark-preview} as the
+@code{:state} callback---the same mechanism @code{consult-bookmark}
+uses.  You get live preview as you move through completion candidates.
+
+If @code{consult} is not loaded, the read falls back to plain
+@code{bmkp-completing-read}---no behavior change.
+
+
+@node Casual Integration
+@chapter Casual Integration
+@cindex Casual
+@cindex Transient menu
+
+The optional file @file{casual-bmkp.el} provides a discoverable
+Transient-based menu UI for @file{*Bmkp List*}, in the style of the
+@uref{https://github.com/kickingvegas/casual, Casual suite}.
+
+@section Activation
+
+Requires the @code{casual-lib} package (from MELPA, part of the Casual
+suite).  When @code{casual-lib} is installed, @file{casual-bmkp.el} is
+loaded automatically and binds:
+
+@table @kbd
+@item c
+@code{casual-bmkp-tmenu}---in @code{bmkp-list-mode-map}.  Opens the
+Casual menu.
+@end table
+
+(Casual's own ecosystem uses @kbd{C-o} as the entry-point key, but in
+@code{bmkp-list-mode} that is already taken by
+@code{bmkp-list-switch-other-window}.  @kbd{c} was free.)
+
+If @code{casual-lib} is not installed, Bookmark++ runs unchanged and
+@kbd{c} is unbound.
+
+@section Menu Layout
+
+The main menu groups commands by intent: Move, Mark, Delete, Filter and
+Show, Edit, Files, Preview, Sort (own submenu), Help, Quit.  See the
+in-Emacs help (@kbd{?} in the transient) for the live list.
+
+
+@node Cycling
+@chapter Cycling: the Navigation List
+@cindex cycling
+@cindex navigation list
+@cindex navlist
+
+Bookmark++ lets you @emph{cycle} through a set of bookmarks---like
+``favorites'' buttons on a TV remote.  The set being cycled is the
+@dfn{navigation list} (navlist).
+
+@section Defining the Navlist
+
+@table @code
+@item bmkp-choose-navlist-of-type
+@kbd{C-x x :}---all bookmarks of a given type.
+@item bmkp-choose-navlist-from-bookmark-list
+@kbd{C-x x B}---bookmarks corresponding to a bookmark-list bookmark, or
+the current @file{*Bmkp List*} state.
+@end table
+
+If you do not define one, the first cycling key takes a snapshot of
+the current bookmarks (or of bookmarks for the current file/buffer, for
+the file/buffer-specific cycling keys).
+
+@section Cycling Commands
+
+@multitable @columnfractions .42 .28 .28
+@headitem Command @tab Forward key @tab Backward key
+@item @code{bmkp-next-bookmark-repeat}                     @tab @kbd{C-x x f} / @kbd{C-x x C-f} / @kbd{C-x x @key{right}} @tab @kbd{C-x x b} / @kbd{C-x x C-b} / @kbd{C-x x @key{left}}
+@item @code{bmkp-next-bookmark-this-file/buffer-repeat}    @tab @kbd{C-x x n} / @kbd{C-x x C-n} / @kbd{C-x x @key{down}}  @tab @kbd{C-x x p} / @kbd{C-x x C-p} / @kbd{C-x x @key{up}}
+@item @code{bmkp-next-lighted-this-buffer-repeat}          @tab @kbd{C-x x C-@key{down}} @tab @kbd{C-x x C-@key{up}}
+@end multitable
+
+After @kbd{C-x x} you can also rotate the mouse wheel to cycle.
+
+Show @file{*Bmkp List*} filtered to the navigation list with
+@code{bmkp-navlist-bmenu-list} (@kbd{C-x x N}).
+
+
+@node Automatic Bookmarking
+@chapter Automatic Bookmarking
+@cindex automatic bookmarking
+
+@section On a Hook
+
+Add @code{bmkp-set-automatic-bookmark} to any hook to create a bookmark
+whenever that hook runs:
+
+@lisp
+(add-hook 'imenu-after-jump-hook #'bmkp-set-automatic-bookmark)
+@end lisp
+
+The bookmark created is an autonamed bookmark.
+
+@section Idle-Period Bookmarking
+@findex bmkp-automatic-bookmark-mode
+
+@code{bmkp-automatic-bookmark-mode} is a buffer-local minor mode that
+sets an autonamed bookmark whenever Emacs has been idle for
+@code{bmkp-automatic-bookmark-mode-delay} seconds in the current
+buffer.  @code{bmkp-global-automatic-bookmark-mode} turns it on
+everywhere (a bookmark is still only created for the currently selected
+buffer).
+
+Tuning options:
+
+@itemize
+@item @code{bmkp-automatic-bookmark-mode-lighter}---mode-line lighter
+(default @samp{Auto-Bmk}; set to @code{""} to hide).
+@item @code{bmkp-automatic-bookmark-min-distance}---minimum distance
+(in characters) from the nearest existing automatic bookmark.
+@item @code{bmkp-automatic-bookmark-set-function}---which command to
+use.
+@end itemize
+
+@section Automatic Info Bookmarking
+@findex bmkp-info-auto-bookmark-mode
+
+Enable @code{bmkp-info-auto-bookmark-mode} and every Info node you
+visit either creates or updates a bookmark named @samp{(MANUAL) NODE}.
+@code{bmkp-info-auto-type} chooses between @code{update-only} (default)
+and @code{create-or-replace}; @code{bmkp-toggle-info-auto-type} flips
+it.
+
+The result is a persistent log of ``what I have read recently in the
+Elisp / Emacs / @dots{} manuals.''
+
+
+@node Autonamed Bookmarks
+@chapter Autonamed Bookmarks
+@cindex autonamed bookmarks
+
+An @dfn{autonamed} bookmark is a regular, persistent bookmark whose
+name is generated automatically from a buffer name plus position
+(default format: @samp{000058356 foo.el}---nine-digit position then
+buffer name).  It records no region, only a position.
+
+@table @code
+@item bmkp-toggle-autonamed-bookmark-set/delete
+@kbd{C-x x @key{RET}}.  Toggles the autonamed bookmark at point.
+Setting one is one keystroke; deleting it is the same keystroke.  With
+a prefix argument it deletes @emph{all} autonamed bookmarks in the
+current buffer (after confirmation).
+@item bmkp-delete-bookmarks
+@kbd{C-x x @key{delete}}.  Deletes individual bookmarks under cursor or
+all bookmarks in the buffer (any type).
+@end table
+
+Other autonamed commands (not bound by default):
+@code{bmkp-set-autonamed-bookmark-at-line},
+@code{bmkp-set-autonamed-regexp-buffer},
+@code{bmkp-set-autonamed-regexp-region},
+@code{bmkp-occur-create-autonamed-bookmarks}.
+
+If you do not want autonamed bookmarks to persist across sessions:
+
+@lisp
+(add-hook 'kill-buffer-hook 'bmkp-delete-autonamed-this-buffer-no-confirm)
+(add-hook 'kill-emacs-hook  'bmkp-delete-autonamed-no-confirm)
+@end lisp
+
+Alternative: make autonamed bookmarks @emph{temporary} via
+@code{bmkp-autotemp-bookmark-predicates} (the default), and they will
+not be saved.  @xref{Temporary Bookmarks}.
+
+Customize the name format with @code{bmkp-autoname-format} and
+@code{bmkp-autoname-bookmark-function}.  The special spec @samp{%B}
+refers to the buffer name within the format.
+
+
+@node Temporary Bookmarks
+@chapter Temporary Bookmarks
+@cindex temporary bookmarks
+
+A @dfn{temporary} bookmark is one that will not be written to the
+bookmark file.  It exists only for the current session.
+
+@section Temporary-Bookmarking Mode
+@findex bmkp-temporary-bookmarking-mode
+
+@code{bmkp-temporary-bookmarking-mode} (@kbd{M-L} in @file{*Bmkp List*})
+turns on a minor mode that:
+
+@enumerate
+@item Switches to an empty bookmark file.
+@item Turns off auto-saving (@code{bookmark-save-flag}).
+@end enumerate
+
+Every bookmark you create in this mode is therefore session-local.
+The mode-line indicator changes to @samp{TEMPORARY Bookmarking}.
+
+@section Per-Bookmark Temporary Flag
+
+@multitable @columnfractions .47 .18 .35
+@headitem Command @tab Key @tab Meaning
+@item @code{bmkp-toggle-temporary-bookmark}                @tab @kbd{C-M-X} @tab Toggle for this line's bookmark.
+@item @code{bmkp-bmenu-toggle-marked-temporary/savable}    @tab @kbd{M-X}   @tab Toggle for the marked bookmarks.
+@item Temporary mark/show commands                          @tab @kbd{X M} / @kbd{X S} @tab Mark / show only temporary.
+@item @code{bmkp-toggle-autotemp-on-set}                   @tab @kbd{C-x x x} @tab Toggle: make every new bookmark temporary.
+@end multitable
+
+@section Autotemp Predicates
+@vindex bmkp-autotemp-bookmark-predicates
+
+@code{bmkp-autotemp-bookmark-predicates} is a list of predicates---
+typically type predicates such as @code{bmkp-autonamed-bookmark-p}---
+that decide which bookmarks become temporary automatically when created
+or updated.  The default makes autonamed bookmarks temporary.
+
+@code{bmkp-delete-all-temporary-bookmarks} removes them all from the
+current list at once.
+
+Temporary bookmarks are flagged with @kbd{X} in @file{*Bmkp List*}.
+
+
+@node Bookmark Records
+@chapter Bookmark Records
+@cindex bookmark record format
+@cindex bookmark-alist
+
+A bookmark is a list whose @code{car} is its name (a string) and whose
+@code{cdr} is a @dfn{property alist}.  A typical record:
+
+@example
+("README"
+ (id          . "8f3a7b3c-4dd5-...")
+ (filename    . "/home/me/proj/README")
+ (front-context-string . "## Introduction")
+ (rear-context-string  . "")
+ (position    . 1234)
+ (last-modified 26013 12345 0 0)
+ (visits      . 7)
+ (tags ("doc") ("project" . "myproj")))
+@end example
+
+@cindex @code{id} property
+
+Every record carries an @code{(id . STRING)} property.  The id is
+opaque (@code{format-time-string} plus random hex bits), assigned at
+record creation by @code{bookmark-make-record-default}.  Records read
+from a file that lack an @code{id} (created by the built-in or by older
+Bookmark+ versions) get one generated at load time and the alist is
+marked dirty so the next save writes them.
+
+@xref{Migration}, for why the @code{id} field exists and how it relates
+to bookmark identity.
+
+@section Lookup Helpers
+
+@table @code
+@item bmkp-get-bookmark
+@code{(assoc NAME bookmark-alist)}.  Names are unique.
+@item bmkp-get-by-id
+Find a record by id.  Useful when a bookmark name may have changed.
+@end table
+
+@section Name Uniqueness
+@cindex name uniqueness
+
+Bookmark names are enforced unique within @code{bookmark-alist}.  Two
+mechanisms maintain this:
+
+@itemize
+@item @strong{Auto-disambiguation on creation.}  When
+@code{bookmark-store} is asked to create a new bookmark whose name
+collides with an existing one, the new bookmark is auto-renamed
+@samp{foo} @result{} @samp{foo<2>} @result{} @samp{foo<3>} @result{} @dots{}
+@item @strong{Deduplication on load.}
+@code{bmkp-deduplicate-bookmark-names} runs on
+@code{bmkp-read-bookmark-file-hook} and renames any duplicate names
+found in a loaded bookmark file.
+@end itemize
+
+
+@node Customization
+@chapter Customization
+@cindex customization
+
+Run @kbd{M-x customize-group RET bookmark-plus RET} for the full
+customize interface.  This section enumerates the most commonly tweaked
+options.  Many more are listed in @code{customize-group}.
+
+@section Bookmark Naming and Properties
+
+@vtable @code
+@item bmkp-new-bookmark-default-names
+List of functions consulted to generate the default name for a new
+bookmark.
+@item bmkp-properties-to-keep
+Properties preserved when you overwrite a bookmark.  Default:
+@code{(tags annotation)}.
+@item bmkp-count-multi-mods-as-one-flag
+If non-nil (default), count all the modifications a single command
+makes as one for @code{bookmark-save-flag} purposes.
+@item bmkp-save-new-location-flag
+If non-nil, update the recorded position to the actual destination
+after a relocated jump.
+@end vtable
+
+@section Tags
+
+@vtable @code
+@item bmkp-prompt-for-tags-flag
+Prompt for tags whenever a bookmark is created or updated.
+@item bmkp-tags-for-completion
+Which tags are completion candidates: @code{current} (the default), a
+list of specific tags, or a list of bookmark files.
+@end vtable
+
+@section Annotations
+
+@vtable @code
+@item bookmark-automatically-show-annotations
+If non-nil, pop up the annotation when jumping.  Value @code{edit}
+opens in edit mode; anything else non-nil opens read-only.
+@item bmkp-annotation-modes-inherit-from
+Major mode for the annotation edit buffer (default @code{org-mode}).
+@end vtable
+
+@section Sorting
+
+@vtable @code
+@item bmkp-sort-comparer
+The active sort order.  (The built-in @code{bookmark-sort-flag} is
+ignored.)
+@item bmkp-sort-orders-for-cycling-alist
+The orders cycled by @kbd{s s}.
+@end vtable
+
+@section @file{*Bmkp List*} State
+
+@vtable @code
+@item bmkp-bmenu-state-file
+Where the display state is saved.  @code{nil} disables the feature.
+@item bmkp-bmenu-commands-file
+Where defined commands are appended (@kbd{C-c C-c}, @kbd{C-c C-S-c},
+@kbd{C-c C-j}).
+@end vtable
+
+@section Bookmark Files
+
+@vtable @code
+@item bmkp-last-as-first-bookmark-file
+Start each Emacs session with the last bookmark file used.  Set to
+@code{nil} to always start with @code{bookmark-default-file}.
+@item bookmark-save-flag
+(Built-in.)  When to auto-save the current bookmark file (@code{nil} =
+never, @code{t} = on every change, integer = after that many
+modifications).
+@item bookmark-version-control
+(Built-in.)  Recommended @code{t} so Bookmark++'s save-time backups
+accumulate cleanly.
+@end vtable
+
+@section Live Preview
+
+@vtable @code
+@item bmkp-preview-use-consult-flag
+Use @code{consult} for live preview in @code{bmkp-jump} commands.
+Default @code{t}.  Takes effect only when @code{consult} is loaded.
+@item bmkp-list-preview-display-action
+@code{display-buffer} action used by @code{bmkp-list-preview-mode}.
+@end vtable
+
+@section Highlighting
+
+@vtable @code
+@item bmkp-light-style-autonamed
+@itemx bmkp-light-style-non-autonamed
+@itemx bmkp-light-style-autonamed-region
+@itemx bmkp-light-style-non-autonamed-region
+Per-kind default highlighting style.
+@item bmkp-light-left-fringe-bitmap
+@itemx bmkp-light-right-fringe-bitmap
+Bitmaps for fringe styles.
+@item bmkp-light-priorities
+Overlay z-order.
+@item bmkp-light-threshold
+Maximum number of bookmarks to highlight in a buffer.
+@item bmkp-auto-light-when-set
+@itemx bmkp-auto-light-when-jump
+Auto-highlighting trigger.
+@item bmkp-tooltip-content-function
+Function returning the tooltip body for hovered highlighted bookmarks.
+@item bmkp-highlight-on-jump-flag
+Pulse-highlight the landing line after a jump (uses built-in
+@file{pulse.el}).
+@end vtable
+
+
+@node Migration
+@chapter Migration from Upstream Bookmark+
+@cindex migration
+@cindex differences from upstream
+
+This is a fork of Drew Adams' Bookmark+, modernized for Emacs 30+.  If
+you are coming from the original, here is what changed.
+
+@section Sibling, Not Replacement
+@cindex sibling design
+
+Upstream Bookmark+ @emph{replaced} many built-in @file{bookmark.el}
+functions in place, using a @code{bmkp-full-record} text-property trick
+to support multiple bookmarks with the same name.
+
+This fork is an @strong{additive sibling} of the built-in.  No built-in
+function is redefined.  Every Bookmark++ command lives under the
+@code{bmkp-} prefix.  Both systems coexist and operate on the same
+@code{bookmark-alist} and on-disk bookmark file.
+
+The @code{bmkp-full-record} text-property trick is gone.  The same
+use cases (autofiles with the same basename in different directories)
+work via auto-disambiguation: @samp{README.md}, @samp{README.md<2>},
+@samp{README.md<3>}, @dots{}
+
+@section No Compatibility Aliases
+@cindex no compat aliases
+
+Where this fork renamed an upstream symbol (for example, the bmenu
+buffer became @file{*Bmkp List*} and many @code{bookmark-bmenu-*}
+defuns became @code{bmkp-list-*}), no compatibility alias was kept.
+The user-visible Bookmark++ commands are all @code{bmkp-*}; the
+built-in @code{bookmark-*} names always refer to the built-in.
+
+If you had user code that called @code{bookmark-bmenu-foo}, point it at
+the corresponding @code{bmkp-list-foo} or @code{bmkp-bmenu-foo}.
+
+@section Emacs 30 or Newer Required
+@cindex Emacs 30 requirement
+
+Loading the package on Emacs @math{<} 30 signals an error at load time.
+Many polyfills for older Emacs (cl-puthash dispatch, find-tag-default
+fallbacks, Emacs-21 fringe-style guards, @dots{}) have been deleted.
+
+@section Dropped External Dependencies
+@cindex dropped dependencies
+
+Replaced with built-in equivalents:
+
+@multitable @columnfractions .35 .65
+@headitem Upstream dep @tab Replacement
+@item @file{crosshairs.el}       @tab Built-in @file{pulse.el}.
+@item @file{fit-frame.el}        @tab Built-in @code{fit-frame-to-buffer}.
+@item @file{narrow-indirect.el}  @tab Built-in @code{clone-indirect-buffer-other-window} + @code{narrow-to-region}.
+@item @file{thingatpt+.el}       @tab Inlined as @code{bmkp-symbol-nearest-point} and friends.
+@item @file{zones.el} helper calls @tab Inlined as @code{bmkp-read-any-variable}, @code{bmkp-readable-marker} (the izones bookmark type is still gated on @file{zones.el}).
+@item @file{linkd.el} (dead since 2007) @tab Built-in @code{outline-minor-mode}.
+@item Active @file{emacs-w3m} integration @tab @code{bmkp-jump-w3m} routes to @code{bmkp-jump-eww}; no new W3M bookmarks created.
+@item Icicles completion-framework integration @tab Plain @code{completing-read}; layer @code{vertico} / @code{consult} / @code{marginalia} on top.
+@end multitable
+
+@file{dired+.el} is still recognised as an optional dependency.
+
+@section File Format
+@cindex file format
+
+Bookmark files are now plain printable Lisp---no
+@code{print-circle}/@code{#1=#1#} markers, no @code{bmkp-full-record}
+text property on names.  Files round-trip through built-in
+@file{bookmark.el} losslessly.
+
+@section New Capabilities
+@cindex new capabilities
+
+@itemize
+@item Live preview in @file{*Bmkp List*} via @code{bmkp-list-preview-mode}
+(@xref{Live Preview}).
+@item @code{consult} integration for @code{bmkp-jump} (same chapter).
+@item Optional Casual-style Transient menu via @file{casual-bmkp.el}
+(@xref{Casual Integration}).
+@item Stable bookmark identity via the @code{id} record property.
+@item Hard Emacs-30 gate, much cleaner source (~600 lines of dead
+version-gates and polyfills removed).
+@end itemize
+
+
+@node GNU GPL
+@appendix GNU General Public License
+@center Version 3, 29 June 2007
+
+This program is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation, either version 3 of the License, or (at your
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program.  If not, see @uref{https://www.gnu.org/licenses/}.
+
+
+@node Key Index
+@unnumbered Key Index
+@printindex ky
+
+@node Command Index
+@unnumbered Command Index
+@printindex fn
+
+@node Variable Index
+@unnumbered Variable Index
+@printindex vr
+
+@node Concept Index
+@unnumbered Concept Index
+@printindex cp
+
+@bye

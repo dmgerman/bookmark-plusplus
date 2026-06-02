@@ -14,8 +14,12 @@ under the parent `.emacs.d` repo; the `.git` file points to
 - `bookmark+-bmu.el` — `*Bookmark List*` (bmenu) buffer
 - `bookmark+-key.el` — key and menu bindings
 - `bookmark+-lit.el` — bookmark highlighting (optional)
-- `bookmark+-doc.el` — upstream documentation (comment-only, untouched)
-- `readme.org`, `doc/reference.org` — locally-authored user docs
+- `doc/bookmark-plusplus.texi` — user manual (texinfo source).
+  Build with `make -C doc` to produce `doc/bookmark-plusplus.info`.
+- `doc/Makefile` — `make` builds info; `make html` / `make pdf` available.
+- `readme.org`, `doc/reference.org` — locally-authored quickstart and
+  command-table references (kept alongside the Info manual; the manual
+  is the authoritative user doc).
 - `bookmark+-preview.el` — live preview for `bmkp-jump` and `*Bmkp List*`
   (always loaded; consult integration is soft-gated on `(featurep 'consult)`)
 - `casual-bmkp.el` — optional Casual-style Transient menu for `*Bmkp List*`.

@@ -49,26 +49,9 @@
 ;;    `bookmark+-1.el'   - other required code (non-bmenu)
 ;;    `bookmark+-key.el' - key and menu bindings
 ;;
-;;    `bookmark+-doc.el' - documentation (comment-only file)
-;;
-;;    The documentation (in `bookmark+-doc.el') includes how to
-;;    byte-compile and install Bookmark+.  The documentation is also
-;;    available in these ways:
-;;
-;;    1. From the bookmark list (`C-x r l'):
-;;       Use `?' to show the current bookmark-list status and general
-;;       help, then click link `Doc in Commentary' or link `Doc on the
-;;       Web'.
-;;
-;;    2. From the Emacs-Wiki Web site:
-;;       https://www.emacswiki.org/emacs/BookmarkPlus.
-;;
-;;    3. From the Bookmark+ group customization buffer:
-;;       `M-x customize-group bookmark-plus', then click link
-;;       `Commentary'.
-;;
-;;    (The commentary links in #1 and #3 work only if you have library
-;;    `bookmark+-doc.el' in your `load-path'.)
+;;    User documentation is the `bookmark-plusplus' Info manual.  See
+;;    `M-x info RET m bookmark-plusplus RET' or the source in
+;;    `doc/bookmark-plusplus.texi'.
  
 ;;(@> "Index")
 ;;
@@ -4374,15 +4357,8 @@ Autosave bookmarks:\t%s\nAutosave list display:\t%s\n\n\n"
   (define-button-type 'bmkp-commentary-button
       :supertype 'help-xref
       'help-function #'(lambda ()
-                         (message "Getting Bookmark+ doc from file commentary...")
-                         (finder-commentary "bookmark+-doc")
-                         ;; Drew Adams' commentary uses `;;(@* "Heading")` and
-                         ;; `;;(@> "Index")` as section markers.  outline-minor-mode
-                         ;; gives folding, outline-cycling, and imenu over them.
-                         (setq-local outline-regexp ";;[ \t]*(@[*>@]")
-                         (outline-minor-mode 1)
-                         (fit-frame-to-buffer))
-      'help-echo (purecopy "mouse-2, RET: Bookmark+ documentation (no Internet needed)"))
+                         (info "(bookmark-plusplus)"))
+      'help-echo (purecopy "mouse-2, RET: Bookmark++ Info manual"))
   (define-button-type 'bmkp-customize-button
       :supertype 'help-xref
       'help-function #'(lambda () (customize-group-other-window 'bookmark-plus))

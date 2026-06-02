@@ -49,26 +49,9 @@
 ;;    `bookmark+-1.el'   - other required code (non-bmenu)
 ;;    `bookmark+-key.el' - key and menu bindings
 ;;
-;;    `bookmark+-doc.el' - documentation (comment-only file)
-;;
-;;    The documentation (in `bookmark+-doc.el') includes how to
-;;    byte-compile and install Bookmark+.  The documentation is also
-;;    available in these ways:
-;;
-;;    1. From the bookmark list (`C-x r l'):
-;;       Use `?' to show the current bookmark-list status and general
-;;       help, then click link `Doc in Commentary' or link `Doc on the
-;;       Web'.
-;;
-;;    2. From the Emacs-Wiki Web site:
-;;       https://www.emacswiki.org/emacs/BookmarkPlus.
-;;
-;;    3. From the Bookmark+ group customization buffer:
-;;       `M-x customize-group bookmark-plus', then click link
-;;       `Commentary'.
-;;
-;;    (The commentary links in #1 and #3 work only if you have library
-;;    `bookmark+-doc.el' in your `load-path'.)
+;;    User documentation is the `bookmark-plusplus' Info manual.  See
+;;    `M-x info RET m bookmark-plusplus RET' or the source in
+;;    `doc/bookmark-plusplus.texi'.
 ;;
 ;;    To report Bookmark+ bugs: `M-x customize-group bookmark-plus'
 ;;    and then follow (e.g. click) the link `Send Bug Report', which
