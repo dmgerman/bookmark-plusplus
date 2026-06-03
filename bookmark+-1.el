@@ -814,14 +814,29 @@ whichever symbol is closer."
               (before              (cdr before))
               (after               (cdr after))))))
 
+(defcustom bmkp-non-textual-modes
+  '(image-mode doc-view-mode pdf-view-mode archive-mode hexl-mode)
+  "Major modes whose buffer contents are not meaningful text.
+`bmkp-region-or-symbol-name-nearest-point' returns nil in these
+modes so a new bookmark's default name falls through to the file
+or buffer name instead of a garbled \"symbol\" pulled from raw
+bytes."
+  :type '(repeat symbol) :group 'bookmark-plus)
+
 (defun bmkp-region-or-symbol-name-nearest-point ()
   "Return active region content (if non-empty) or nearest symbol's name.
-Returns nil if neither is available."
-  (if (use-region-p)
-      (let ((s  (buffer-substring-no-properties (region-beginning) (region-end))))
-        (and (not (string-empty-p s)) s))
+Returns nil if neither is available, or if the current major mode
+is in `bmkp-non-textual-modes' (image, PDF, archive, ...) where
+the bytes around point are not meaningful as a word."
+  (cond
+   ((use-region-p)
+    (let ((s  (buffer-substring-no-properties (region-beginning) (region-end))))
+      (and (not (string-empty-p s)) s)))
+   ((apply #'derived-mode-p bmkp-non-textual-modes)
+    nil)
+   (t
     (let ((sym  (bmkp-symbol-nearest-point)))
-      (and sym (symbol-name sym)))))
+      (and sym (symbol-name sym))))))
 
 (require 'font-lock+ nil t)             ; font-lock-ignore (text property)
 
