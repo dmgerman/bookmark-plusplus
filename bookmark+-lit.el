@@ -1538,7 +1538,20 @@ If STYLE is `none' then:
     ;; Emacs bug # prevents making use of a face in a `help-echo' tooltip.
     ;; (when ov (overlay-put ov 'help-echo (bmkp-propertize (funcall bmkp-tooltip-content-function bookmark)
     ;;                                                      'face 'bmkp-tooltip-content-face)))
-    (when ov (overlay-put ov 'help-echo (funcall bmkp-tooltip-content-function bookmark)))
+    ;;
+    ;; The `help-echo' property accepts a function -- Emacs only calls it on
+    ;; demand (when the user actually hovers).  Pass a lambda so we do not pay
+    ;; the cost of `bmkp-tooltip-content-function' on every overlay creation.
+    ;; This matters: the default function `bmkp-bookmark-description' runs
+    ;; `image-dired-get-thumbnail-image' and `exiftool' for files matching
+    ;; `image-file-name-regexp'.  Eager evaluation made every auto-light pay
+    ;; that cost (and errored on PDFs when "pdf" was in `image-file-name-extensions',
+    ;; because ImageMagick refuses PDF conversion under default CVE-2018-16509
+    ;; policy).
+    (when ov
+      (overlay-put ov 'help-echo
+                   (lambda (_window _object _pos)
+                     (funcall bmkp-tooltip-content-function bookmark))))
     ov))
 
 ;; Not used for Emacs 20-21.

@@ -2638,7 +2638,17 @@ DISPLAY-FUNCTION is as in `bmkp-jump'."
   (bmkp-record-visit bookmark 'BATCHP)
   (setq bmkp-jump-display-function  display-function)
   (catch 'bmkp--jump-via
-    (bmkp-handle-bookmark bookmark)
+    (let ((had-handler  (or (bookmark-prop-get bookmark 'file-handler)
+                            (bookmark-get-handler bookmark))))
+      (bmkp-handle-bookmark bookmark)
+      ;; Custom handlers (e.g. `pdf-view-bookmark-jump-handler') typically
+      ;; leave the destination buffer current via `set-buffer' but do not
+      ;; display it; built-in `bookmark--jump-via' would call the display
+      ;; function on the resulting buffer, but our default handler is the
+      ;; only path that consults `bmkp-jump-display-function'.  For custom
+      ;; handlers we have to display the destination ourselves.
+      (when (and had-handler  display-function)
+        (funcall display-function (current-buffer))))
     (unless (and bmkp-use-w32-browser-p  (fboundp 'w32-browser)  (bookmark-get-filename bookmark))
       (let ((win  (get-buffer-window (current-buffer) 0)))
         (when win (set-window-point win (point))))
