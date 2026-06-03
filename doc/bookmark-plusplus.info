@@ -979,10 +979,12 @@ commands can operate on those sets.
 Command                        Global key       Bmenu      Action
                                                 key
 ----------------------------------------------------------------------------
-‘bmkp-add-tags’                ‘C-x x t + b’    ‘T +’      Add tags.
-‘bmkp-remove-tags’             ‘C-x x t - b’    ‘T -’      Remove tags.
-‘bmkp-remove-all-tags’         ‘C-x x t 0’      ‘T 0’      Remove all
-                                                           tags.
+‘bmkp-add-tags’ /              ‘C-x x t + b’    ‘T +’      Add tags.
+‘bmkp-bmenu-add-tags’
+‘bmkp-remove-tags’ /           ‘C-x x t - b’    ‘T -’      Remove tags.
+‘bmkp-bmenu-remove-tags’
+‘bmkp-remove-all-tags’ /       ‘C-x x t 0’      ‘T 0’      Remove all
+‘bmkp-bmenu-remove-all-tags’                               tags.
 ‘bmkp-autofile-add-tags’       ‘C-x x t + a’    (none)     Tag a file
                                                            (creates
                                                            autofile).
@@ -1004,9 +1006,16 @@ Command                        Global key       Bmenu      Action
 ‘bmkp-set-tag-value’           ‘C-x x t v’      ‘T v’      Give a tag a
                                                            value.
 
-   Press ‘<RET> <RET>’ at the tag prompt to accept the empty set (many
-commands treat that as "any tag at all").  Use ‘C-q C-j’ to include a
-newline in a tag.
+   The tag prompt uses ‘completing-read-multiple’: enter tags in a
+single, comma-separated reply (‘work,urgent,backend’).  Each segment
+between commas has its own completion against the candidate list.  Press
+<RET> on an empty input to accept the empty set (many commands treat
+that as "any tag at all").  Use ‘C-q C-j’ to include a newline in a tag.
+
+   Inside ‘*Bmkp List*’, ‘T +’, ‘T -’, ‘T 0’, ‘T v’ and the Casual tags
+menu act on the bookmark on the current line - no separate bookmark
+prompt.  Outside the list, the ‘bmkp-*’ variants prompt for the bookmark
+first.
 
 9.2 Marking by Tag in ‘*Bmkp List*’
 ===================================
@@ -2113,7 +2122,7 @@ Concept Index
 * fork of Bookmark+:                     Preface.             (line   6)
 * header line:                           The Bmkp List Buffer.
                                                               (line  15)
-* hierarchical tags:                     Tags.                (line  84)
+* hierarchical tags:                     Tags.                (line  93)
 * highlighting bookmarks:                Highlighting.        (line   6)
 * id field:                              Migration.           (line  28)
 * id property:                           Bookmark Records.    (line  19)
@@ -2166,7 +2175,7 @@ Concept Index
                                                               (line 174)
 * sorting, tutorial:                     Tutorial.            (line  72)
 * standard keys:                         Standard Keys.       (line   6)
-* tag values:                            Tags.                (line  70)
+* tag values:                            Tags.                (line  79)
 * tag-based jumping:                     Jumping.             (line  71)
 * tagging, tutorial:                     Tutorial.            (line  47)
 * tags:                                  Tags.                (line   6)
@@ -2193,24 +2202,24 @@ Node: Jumping18384
 Node: The Bmkp List Buffer22765
 Node: Bookmark Types34554
 Node: Tags41092
-Node: Annotations45645
-Node: Multiple Bookmark Files48214
-Node: Highlighting50915
-Node: Live Preview54124
-Node: Casual Integration55999
-Node: Cycling57143
-Node: Automatic Bookmarking58871
-Node: Autonamed Bookmarks60483
-Node: Temporary Bookmarks62148
-Node: Bookmark Records64085
-Ref: Round Trip Caveat66431
-Node: Customization68308
-Node: Migration72049
-Node: GNU GPL82095
-Node: Key Index82937
-Node: Command Index83056
-Node: Variable Index83997
-Node: Concept Index86926
+Node: Annotations46145
+Node: Multiple Bookmark Files48714
+Node: Highlighting51415
+Node: Live Preview54624
+Node: Casual Integration56499
+Node: Cycling57643
+Node: Automatic Bookmarking59371
+Node: Autonamed Bookmarks60983
+Node: Temporary Bookmarks62648
+Node: Bookmark Records64585
+Ref: Round Trip Caveat66931
+Node: Customization68808
+Node: Migration72549
+Node: GNU GPL82595
+Node: Key Index83437
+Node: Command Index83556
+Node: Variable Index84497
+Node: Concept Index87426
 
 End Tag Table
 

@@ -1054,9 +1054,9 @@ of bookmarks (@samp{blue}, @samp{vacation/2024/photos}, @samp{todo},
 
 @multitable @columnfractions .42 .22 .14 .22
 @headitem Command @tab Global key @tab Bmenu key @tab Action
-@item @code{bmkp-add-tags}              @tab @kbd{C-x x t + b} @tab @kbd{T +} @tab Add tags.
-@item @code{bmkp-remove-tags}           @tab @kbd{C-x x t - b} @tab @kbd{T -} @tab Remove tags.
-@item @code{bmkp-remove-all-tags}       @tab @kbd{C-x x t 0}   @tab @kbd{T 0} @tab Remove all tags.
+@item @code{bmkp-add-tags} / @code{bmkp-bmenu-add-tags}       @tab @kbd{C-x x t + b} @tab @kbd{T +} @tab Add tags.
+@item @code{bmkp-remove-tags} / @code{bmkp-bmenu-remove-tags} @tab @kbd{C-x x t - b} @tab @kbd{T -} @tab Remove tags.
+@item @code{bmkp-remove-all-tags} / @code{bmkp-bmenu-remove-all-tags} @tab @kbd{C-x x t 0} @tab @kbd{T 0} @tab Remove all tags.
 @item @code{bmkp-autofile-add-tags}     @tab @kbd{C-x x t + a} @tab (none)   @tab Tag a file (creates autofile).
 @item @code{bmkp-untag-a-file}          @tab @kbd{C-x x t - a} @tab (none)   @tab Untag a file.
 @item @code{bmkp-copy-tags}             @tab @kbd{C-x x t c}   @tab @kbd{T c} @tab Copy tags to a kill-ring-style slot.
@@ -1068,9 +1068,17 @@ of bookmarks (@samp{blue}, @samp{vacation/2024/photos}, @samp{todo},
 @item @code{bmkp-set-tag-value}         @tab @kbd{C-x x t v}   @tab @kbd{T v} @tab Give a tag a value.
 @end multitable
 
-Press @kbd{@key{RET} @key{RET}} at the tag prompt to accept the empty
-set (many commands treat that as ``any tag at all'').  Use @kbd{C-q C-j}
+The tag prompt uses @code{completing-read-multiple}: enter tags in a
+single, comma-separated reply (@samp{work,urgent,backend}).  Each
+segment between commas has its own completion against the candidate
+list.  Press @key{RET} on an empty input to accept the empty set
+(many commands treat that as ``any tag at all'').  Use @kbd{C-q C-j}
 to include a newline in a tag.
+
+Inside @file{*Bmkp List*}, @kbd{T +}, @kbd{T -}, @kbd{T 0}, @kbd{T v}
+and the Casual tags menu act on the bookmark on the current line --
+no separate bookmark prompt.  Outside the list, the @code{bmkp-*}
+variants prompt for the bookmark first.
 
 @section Marking by Tag in @file{*Bmkp List*}
 

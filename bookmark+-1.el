@@ -6034,35 +6034,39 @@ Non-nil UPDATE-TAGS-ALIST-P means update var `bmkp-tags-alist'."
 
 (defun bmkp-read-tags-completing (&optional candidate-tags require-match update-tags-alist-p)
   "Read tags with completion, and return them as a list of strings.
-Read tags one by one, until you hit `RET' twice consecutively.
+Tags are entered comma-separated in a single prompt; each segment has
+its own completion against the candidate list.  Submit an empty input
+to return no tags.
+
+This uses `completing-read-multiple', so it works the same way in
+plain Emacs, Vertico, Ivy, Helm, and other completion frameworks --
+unlike the previous one-at-a-time loop, where modern frameworks
+auto-selected a candidate on empty RET, making it impossible to
+finish.
 
 CANDIDATE-TAGS is an alist of tags to use for completion.
  If nil then the candidate tags are taken from variable
  `bmkp-tags-alist'.
-REQUIRE-MATCH is passed to `completing-read'.
+REQUIRE-MATCH is passed to `completing-read-multiple'.
 Non-nil UPDATE-TAGS-ALIST-P means update var `bmkp-tags-alist',
 determining the tags to use per option `bmkp-tags-for-completion'."
   (bmkp-maybe-load-default-file)
-  (let ((cands                                       ())
-        (btags                                       ())
-        (prompt1                                     "Tag (RET for each, empty input to finish): ")
-        (prompt2                                     "Tag: ")
-        tag)
-    ;; Make a new candidates alist, with just one entry per tag name.  The original cdr is discarded.
-    (dolist (full-tag  (or candidate-tags
-                           (and (not update-tags-alist-p)  bmkp-tags-alist) ; Use cached list.
-                           (bmkp-tags-list)))
-      (setq full-tag  (list (if (consp full-tag) (car full-tag) full-tag)))
-      (unless (member full-tag cands) (setq cands  (cons full-tag cands))))
-    (setq tag    (completing-read prompt1 cands nil require-match nil 'bmkp-tag-history)
-          cands  (delete (assoc tag cands) cands)) ; Tag read is no longer a candidate.
-    (while (not (string= "" tag))
-      (if (member tag btags) ; User can enter it more than once, if not REQUIRE-MATCH.
-          (message "Tag `%s' already included" tag)
-        (push tag btags))            ; But we only add it once.
-      (setq tag    (completing-read prompt2 cands nil require-match nil 'bmkp-tag-history)
-            cands  (delete (assoc tag cands) cands)))
-    (nreverse btags)))
+  (let* ((source         (or candidate-tags
+                             (and (not update-tags-alist-p)  bmkp-tags-alist)
+                             (bmkp-tags-list)))
+         (cands          (delete-dups
+                          (mapcar (lambda (tg) (if (consp tg) (car tg) tg))
+                                  source)))
+         (crm-separator  ",")
+         (raw            (completing-read-multiple
+                          "Tags (comma-separated, empty to skip): "
+                          cands nil require-match nil 'bmkp-tag-history)))
+    (delete-dups
+     (delq nil
+           (mapcar (lambda (s)
+                     (let ((trim (string-trim s)))
+                       (and (not (string-empty-p trim)) trim)))
+                   raw)))))
 
 ;;;###autoload (autoload 'bmkp-list-all-tags "bookmark+")
 (defun bmkp-list-all-tags (fullp current-only-p &optional msg-p)
