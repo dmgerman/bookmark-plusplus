@@ -63,5 +63,65 @@
         (should (> after before))))))
 
 
+;;; Custom-handler dispatch
+;; --------------------------------------------------------------------
+;;
+;; Built-in `bookmark--jump-via' contract: a handler does `set-buffer'
+;; on the destination and leaves display to the caller.  Built-in
+;; `bookmark--jump-via' then calls DISPLAY-FUNCTION on the resulting
+;; buffer.  Our `bmkp--jump-via' previously only consulted
+;; `bmkp-jump-display-function' from inside the default handler, so
+;; jumps to bookmarks with a custom handler (pdf-view, eww, gnus,
+;; info, ...) created the destination buffer but never displayed it.
+
+(defvar bmkpp-test-jump--custom-called nil
+  "Set to t by `bmkpp-test-jump--custom-handler' when invoked.")
+
+(defvar bmkpp-test-jump--display-called-with nil
+  "Buffer (or nil) passed to `bmkpp-test-jump--mock-display'.")
+
+(defun bmkpp-test-jump--custom-handler (bmk)
+  "Mimic `pdf-view-bookmark-jump-handler': set-buffer only, no display."
+  (setq bmkpp-test-jump--custom-called t)
+  (let* ((file (bookmark-prop-get bmk 'filename))
+         (buf  (or (find-buffer-visiting file)
+                   (find-file-noselect file))))
+    (set-buffer buf)))
+
+(defun bmkpp-test-jump--mock-display (buf)
+  "Mock DISPLAY-FUNCTION: record the buffer it was called with."
+  (setq bmkpp-test-jump--display-called-with buf))
+
+(ert-deftest bmkpp-test-jump/custom-handler-receives-display-call ()
+  "Jumping to a custom-handler bookmark must invoke DISPLAY-FUNCTION
+on the destination buffer.
+
+The built-in `bookmark--jump-via' contract: a custom handler does
+`set-buffer' to make the destination current and leaves window display
+to the caller.  `bmkp--jump-via' previously only consulted
+`bmkp-jump-display-function' from inside the default handler, so jumps
+to custom-handler bookmarks left DISPLAY-FUNCTION uncalled.
+
+This is a contract test, not a windowing test: it checks that the
+display function actually receives the destination, regardless of
+whether batch mode does anything visible with it."
+  (bmkpp-test-with-clean-bookmarks
+    (bmkpp-test-with-fixture-buffer dest "destination contents"
+      (let ((dest-file (buffer-file-name dest)))
+        (push (list "custom-h"
+                    (cons 'filename dest-file)
+                    (cons 'position 1)
+                    (cons 'handler  #'bmkpp-test-jump--custom-handler)
+                    (cons 'id       "test-id-custom-h"))
+              bookmark-alist)
+        (setq bmkpp-test-jump--custom-called      nil
+              bmkpp-test-jump--display-called-with nil)
+        (bmkp-jump "custom-h" #'bmkpp-test-jump--mock-display)
+        (should bmkpp-test-jump--custom-called)
+        (should (bufferp bmkpp-test-jump--display-called-with))
+        (should (equal (file-name-nondirectory dest-file)
+                       (buffer-name bmkpp-test-jump--display-called-with)))))))
+
+
 (provide 'bmkpp-test-jump)
 ;;; bmkpp-test-jump.el ends here
