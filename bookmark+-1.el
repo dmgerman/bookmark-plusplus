@@ -10436,8 +10436,19 @@ BOOKMARK is a bookmark name or a bookmark record."
         (subdirs      (bookmark-prop-get bookmark 'dired-subdirs))
         (hidden-dirs  (bookmark-prop-get bookmark 'dired-hidden-dirs)))
     (cl-case bmkp-jump-display-function
-      ((nil bmkp--pop-to-buffer-same-window display-buffer)
+      ((nil bmkp--pop-to-buffer-same-window)
        (dired dir switches))
+      ((display-buffer)
+       ;; `dired' uses `switch-to-buffer' internally, which does not
+       ;; honor `display-buffer-overriding-action'.  Use
+       ;; `dired-noselect' + `display-buffer' so the caller's display
+       ;; action (e.g. `bmkp-list-switch-other-window' previewing in
+       ;; another window) is respected.  Also `set-buffer' to the
+       ;; dired buffer so the tail logic below (subdir insertion,
+       ;; mark restoration, goto-char pos) runs in the right buffer.
+       (let ((buf  (dired-noselect dir switches)))
+         (display-buffer buf)
+         (set-buffer buf)))
       ((bmkp-select-buffer-other-window pop-to-buffer switch-to-buffer-other-window)
        (dired-other-window dir switches))
       (t (dired dir switches)))
