@@ -368,17 +368,14 @@
 
 
 
-;; Some general Renamings.
+;; Some general renamings.  In Emacs 27+ the built-in defines both
+;; `bookmark-name-from-record' and `bookmark-name-from-full-record'
+;; (the latter as an alias) so we no longer need the cross-aliasing
+;; dance that earlier Emacs versions required.
 ;;
-;; 1. Fix incompatibility introduced by gratuitous Emacs name change.
-;;
-(cond ((and (fboundp 'bookmark-name-from-record)  (not (fboundp 'bookmark-name-from-full-record)))
-       (defalias 'bookmark-name-from-full-record 'bookmark-name-from-record))
-      ((and (fboundp 'bookmark-name-from-full-record)  (not (fboundp 'bookmark-name-from-record)))
-       (defalias 'bookmark-name-from-record 'bookmark-name-from-full-record)))
-
-;; 2. The built-in name of the first is misleading, as it returns only the cdr of the record.
-;;    The second is for consistency.
+;; The built-in name of `bookmark-get-bookmark-record' is misleading
+;; -- it returns only the cdr of the record -- so we keep the more
+;; descriptive bmkp- aliases for both helpers.
 ;;
 (defalias 'bmkp-bookmark-data-from-record 'bookmark-get-bookmark-record)
 (defalias 'bmkp-bookmark-name-from-record 'bookmark-name-from-full-record)
@@ -1336,7 +1333,7 @@ window), add an entry for buffer name `*Bmkp List*' to
                                        bmkp-bmenu-image-bookmark-icon-file
                                        (file-readable-p bmkp-bmenu-image-bookmark-icon-file))))
     (erase-buffer)
-    (when (fboundp 'remove-images) (remove-images (point-min) (point-max)))
+    (remove-images (point-min) (point-max))
     (insert (format "%s\n%s\n" title (make-string (length title) ?-)))
     (add-text-properties (point-min) (point) (bmkp-face-prop 'bmkp-heading))
     (goto-char (point-min))

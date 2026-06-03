@@ -1338,7 +1338,7 @@ it to take effect."
   )
 
 ;;;###autoload (autoload 'bmkp-annotation-modes-inherit-from "bookmark+")
-(defcustom bmkp-annotation-modes-inherit-from (if (fboundp 'org-mode) 'org-mode 'text-mode)
+(defcustom bmkp-annotation-modes-inherit-from 'org-mode
   "Symbol for mode that bookmark annotation modes are to inherit from.
 Or nil if no parent mode.  The annotation modes are
 `bmkp-edit-annotation-mode' and `bmkp-show-annotation-mode'.
@@ -2232,7 +2232,7 @@ Lines beginning with `#' are ignored."
         (annotation-buf  (current-buffer)))
     (when (string= annotation "") (setq annotation  nil))
     (bookmark-set-annotation bookmark annotation)
-    (when (fboundp 'bookmark-update-last-modified) (bookmark-update-last-modified bookmark)) ; Emacs 29+
+    (bookmark-update-last-modified bookmark)
     (setq bookmark-alist-modification-count  (1+ bookmark-alist-modification-count))
     (bmkp-refresh/rebuild-menu-list bookmark) ; So display `a' and `*' markers (updated).
     (if (fboundp 'kill-buffer-and-its-windows)
@@ -2360,7 +2360,7 @@ Non-nil NO-REGION means do not include the region end, `end-position'."
       (visits   . ,(or visits  0))
       ,@(and visits  `((last-visited . ,ctime)))
       (created  . ,ctime)
-      ,@(when (fboundp 'bookmark-update-last-modified) `((last-modified . ,ctime))) ; Emacs 29+
+      (last-modified . ,ctime)
       (position . ,beg)
       ,@(when (and regionp  (not no-region)) `((end-position . ,end))))))
 
@@ -2950,7 +2950,7 @@ Useful when a file has been renamed after a bookmark was set in it."
                                 (format "Relocate %s to: " bookmark-name)
                                 (file-name-directory bookmark-filename))))))
     (bookmark-set-filename bookmark-name new-filename)
-    (when (fboundp 'bookmark-update-last-modified) (bookmark-update-last-modified bookmark-name)) ; Emacs 29+
+    (bookmark-update-last-modified bookmark-name)
     ;; Change location for Dired too, but not if different from original file name (e.g. a cons).
     (let ((dired-dir  (bookmark-prop-get bookmark-name 'dired-directory)))
       (when (and dired-dir  (equal dired-dir bookmark-filename))
@@ -3077,7 +3077,7 @@ should be non-nil if BATCH is non-nil.)"
 ;;;           nil 'bookmark-history))))
     (when newname
       (bmkp-set-name old newname)
-      (when (fboundp 'bookmark-update-last-modified) (bookmark-update-last-modified newname)) ; Emacs 29+
+      (bookmark-update-last-modified newname)
       (bmkp-rename-for-marked-and-omitted-lists old newname) ; Rename in marked & omitted lists, if present.
       (setq bookmark-current-bookmark  newname)
       (unless batchp
@@ -3136,7 +3136,7 @@ In this way, you can delete multiple bookmarks."
     (when bname                         ; Do nothing if BOOKMARK does not represent a bookmark.
       (bookmark-maybe-historicize-string bname)
       (when (fboundp 'bmkp-unlight-bookmark) (bmkp-unlight-bookmark bmk 'NOERROR))
-      (when (fboundp 'bookmark--remove-fringe-mark) (bookmark--remove-fringe-mark bmk)) ; Emacs 28+
+      (bookmark--remove-fringe-mark bmk)
       (setq bookmark-alist                (delq bmk bookmark-alist)
             bmkp-latest-bookmark-alist    (delq bmk bmkp-latest-bookmark-alist)
             bmkp-automatic-bookmarks      (delq bmk bmkp-automatic-bookmarks)
@@ -6557,8 +6557,7 @@ If it is a record then it need not belong to `bookmark-alist'."
 BOOKMARK is a bookmark name or a bookmark record.
 If it is a record then it need not belong to `bookmark-alist'."
   (or (eq (bookmark-get-handler bookmark) 'image-bmkp-jump)
-      (and (fboundp 'image-file-name-regexp) ; In `image-file.el' (Emacs 22+).
-           (bmkp-file-bookmark-p bookmark)
+      (and (bmkp-file-bookmark-p bookmark)
            (not (bmkp-dired-bookmark-p bookmark))
            (string-match-p (image-file-name-regexp) (bookmark-get-filename bookmark)))))
 
@@ -7970,8 +7969,7 @@ Non-interactively:
 * Non-nil MSG-P means display a status message."
   (interactive
    (let* ((default-url   (or (bmkp-thing-at-point 'url)
-                             (and (fboundp 'url-get-url-at-point)
-                                  (url-get-url-at-point))
+                             (thing-at-point-url-at-point)
                              ;; TEMPORARY hack to work around Emacs bug #44822.
                              "https://example.com"))
           (parg          current-prefix-arg)
@@ -8117,8 +8115,7 @@ Around-advice for `file-cache-add-file'."
         ((eq bmkp-autofile-filecache 'cache-only)
          (funcall orig-fn file))))
 
-(when (fboundp 'file-cache-add-file)
-  (advice-add 'file-cache-add-file :around #'bmkp--ad-file-cache-add-file))
+(advice-add 'file-cache-add-file :around #'bmkp--ad-file-cache-add-file)
 
 (defun bmkp-find-file-invoke-bookmark-if-autofile ()
   "Invoke the autofile bookmark associated with the visited file.
@@ -8837,7 +8834,6 @@ Inserted subdirs:\t%s\nHidden subdirs:\t\t%s\n%s"
              (and snippet-p  (format "\nSnippet:\n%s\n" (bookmark-prop-get bookmark 'text)))
              (and (not no-image)
                   file
-                  (fboundp 'image-file-name-regexp) ; In `image-file.el' (Emacs 22+).
                   (string-match-p (image-file-name-regexp) file)
                   (display-graphic-p)
                   (require 'image-dired nil t)
@@ -8845,7 +8841,6 @@ Inserted subdirs:\t%s\nHidden subdirs:\t\t%s\n%s"
                   (concat "\n@#%&()_IMAGE-HERE_()&%#@" file "\n"))
              (and (not no-image)
                   file
-                  (fboundp 'image-file-name-regexp) ; In `image-file.el' (Emacs 22+).
                   (string-match-p (image-file-name-regexp) file)
                   (progn (message "Gathering image data...") t)
                   (condition-case nil
@@ -9453,12 +9448,6 @@ enter, just use it to set the bookmark."
     (desktop-save desk-dir 'RELEASE 'AUTOSAVE)
     (message "Desktop saved in `%s'" desktop-file)))
 
-(unless (fboundp 'desktop-full-file-name) ; Emacs < 22.  (This is the built-in definition.)
-  (defun desktop-full-file-name (&optional dirname)
-    "Return the full name of the desktop file in DIRNAME.
-DIRNAME omitted or nil means use `desktop-dirname'."
-    (expand-file-name desktop-basefilename (or dirname  desktop-dirname))))
-
 (defun bmkp-desktop-save-as-last ()
   "Save desktop to the file that is the value of `bmkp-desktop-current-file'.
 Do nothing if any of these are true:
@@ -9562,7 +9551,7 @@ This function does nothing in Emacs versions prior to Emacs 22."
       (file-error (unless (yes-or-no-p "Error while saving the desktop.  IGNORE? ")
                     (signal (car err) (cdr err))))))
   ;; Just release lock, regardless of whether this Emacs process is the owner.
-  (when (fboundp 'desktop-release-lock) (desktop-release-lock))) ; Not defined for Emacs 20.
+  (desktop-release-lock))
 
 ;; Derived from code in `desktop-read'.
 ;;;###autoload (autoload 'bmkp-desktop-read "bookmark+")
@@ -9580,7 +9569,7 @@ Return t if FILE was loaded, nil otherwise."
           (desktop-buffer-ok-count    0)
           (desktop-buffer-fail-count  0)
           (desktop-save               nil)) ; Prevent desktop saving during eval of desktop buffer.
-      (when (fboundp 'desktop-lazy-abort) (desktop-lazy-abort)) ; Emacs 22+.
+      (desktop-lazy-abort)
       (load file t t t)
       (when (boundp 'desktop-file-modtime) ; Emacs 22+
         (setq desktop-file-modtime  (nth 5 (file-attributes file))))
@@ -9621,7 +9610,7 @@ BOOKMARK is a bookmark name or a bookmark record."
     ;; This will NOT be the right thing to do if a desktop file different from DESKTOP-FILE
     ;; is currently locked in the same directory.
     (let ((desktop-dirname  (file-name-directory desktop-file)))
-      (when (fboundp 'desktop-release-lock) (desktop-release-lock))) ; Not defined for Emacs 20.
+      (desktop-release-lock))
     (when (file-exists-p desktop-file) (delete-file desktop-file)))
   (bmkp-delete bookmark))
 
