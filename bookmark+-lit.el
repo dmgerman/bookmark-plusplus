@@ -1440,7 +1440,7 @@ Optional args are the default values (strings) for reading new values."
                         ("never"  . :no-light)))
          (when         (completing-read "When: " when-cands nil t nil nil
                                         (if default-when "conditionally (read sexp)" "auto")))
-         (evald       (if (bmkp-string-match-p "^con" when)
+         (evald       (if (string-match-p "^con" when)
                           (read-from-minibuffer "Highlight when (sexp): " nil
                                                 (if (boundp 'pp-read-expression-map)
                                                     pp-read-expression-map

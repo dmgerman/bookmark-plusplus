@@ -3690,7 +3690,7 @@ A new list is returned (no side effects)."
      (lambda (bmk)
        (let ((bmk-tags  (bmkp-get-tags bmk)))
          (and bmk-tags
-              (bmkp-every (lambda (tag) (bmkp-string-match-p rg (bmkp-tag-name tag))) bmk-tags)))))
+              (bmkp-every (lambda (tag) (string-match-p rg (bmkp-tag-name tag))) bmk-tags)))))
    bookmark-alist))
 
 (defun bmkp-annotated-alist-only ()
@@ -3731,7 +3731,7 @@ A new list is returned (no side effects)."
        (and (bmkp-autofile-bookmark-p bmk)
             (let ((bmk-tags  (bmkp-get-tags bmk)))
               (and bmk-tags
-                   (bmkp-every (lambda (tag) (bmkp-string-match-p rg (bmkp-tag-name tag))) bmk-tags))))))
+                   (bmkp-every (lambda (tag) (string-match-p rg (bmkp-tag-name tag))) bmk-tags))))))
    bookmark-alist))
 
 (put 'bmkp-autofile-some-tags-alist-only 'bmkp-read-arg 'bmkp-read-tags-completing)
@@ -3752,7 +3752,7 @@ A new list is returned (no side effects)."
   (bmkp-remove-if-not
    (let ((rg  regexp))
      (lambda (bmk) (and (bmkp-autofile-bookmark-p bmk)
-                        (bmkp-some (lambda (tag) (bmkp-string-match-p rg (bmkp-tag-name tag)))
+                        (bmkp-some (lambda (tag) (string-match-p rg (bmkp-tag-name tag)))
                                    (bmkp-get-tags bmk)))))
    bookmark-alist))
 (defun bmkp-autonamed-alist-only ()
@@ -3850,7 +3850,7 @@ A new list is returned (no side effects)."
        (and (bmkp-file-bookmark-p bmk)
             (let ((bmk-tags  (bmkp-get-tags bmk)))
               (and bmk-tags
-                   (bmkp-every (lambda (tag) (bmkp-string-match-p rg (bmkp-tag-name tag))) bmk-tags))))))
+                   (bmkp-every (lambda (tag) (string-match-p rg (bmkp-tag-name tag))) bmk-tags))))))
    bookmark-alist))
 
 (put 'bmkp-file-some-tags-alist-only 'bmkp-read-arg 'bmkp-read-tags-completing)
@@ -3872,7 +3872,7 @@ A new list is returned (no side effects)."
   (bmkp-remove-if-not
    (let ((rg  regexp))
      (lambda (bmk) (and (bmkp-file-bookmark-p bmk)
-                        (bmkp-some (lambda (tag) (bmkp-string-match-p rg (bmkp-tag-name tag)))
+                        (bmkp-some (lambda (tag) (string-match-p rg (bmkp-tag-name tag)))
                                    (bmkp-get-tags bmk)))))
    bookmark-alist))
 
@@ -3910,7 +3910,7 @@ A new list is returned (no side effects)."
        (and (bmkp-file-this-dir-bookmark-p bmk)
             (let ((bmk-tags  (bmkp-get-tags bmk)))
               (and bmk-tags
-                   (bmkp-every (lambda (tag) (bmkp-string-match-p rg (bmkp-tag-name tag)))  bmk-tags))))))
+                   (bmkp-every (lambda (tag) (string-match-p rg (bmkp-tag-name tag)))  bmk-tags))))))
    bookmark-alist))
 
 (put 'bmkp-file-this-dir-some-tags-alist-only 'bmkp-read-arg 'bmkp-read-tags-completing)
@@ -3934,7 +3934,7 @@ A new list is returned (no side effects)."
   (bmkp-remove-if-not
    (let ((rg  regexp))
      (lambda (bmk) (and (bmkp-file-this-dir-bookmark-p bmk)
-                        (bmkp-some (lambda (tag) (bmkp-string-match-p rg (bmkp-tag-name tag)))
+                        (bmkp-some (lambda (tag) (string-match-p rg (bmkp-tag-name tag)))
                                    (bmkp-get-tags bmk)))))
    bookmark-alist))
 
@@ -4055,21 +4055,21 @@ BOOKMARK is a bookmark name or a bookmark record."
    (lambda (bmk)
      (let ((annot  (bookmark-get-annotation bmk)))
        (and (stringp annot)  (not (string= "" annot))
-            (bmkp-string-match-p bmkp-bmenu-filter-pattern annot))))
+            (string-match-p bmkp-bmenu-filter-pattern annot))))
    bookmark-alist))                     ; (Could use `bmkp-annotated-alist-only' here instead.)
 
 (defun bmkp-regexp-filtered-bookmark-name-alist-only ()
   "`bookmark-alist' for bookmarks matching `bmkp-bmenu-filter-pattern'."
   (bmkp-maybe-load-default-file)
   (bmkp-remove-if-not (lambda (bmk)
-                        (bmkp-string-match-p bmkp-bmenu-filter-pattern (bookmark-name-from-full-record bmk)))
+                        (string-match-p bmkp-bmenu-filter-pattern (bookmark-name-from-full-record bmk)))
                       bookmark-alist))
 
 (defun bmkp-regexp-filtered-file-name-alist-only ()
   "`bookmark-alist' for files matching `bmkp-bmenu-filter-pattern'."
   (bmkp-maybe-load-default-file)
   (bmkp-remove-if-not (lambda (bmk) (let ((fname  (bookmark-get-filename bmk)))
-                                      (and fname  (bmkp-string-match-p bmkp-bmenu-filter-pattern fname))))
+                                      (and fname  (string-match-p bmkp-bmenu-filter-pattern fname))))
                       bookmark-alist))
 
 (defun bmkp-regexp-filtered-tags-alist-only ()
@@ -4078,7 +4078,7 @@ BOOKMARK is a bookmark name or a bookmark record."
   (bmkp-remove-if-not (lambda (bmk)
                         (let ((bmk-tags  (bmkp-get-tags bmk)))
                           (and bmk-tags  (bmkp-some (lambda (tag)
-                                                      (bmkp-string-match-p bmkp-bmenu-filter-pattern
+                                                      (string-match-p bmkp-bmenu-filter-pattern
                                                                            (bmkp-tag-name tag)))
                                                     bmk-tags))))
                       bookmark-alist))
@@ -4131,7 +4131,7 @@ A new list is returned (no side effects)."
   (bmkp-maybe-load-default-file)
   (bmkp-remove-if-not (let ((rg  regexp))
                         (lambda (bmk)
-                          (bmkp-some (lambda (tag) (bmkp-string-match-p rg (bmkp-tag-name tag)))
+                          (bmkp-some (lambda (tag) (string-match-p rg (bmkp-tag-name tag)))
                                      (bmkp-get-tags bmk))))
                       bookmark-alist))
 
@@ -5669,7 +5669,7 @@ BUFFER, if non-nil, is a buffer or a buffer name."
                            start)
         (setq nargs  (1+ nargs)
               start  (match-end 0))))
-    (bmkp-string-match-p
+    (string-match-p
      (apply #'format
             (bmkp-format-spec bmkp-autoname-format `((?B . ,(if buffer (regexp-quote buffer) ".*"))))
             (make-list nargs ".*"))
@@ -6497,7 +6497,7 @@ If it is a record then it need not belong to `bookmark-alist'."
   (setq bookmark  (bmkp-get-bookmark bookmark))
   (and (bmkp-dired-bookmark-p bookmark)
        (let ((file  (bookmark-get-filename bookmark)))
-         (and (stringp file)  (bmkp-string-match-p (regexp-quote "*") file)))))
+         (and (stringp file)  (string-match-p (regexp-quote "*") file)))))
 
 (progn ; Emacs 25+
 
@@ -6561,7 +6561,7 @@ If it is a record then it need not belong to `bookmark-alist'."
       (and (fboundp 'image-file-name-regexp) ; In `image-file.el' (Emacs 22+).
            (bmkp-file-bookmark-p bookmark)
            (not (bmkp-dired-bookmark-p bookmark))
-           (bmkp-string-match-p (image-file-name-regexp) (bookmark-get-filename bookmark)))))
+           (string-match-p (image-file-name-regexp) (bookmark-get-filename bookmark)))))
 
 (defun bmkp-info-bookmark-p (bookmark)
   "Return non-nil if BOOKMARK is an Info bookmark.
@@ -8101,7 +8101,7 @@ The bookmarked position will be the beginning of the file."
            ;; NEED TO KEEP THIS CODE SYNC'D WITH `diredp-bookmark'.
            `(lambda ()
              ',(append common `((image-type . ,(image-type file)) (handler . image-bmkp-jump)))))
-          ((let ((case-fold-search  t))  (bmkp-string-match-p "\\([.]au$\\|[.]wav$\\)" file)) ; Sound
+          ((let ((case-fold-search  t))  (string-match-p "\\([.]au$\\|[.]wav$\\)" file)) ; Sound
            ;; Obsolete: `(lambda () '((filename . ,file) (handler . bmkp-sound-jump))))
            `(lambda () ',(append common '((file-handler . play-sound-file)))))
           (t
@@ -8426,7 +8426,7 @@ that invokes that shell command."
 The value is based on `bmkp-default-handlers-for-file-types'."
   (catch 'bmkp-default-handler-user
     (dolist (assn  bmkp-default-handlers-for-file-types)
-      (when (bmkp-string-match-p (car assn) filename) (throw 'bmkp-default-handler-user (cdr assn))))
+      (when (string-match-p (car assn) filename) (throw 'bmkp-default-handler-user (cdr assn))))
     nil))
 
 ;; Keep this only for compatibility with existing bookmarks that have `bmkp-sound-jump' as `handler' prop.
@@ -8839,7 +8839,7 @@ Inserted subdirs:\t%s\nHidden subdirs:\t\t%s\n%s"
              (and (not no-image)
                   file
                   (fboundp 'image-file-name-regexp) ; In `image-file.el' (Emacs 22+).
-                  (bmkp-string-match-p (image-file-name-regexp) file)
+                  (string-match-p (image-file-name-regexp) file)
                   (display-graphic-p)
                   (require 'image-dired nil t)
                   (image-dired-get-thumbnail-image file)
@@ -8847,7 +8847,7 @@ Inserted subdirs:\t%s\nHidden subdirs:\t\t%s\n%s"
              (and (not no-image)
                   file
                   (fboundp 'image-file-name-regexp) ; In `image-file.el' (Emacs 22+).
-                  (bmkp-string-match-p (image-file-name-regexp) file)
+                  (string-match-p (image-file-name-regexp) file)
                   (progn (message "Gathering image data...") t)
                   (condition-case nil
                       (let ((all  (bmkp-all-exif-data (expand-file-name file))))
@@ -9005,7 +9005,7 @@ Typically, these are all commands."
 Otherwise, return nil."
   (catch 'break
     (dolist (ii  (mapcar #'buffer-name (buffer-list)))
-      (when (bmkp-string-match-p "*tramp/\\(su\\|sudo\\) ." ii) (throw 'break t)))))
+      (when (string-match-p "*tramp/\\(su\\|sudo\\) ." ii) (throw 'break t)))))
 
 (defun bmkp-position-post-context (breg)
   "Return `bookmark-search-size' chars, starting at position BREG.
@@ -9482,7 +9482,7 @@ You might want to use this on `kill-emacs-hook'."
 ;;;        (with-current-buffer (let ((enable-local-variables nil)) (find-file-noselect file))
 ;;;          (goto-char (point-min))
 ;;;          (and (zerop (forward-line 2))
-;;;               (bmkp-looking-at-p "^;; Desktop File for Emacs$")))))
+;;;               (looking-at-p "^;; Desktop File for Emacs$")))))
 
 ;; Similar to `icicle-file-desktop-p' in `icicles-fn.el'.
 ;; This is better than using `find-file-noselect', which visits the file and leaves its buffer.
@@ -9496,7 +9496,7 @@ You might want to use this on `kill-emacs-hook'."
          (insert-file-contents-literally filename nil 0 1000)
          (goto-char (point-min))
          (and (zerop (forward-line 2))
-              (bmkp-looking-at-p "^;; Desktop File for Emacs"))))) ; No $, because maybe eol chars (e.g. ^M).
+              (looking-at-p "^;; Desktop File for Emacs"))))) ; No $, because maybe eol chars (e.g. ^M).
 
 (defun bmkp-make-desktop-record (desktop-file)
   "Create and return a desktop bookmark record.
@@ -11871,7 +11871,7 @@ You are prompted for the REGEXP."
                     (lambda (ff)
                       (let* ((bk    (bmkp-get-autofile-bookmark ff))
                              (btgs  (and bk  (bmkp-get-tags bk))))
-                        (and btgs  (bmkp-every (lambda (tag) (bmkp-string-match-p rg (bmkp-tag-name tag)))
+                        (and btgs  (bmkp-every (lambda (tag) (string-match-p rg (bmkp-tag-name tag)))
                                                btgs)))))
                    (fil                                         (or (and file  (funcall pred file)  file)
                                                                     (read-file-name
@@ -11891,7 +11891,7 @@ You are prompted for the REGEXP."
                     (lambda (ff)
                       (let* ((bk    (bmkp-get-autofile-bookmark ff))
                              (btgs  (and bk  (bmkp-get-tags bk))))
-                        (and btgs  (bmkp-every (lambda (tag) (bmkp-string-match-p rg (bmkp-tag-name tag)))
+                        (and btgs  (bmkp-every (lambda (tag) (string-match-p rg (bmkp-tag-name tag)))
                                                btgs)))))
                    (fil                                         (or (and file  (funcall pred file)  file)
                                                                     (read-file-name
@@ -11962,7 +11962,7 @@ You are prompted for the REGEXP."
                     (lambda (ff)
                       (let* ((bk    (bmkp-get-autofile-bookmark ff))
                              (btgs  (and bk  (bmkp-get-tags bk))))
-                        (and btgs  (bmkp-some (lambda (tag) (bmkp-string-match-p rg (bmkp-tag-name tag)))
+                        (and btgs  (bmkp-some (lambda (tag) (string-match-p rg (bmkp-tag-name tag)))
                                               btgs)))))
                    (fil                                         (or (and file  (funcall pred file)  file)
                                                                     (read-file-name
@@ -11982,7 +11982,7 @@ You are prompted for the REGEXP."
                     (lambda (ff)
                       (let* ((bk    (bmkp-get-autofile-bookmark ff))
                              (btgs  (and bk  (bmkp-get-tags bk))))
-                        (and btgs  (bmkp-some (lambda (tag) (bmkp-string-match-p rg (bmkp-tag-name tag)))
+                        (and btgs  (bmkp-some (lambda (tag) (string-match-p rg (bmkp-tag-name tag)))
                                               btgs)))))
                    (fil                                         (or (and file  (funcall pred file)  file)
                                                                     (read-file-name

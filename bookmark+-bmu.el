@@ -261,12 +261,12 @@
 ;;    `bmkp-bmenu-store-org-link' (Emacs 24.4+),
 ;;    `bmkp-bookmark-data-from-record',
 ;;    `bmkp-bookmark-name-from-record', `bmkp-face-prop',
-;;    `bmkp-bmenu-marked-or-this-or-all', `bmkp-looking-at-p',
+;;    `bmkp-bmenu-marked-or-this-or-all', `looking-at-p',
 ;;    `bmkp-maybe-unpropertize-bookmark-names',
 ;;    `bmkp-maybe-unpropertize-string', `bmkp-remap',
 ;;    `bmkp-replace-regexp-in-string',
 ;;    `bmkp-reverse-multi-sort-order', `bmkp-reverse-sort-order',
-;;    `bmkp-string-match-p', `bookmark-name-from-full-record',
+;;    `string-match-p', `bookmark-name-from-full-record',
 ;;    `bookmark-name-from-record',
 ;;
 ;;  Internal variables and constants defined here:
@@ -523,13 +523,6 @@ Elements of ALIST that are not conses are ignored."
  
 ;;(@* "Utility Functions")
 ;;; Utility Functions ------------------------------------------------
-
-(defalias 'bmkp-string-match-p 'string-match-p) ; Built in since Emacs 23.
-
-;; Do not `defalias' to Emacs `looking-at-p' because that is a `defsubst'.
-(defun bmkp-looking-at-p (regexp)
-  "Like `looking-at', but this saves and restores the match data."
-  (save-match-data (looking-at regexp)))
 
 (defun bmkp-remap (old new map &optional _oldmap)
   "Bind command NEW in MAP to all keys currently bound to OLD.
@@ -2353,7 +2346,7 @@ for confirmation when deleting marked (not flagged) bookmarks."
             no-confirm-p
             (yes-or-no-p "Delete bookmarks marked `>' (not `D') "))
         (let* ((mark-type  (if markedp "^>" "^D"))
-               (o-str      (and (not (bmkp-looking-at-p mark-type))  (bmkp-list-bookmark)))
+               (o-str      (and (not (looking-at-p mark-type))  (bmkp-list-bookmark)))
                (o-point    (point))
                (count      0))
           (message "Deleting bookmarks...")
@@ -3183,7 +3176,7 @@ message."
 If none are marked, toggle status of the bookmark of the current line."
   (interactive)
   (bmkp-bmenu-barf-if-not-in-menu-list)
-  (let ((o-str       (and (not (bmkp-looking-at-p "^>"))  (bmkp-list-bookmark)))
+  (let ((o-str       (and (not (looking-at-p "^>"))  (bmkp-list-bookmark)))
         (o-point     (point))
         (count-temp  0)
         (count-save  0)
@@ -3618,7 +3611,7 @@ You can then mark some of them and use `\\[bmkp-bmenu-omit/unomit-marked]' to ma
  available again for the bookmark list."
   (interactive)
   (bmkp-bmenu-barf-if-not-in-menu-list)
-  (let ((o-str    (and (not (bmkp-looking-at-p "^>"))  (bmkp-list-bookmark)))
+  (let ((o-str    (and (not (looking-at-p "^>"))  (bmkp-list-bookmark)))
         (o-point  (point))
         (count    0))
     (message "Omitting marked bookmarks...")
@@ -4004,7 +3997,7 @@ Non-interactively:
       (when msg-p (message "Updating bookmark-list display..."))
       (while (not (eobp))
         (setq tags  (bmkp-get-tags (bmkp-list-bookmark))
-              anyp  (and tags  (bmkp-some (lambda (tag) (bmkp-string-match-p regexp (bmkp-tag-name tag)))
+              anyp  (and tags  (bmkp-some (lambda (tag) (string-match-p regexp (bmkp-tag-name tag)))
                                           tags)))
         (if (not (and tags  (if notp (not anyp) anyp)))
             (forward-line 1)
@@ -4090,7 +4083,7 @@ Non-interactively:
       (when msg-p (message "Updating bookmark-list display..."))
       (while (not (eobp))
         (setq tags  (bmkp-get-tags (bmkp-list-bookmark))
-              anyp  (and tags  (bmkp-some (lambda (tag) (bmkp-string-match-p regexp (bmkp-tag-name tag)))
+              anyp  (and tags  (bmkp-some (lambda (tag) (string-match-p regexp (bmkp-tag-name tag)))
                                           tags)))
         (if (not (and tags  (if notp (not anyp) anyp)))
             (forward-line 1)
@@ -5057,8 +5050,8 @@ Return the propertized string (the bookmark name)."
 
          (filep           (bookmark-get-filename bookmark))
          (sudop           (and filep  (boundp 'tramp-file-name-regexp)
-                               (bmkp-string-match-p tramp-file-name-regexp filep)
-                               (bmkp-string-match-p bmkp-su-or-sudo-regexp filep))))
+                               (string-match-p tramp-file-name-regexp filep)
+                               (string-match-p bmkp-su-or-sudo-regexp filep))))
     ;; Tag the name span in the buffer with the bookmark name, so cursor-position
     ;; lookups (`bmkp-list-bookmark') can identify which bookmark is on this line.
     (put-text-property start end 'bmkp-bookmark-name bookmark-name)
@@ -5242,7 +5235,7 @@ For each number indication:
                               "%s%d%c"
                               (save-excursion
                                 (forward-line 0)
-                                (if (bmkp-looking-at-p (concat regexp ".*"))
+                                (if (looking-at-p (concat regexp ".*"))
                                     (format "%d/" (1+ (count-matches regexp (point-min) (point))))
                                   ""))
                               nb  mk)
@@ -6764,7 +6757,7 @@ are marked or ALLP is non-nil."
                                     ,(save-excursion
                                       (goto-char (posn-point mouse-pos))
                                       (beginning-of-line)
-                                      (if (bmkp-looking-at-p "^D")
+                                      (if (looking-at-p "^D")
                                           ["Unmark" bmkp-list-unmark]
                                         ["Flag for Deletion" bmkp-bmenu-flag-for-deletion]))
                                     ["Omit" bmkp-bmenu-omit]
