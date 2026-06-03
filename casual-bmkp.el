@@ -32,7 +32,7 @@
 (declare-function bmkp-list-other-window                         "bookmark+-bmu")
 (declare-function bmkp-list-switch-other-window                  "bookmark+-bmu")
 (declare-function bmkp-list-execute-deletions                    "bookmark+-bmu")
-(declare-function bmkp-list-rename                               "bookmark+-bmu")
+(declare-function bmkp-bmenu-edit-bookmark-name-and-location     "bookmark+-bmu")
 (declare-function bmkp-list-show-annotation                      "bookmark+-bmu")
 (declare-function bmkp-list-toggle-filenames                     "bookmark+-bmu")
 (declare-function bmkp-list-preview-mode                         "bookmark+-preview")
@@ -69,7 +69,6 @@
 (declare-function bmkp-add-tags                                  "bookmark+-1")
 (declare-function bmkp-remove-tags                               "bookmark+-1")
 (declare-function bmkp-remove-all-tags                           "bookmark+-1")
-(declare-function bmkp-edit-tags                                 "bookmark+-1")
 (declare-function bmkp-set-tag-value                             "bookmark+-1")
 (declare-function bmkp-rename-tag                                "bookmark+-1")
 (declare-function bmkp-list-all-tags                             "bookmark+-1")
@@ -92,7 +91,7 @@
     ("+" "Add tags"            bmkp-add-tags                            :transient nil)
     ("-" "Remove tags"         bmkp-remove-tags                         :transient nil)
     ("0" "Remove all tags"     bmkp-remove-all-tags                     :transient nil)
-    ("e" "Edit tags"           bmkp-edit-tags                           :transient nil)
+    ("e" "Edit tags"           bmkp-bmenu-edit-tags                     :transient nil)
     ("v" "Set tag value"       bmkp-set-tag-value                       :transient nil)]
    ["Marked"
     ("M-+" "Add tags"          bmkp-bmenu-add-tags-to-marked            :transient nil)
@@ -106,6 +105,7 @@
   [["Show / sort"
     ("S" "Only tagged"         bmkp-bmenu-show-only-tagged-bookmarks    :transient nil)
     ("U" "Only untagged"       bmkp-bmenu-show-only-untagged-bookmarks  :transient nil)
+    ("." "Show all"            bmkp-bmenu-show-all                      :transient nil)
     ("s" "Sort: tagged first"  bmkp-bmenu-sort-tagged-before-untagged   :transient nil)]
    ["Global"
     ("l" "List all tags"       bmkp-list-all-tags                       :transient nil)
@@ -200,7 +200,7 @@
    ["Edit"
     ("e"   "Edit record"        bmkp-bmenu-edit-bookmark-record       :transient nil)
     ("E"   "Edit marked"        bmkp-bmenu-edit-marked                :transient nil)
-    ("r"   "Rename"             bmkp-list-rename                      :transient nil)
+    ("r"   "Rename"             bmkp-bmenu-edit-bookmark-name-and-location :transient nil)
     ("a"   "Show annotation"    bmkp-list-show-annotation             :transient nil)
     ("A"   "Edit annotation"    bmkp-edit-annotation                  :transient nil)]
    ["Files"

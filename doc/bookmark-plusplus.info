@@ -1098,9 +1098,9 @@ Command                            Key           Meaning
 ---------------------------------------------------------------------------
 ‘bmkp-switch-bookmark-file-create’ ‘C-x x L’     Switch to another
                                    or ‘L’        bookmark file.
-‘bookmark-load’ (no prefix)        ‘C-x x l’     Add bookmarks from a
-                                                 file.
-‘bookmark-load’ (with prefix)      ‘C-u C-x x    Equivalent to ‘L’
+‘bmkp-load’ (no prefix)            ‘C-x x l’     Add bookmarks from a
+                                   or ‘l’        file.
+‘bmkp-load’ (with prefix)          ‘C-u C-x x    Equivalent to ‘L’
                                    l’            (switch).
 ‘bmkp-switch-to-bookmark-file-this-file/buffer’‘C-x x C-l’Switch to a file with
                                                  only this buffer's
@@ -2153,22 +2153,22 @@ Node: Bookmark Types32918
 Node: Tags39456
 Node: Annotations44009
 Node: Multiple Bookmark Files46578
-Node: Highlighting49275
-Node: Live Preview52484
-Node: Casual Integration54359
-Node: Cycling55503
-Node: Automatic Bookmarking57231
-Node: Autonamed Bookmarks58843
-Node: Temporary Bookmarks60508
-Node: Bookmark Records62445
-Ref: Round Trip Caveat64791
-Node: Customization66668
-Node: Migration70409
-Node: GNU GPL80455
-Node: Key Index81297
-Node: Command Index81416
-Node: Variable Index82357
-Node: Concept Index85286
+Node: Highlighting49279
+Node: Live Preview52488
+Node: Casual Integration54363
+Node: Cycling55507
+Node: Automatic Bookmarking57235
+Node: Autonamed Bookmarks58847
+Node: Temporary Bookmarks60512
+Node: Bookmark Records62449
+Ref: Round Trip Caveat64795
+Node: Customization66672
+Node: Migration70413
+Node: GNU GPL80459
+Node: Key Index81301
+Node: Command Index81420
+Node: Variable Index82361
+Node: Concept Index85290
 
 End Tag Table
 

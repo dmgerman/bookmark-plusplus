@@ -303,7 +303,7 @@
 ;;    `bmkp-list-2-window', `bmkp-list-other-frame',
 ;;    `bmkp-list-other-window',
 ;;    `bmkp-list-other-window-with-mouse',
-;;    `bmkp-list-rename', `bmkp-list-show-annotation',
+;;    `bmkp-list-show-annotation',
 ;;    `bmkp-list-switch-other-window',
 ;;    `bmkp-list-this-window', `bookmark-bmenu-toggle-filenames',
 ;;    `bmkp-list-unmark'.
@@ -2138,20 +2138,6 @@ for confirmation when deleting marked (not flagged) bookmarks."
 
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
-;;
-;; 1. Do not call `bmkp-list' (it was already called).
-;; 2. Raise error if not in buffer `*Bmkp List*'.
-;; 3. Use `bmkp-bmenu-goto-bookmark-named' instead of just searching for name.
-;;
-;;;###autoload (autoload 'bmkp-list-rename "bookmark+")
-(defun bmkp-list-rename ()         ; Bound to `r' in bookmark list
-  "Rename bookmark on current line.  Prompts for a new name."
-  (interactive)
-  (bmkp-bmenu-barf-if-not-in-menu-list)
-  (bmkp-list-ensure-position)
-  (let ((newname  (bmkp-rename (bmkp-list-bookmark)))) (bmkp-bmenu-goto-bookmark-named newname)))
- 
 ;;(@* "Bookmark+ Functions (`bmkp-*')")
 ;;; Bookmark+ Functions (`bmkp-*') -----------------------------------
 
@@ -5533,6 +5519,7 @@ are marked or ALLP is non-nil."
 (define-key bmkp-list-mode-map "K"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "KM"                   'bmkp-bmenu-mark-desktop-bookmarks)
 (define-key bmkp-list-mode-map "KS"                   'bmkp-bmenu-show-only-desktop-bookmarks)
+(define-key bmkp-list-mode-map "l"                    'bmkp-load)
 (define-key bmkp-list-mode-map "L"                    'bmkp-switch-bookmark-file-create)
 (define-key bmkp-list-mode-map [(control shift ?l)]   'bookmark-bmenu-locate) ; `C-L' (aka `C-S-l')
 (define-key bmkp-list-mode-map "\M-l"                 'bmkp-bmenu-load-marked-bookmark-file-bookmarks)

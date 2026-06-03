@@ -1153,8 +1153,8 @@ in-memory set).
 @multitable @columnfractions .47 .18 .35
 @headitem Command @tab Key @tab Meaning
 @item @code{bmkp-switch-bookmark-file-create}  @tab @kbd{C-x x L} or @kbd{L} @tab Switch to another bookmark file.
-@item @code{bookmark-load} (no prefix)         @tab @kbd{C-x x l} @tab Add bookmarks from a file.
-@item @code{bookmark-load} (with prefix)       @tab @kbd{C-u C-x x l} @tab Equivalent to @kbd{L} (switch).
+@item @code{bmkp-load} (no prefix)             @tab @kbd{C-x x l} or @kbd{l} @tab Add bookmarks from a file.
+@item @code{bmkp-load} (with prefix)           @tab @kbd{C-u C-x x l} @tab Equivalent to @kbd{L} (switch).
 @item @code{bmkp-switch-to-bookmark-file-this-file/buffer} @tab @kbd{C-x x C-l} @tab Switch to a file with only this buffer's bookmarks.
 @item @code{bmkp-bmenu-load-marked-bookmark-file-bookmarks} @tab @kbd{M-l} @tab Load every marked bookmark-file bookmark.
 @end multitable
