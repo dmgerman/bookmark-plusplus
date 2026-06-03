@@ -3674,7 +3674,7 @@ A new list is returned (no side effects)."
   (bmkp-maybe-load-default-file)
   (bmkp-remove-if-not
    (lambda (bmk)
-     (bmkp-lexlet* ((tgs       tags)
+     (let* ((tgs       tags)
                     (bmk-tags  (bmkp-get-tags bmk)))
        (and bmk-tags  (bmkp-every (lambda (tag) (member (bmkp-tag-name tag) tgs)) bmk-tags))))
    bookmark-alist))
@@ -3686,7 +3686,7 @@ Does not include bookmarks that have no tags.
 A new list is returned (no side effects)."
   (bmkp-maybe-load-default-file)
   (bmkp-remove-if-not
-   (bmkp-lexlet ((rg  regexp))
+   (let ((rg  regexp))
      (lambda (bmk)
        (let ((bmk-tags  (bmkp-get-tags bmk)))
          (and bmk-tags
@@ -3705,7 +3705,7 @@ With non-nil arg PREFIX, the bookmark names must all have that PREFIX."
   (bmkp-maybe-load-default-file)
   (if (not prefix)
       (bmkp-remove-if-not #'bmkp-autofile-bookmark-p bookmark-alist)
-    (bmkp-remove-if-not (bmkp-lexlet ((pref  prefix)) (lambda (bmk) (bmkp-autofile-bookmark-p bmk pref)))
+    (bmkp-remove-if-not (let ((pref  prefix)) (lambda (bmk) (bmkp-autofile-bookmark-p bmk pref)))
                         bookmark-alist)))
 
 (put 'bmkp-autofile-all-tags-alist-only 'bmkp-read-arg 'bmkp-read-tags-completing)
@@ -3714,10 +3714,10 @@ With non-nil arg PREFIX, the bookmark names must all have that PREFIX."
 A new list is returned (no side effects)."
   (bmkp-maybe-load-default-file)
   (bmkp-remove-if-not
-   (bmkp-lexlet ((tgs  tags))
+   (let ((tgs  tags))
      (lambda (bmk)
        (and (bmkp-autofile-bookmark-p bmk)  (bmkp-get-tags bmk)
-            (bmkp-every (bmkp-lexlet ((bk  bmk)) (lambda (tag) (bmkp-has-tag-p bk tag))) tgs))))
+            (bmkp-every (let ((bk  bmk)) (lambda (tag) (bmkp-has-tag-p bk tag))) tgs))))
    bookmark-alist))
 
 (put 'bmkp-autofile-all-tags-regexp-alist-only 'bmkp-read-arg 'bmkp-read-regexp)
@@ -3726,7 +3726,7 @@ A new list is returned (no side effects)."
 A new list is returned (no side effects)."
   (bmkp-maybe-load-default-file)
   (bmkp-remove-if-not
-   (bmkp-lexlet ((rg  regexp))
+   (let ((rg  regexp))
      (lambda (bmk)
        (and (bmkp-autofile-bookmark-p bmk)
             (let ((bmk-tags  (bmkp-get-tags bmk)))
@@ -3741,7 +3741,7 @@ A new list is returned (no side effects)."
   (bmkp-maybe-load-default-file)
   (bmkp-remove-if-not
    (lambda (bmk) (and (bmkp-autofile-bookmark-p bmk)
-                      (bmkp-some (bmkp-lexlet ((bk  bmk)) (lambda (tag) (bmkp-has-tag-p bk tag)))  tags)))
+                      (bmkp-some (let ((bk  bmk)) (lambda (tag) (bmkp-has-tag-p bk tag)))  tags)))
    bookmark-alist))
 
 (put 'bmkp-autofile-some-tags-regexp-alist-only 'bmkp-read-arg 'bmkp-read-regexp)
@@ -3750,7 +3750,7 @@ A new list is returned (no side effects)."
 A new list is returned (no side effects)."
   (bmkp-maybe-load-default-file)
   (bmkp-remove-if-not
-   (bmkp-lexlet ((rg  regexp))
+   (let ((rg  regexp))
      (lambda (bmk) (and (bmkp-autofile-bookmark-p bmk)
                         (bmkp-some (lambda (tag) (bmkp-string-match-p rg (bmkp-tag-name tag)))
                                    (bmkp-get-tags bmk)))))
@@ -3833,10 +3833,10 @@ A new list is returned (no side effects)."
 A new list is returned (no side effects)."
   (bmkp-maybe-load-default-file)
   (bmkp-remove-if-not
-   (bmkp-lexlet ((tgs  tags))
+   (let ((tgs  tags))
      (lambda (bmk)
        (and (bmkp-file-bookmark-p bmk)  (bmkp-get-tags bmk)
-            (bmkp-every (bmkp-lexlet ((bk  bmk)) (lambda (tag) (bmkp-has-tag-p bk tag)))  tgs))))
+            (bmkp-every (let ((bk  bmk)) (lambda (tag) (bmkp-has-tag-p bk tag)))  tgs))))
    bookmark-alist))
 
 (put 'bmkp-file-all-tags-regexp-alist-only 'bmkp-read-arg 'bmkp-read-regexp)
@@ -3845,7 +3845,7 @@ A new list is returned (no side effects)."
 A new list is returned (no side effects)."
   (bmkp-maybe-load-default-file)
   (bmkp-remove-if-not
-   (bmkp-lexlet ((rg  regexp))
+   (let ((rg  regexp))
      (lambda (bmk)
        (and (bmkp-file-bookmark-p bmk)
             (let ((bmk-tags  (bmkp-get-tags bmk)))
@@ -3859,9 +3859,9 @@ A new list is returned (no side effects)."
 A new list is returned (no side effects)."
   (bmkp-maybe-load-default-file)
   (bmkp-remove-if-not
-   (bmkp-lexlet ((tgs  tags))
+   (let ((tgs  tags))
      (lambda (bmk) (and (bmkp-file-bookmark-p bmk)
-                        (bmkp-some (bmkp-lexlet ((bk  bmk)) (lambda (tag) (bmkp-has-tag-p bk tag)))  tgs))))
+                        (bmkp-some (let ((bk  bmk)) (lambda (tag) (bmkp-has-tag-p bk tag)))  tgs))))
    bookmark-alist))
 
 (put 'bmkp-file-some-tags-regexp-alist-only 'bmkp-read-arg 'bmkp-read-regexp)
@@ -3870,7 +3870,7 @@ A new list is returned (no side effects)."
 A new list is returned (no side effects)."
   (bmkp-maybe-load-default-file)
   (bmkp-remove-if-not
-   (bmkp-lexlet ((rg  regexp))
+   (let ((rg  regexp))
      (lambda (bmk) (and (bmkp-file-bookmark-p bmk)
                         (bmkp-some (lambda (tag) (bmkp-string-match-p rg (bmkp-tag-name tag)))
                                    (bmkp-get-tags bmk)))))
@@ -3892,10 +3892,10 @@ Include only files and subdir that are in `default-directory'.
 A new list is returned (no side effects)."
   (bmkp-maybe-load-default-file)
   (bmkp-remove-if-not
-   (bmkp-lexlet ((tgs  tags))
+   (let ((tgs  tags))
      (lambda (bmk)
        (and (bmkp-file-this-dir-bookmark-p bmk)  (bmkp-get-tags bmk)
-            (bmkp-every (bmkp-lexlet ((bk  bmk)) (lambda (tag) (bmkp-has-tag-p bk tag)))  tgs))))
+            (bmkp-every (let ((bk  bmk)) (lambda (tag) (bmkp-has-tag-p bk tag)))  tgs))))
    bookmark-alist))
 
 (put 'bmkp-file-this-dir-all-tags-regexp-alist-only 'bmkp-read-arg 'bmkp-read-regexp)
@@ -3905,7 +3905,7 @@ Include only files and subdir that are in `default-directory'.
 A new list is returned (no side effects)."
   (bmkp-maybe-load-default-file)
   (bmkp-remove-if-not
-   (bmkp-lexlet ((rg  regexp))
+   (let ((rg  regexp))
      (lambda (bmk)
        (and (bmkp-file-this-dir-bookmark-p bmk)
             (let ((bmk-tags  (bmkp-get-tags bmk)))
@@ -3920,9 +3920,9 @@ Include only files and subdir that are in `default-directory'.
 A new list is returned (no side effects)."
   (bmkp-maybe-load-default-file)
   (bmkp-remove-if-not
-   (bmkp-lexlet ((tgs  tags))
+   (let ((tgs  tags))
      (lambda (bmk) (and (bmkp-file-this-dir-bookmark-p bmk)
-                        (bmkp-some (bmkp-lexlet ((bk  bmk)) (lambda (tag) (bmkp-has-tag-p bk tag)))  tgs))))
+                        (bmkp-some (let ((bk  bmk)) (lambda (tag) (bmkp-has-tag-p bk tag)))  tgs))))
    bookmark-alist))
 
 (put 'bmkp-file-this-dir-some-tags-regexp-alist-only 'bmkp-read-arg 'bmkp-read-regexp)
@@ -3932,7 +3932,7 @@ Include only files and subdir that are in `default-directory'.
 A new list is returned (no side effects)."
   (bmkp-maybe-load-default-file)
   (bmkp-remove-if-not
-   (bmkp-lexlet ((rg  regexp))
+   (let ((rg  regexp))
      (lambda (bmk) (and (bmkp-file-this-dir-bookmark-p bmk)
                         (bmkp-some (lambda (tag) (bmkp-string-match-p rg (bmkp-tag-name tag)))
                                    (bmkp-get-tags bmk)))))
@@ -4118,9 +4118,9 @@ A new list is returned (no side effects)."
   "`bookmark-alist', but with only bookmarks having some tags in TAGS.
 A new list is returned (no side effects)."
   (bmkp-maybe-load-default-file)
-  (bmkp-remove-if-not (bmkp-lexlet ((tgs  tags))
+  (bmkp-remove-if-not (let ((tgs  tags))
                         (lambda (bmk)
-                          (bmkp-some (bmkp-lexlet ((bk  bmk)) (lambda (tag) (bmkp-has-tag-p bk tag)))
+                          (bmkp-some (let ((bk  bmk)) (lambda (tag) (bmkp-has-tag-p bk tag)))
                                      tgs)))
                       bookmark-alist))
 
@@ -4129,7 +4129,7 @@ A new list is returned (no side effects)."
   "`bookmark-alist', but with only bookmarks having some tags match REGEXP.
 A new list is returned (no side effects)."
   (bmkp-maybe-load-default-file)
-  (bmkp-remove-if-not (bmkp-lexlet ((rg  regexp))
+  (bmkp-remove-if-not (let ((rg  regexp))
                         (lambda (bmk)
                           (bmkp-some (lambda (tag) (bmkp-string-match-p rg (bmkp-tag-name tag)))
                                      (bmkp-get-tags bmk))))
@@ -4146,7 +4146,7 @@ Note: Bookmarks created by built-in Emacs do not record the buffer
 name.  They are therefore excluded from the returned alist."
   (unless buffers  (setq buffers  (list (buffer-name))))
   (bmkp-maybe-load-default-file)
-  (bmkp-remove-if-not (bmkp-lexlet ((bufs  buffers))
+  (bmkp-remove-if-not (let ((bufs  buffers))
                         (lambda (bmk)
                           (and (not (bmkp-desktop-bookmark-p       bmk)) ; Exclude these
                                (not (bmkp-bookmark-file-bookmark-p bmk))
@@ -4165,7 +4165,7 @@ It defaults to a singleton list with the current buffer's file name,
 A new list is returned (no side effects)."
   (unless files  (setq files  (and (buffer-file-name)  (list (buffer-file-name)))))
   (bmkp-maybe-load-default-file)
-  (bmkp-remove-if-not (bmkp-lexlet ((ff  files))
+  (bmkp-remove-if-not (let ((ff  files))
                         (lambda (bmk)
                           (let ((bf  (bookmark-get-filename bmk))) 
                             (and bf
@@ -6296,7 +6296,7 @@ is negative."
          (olen     (length remtags)))
     (if (null remtags)
         (when msg-p (message "Bookmark has no tags to remove")) ; Do nothing if bookmark has no tags.
-      (setq remtags  (bmkp-remove-if (bmkp-lexlet ((tgs  tags))
+      (setq remtags  (bmkp-remove-if (let ((tgs  tags))
                                        (lambda (tag)
                                          (if (atom tag) (member tag tgs) (member (car tag) tgs))))
                                      remtags))
@@ -7101,7 +7101,7 @@ Keys are compared for sorting using `equal'.
 
 If optional arg OMIT is non-nil, then it is a list of keys.  Omit from
 the return value any elements with keys in the list."
-  (bmkp-lexlet ((new-alist  (bmkp-remove-omitted alist omit))
+  (let ((new-alist  (bmkp-remove-omitted alist omit))
                 (sort-fn    (and bmkp-sort-comparer  (if (and (not (functionp bmkp-sort-comparer))
                                                               (consp bmkp-sort-comparer))
                                                          'bmkp-multi-sort
@@ -7133,7 +7133,7 @@ elements with keys in list OMIT."
 ;;; Keys are compared for sorting using `equal'.
 ;;; If optional arg OMIT is non-nil, then omit from the return value any
 ;;; elements with keys in list OMIT."
-;;;   (bmkp-lexlet ((new-alist  (bmkp-remove-assoc-dups alist omit))
+;;;   (let ((new-alist  (bmkp-remove-assoc-dups alist omit))
 ;;;                (sort-fn  (and bmkp-sort-comparer  (if (and (not (functionp bmkp-sort-comparer))
 ;;;                                                     (consp bmkp-sort-comparer))
 ;;;                                                            'bmkp-multi-sort
@@ -8312,7 +8312,7 @@ Non-interactively:
    refresh/rebuild the bookmark-list display
  - Non-nil MSG-P means display a message about the removal."
   (interactive
-   (bmkp-lexlet* ((pref
+   (let* ((pref
                    (and current-prefix-arg  (wholenump (prefix-numeric-value current-prefix-arg))
                         (read-string "Prefix for bookmark name: ")))
                   (tgs
@@ -9281,7 +9281,7 @@ Non-interactively, non-nil MSG-P means display a status message."
     (condition-case nil                 ; Check whether it's a valid bookmark file.
         (unless (listp (bmkp-alist-from-buffer)) (error ""))
       (error (error "Not a valid bookmark file: `%s'" file))))
-  (let ((bookmark-make-record-function  (bmkp-lexlet ((ff  file))
+  (let ((bookmark-make-record-function  (let ((ff  file))
                                           (lambda () (bmkp-make-bookmark-file-record ff))))
         (bookmark-name                  (bmkp-completing-read-lax "Bookmark-file BOOKMARK name"
                                                                   file nil nil 'bookmark-history)))
@@ -9380,7 +9380,7 @@ you can yank it using `C-y'."
   (interactive "r\nP\np")
   (unless (and mark-active  transient-mark-mode) (error "No active region"))
   (when (equal beg end) (error "Region is empty"))
-  (bmkp-lexlet ((text  (buffer-substring-no-properties beg end)))
+  (let ((text  (buffer-substring-no-properties beg end)))
     (let ((bookmark-make-record-function  (lambda ()
                                             `(,@(bmkp-make-record-default 'NO-FILE 'NO-CONTEXT)
                                               (text    . ,text)
@@ -9438,7 +9438,7 @@ enter, just use it to set the bookmark."
   (if nosavep
       (unless (bmkp-desktop-file-p desktop-file) (error "Not a desktop file: `%s'" desktop-file))
     (bmkp-desktop-save desktop-file))
-  (let ((bookmark-make-record-function  (bmkp-lexlet ((df  desktop-file))
+  (let ((bookmark-make-record-function  (let ((df  desktop-file))
                                           (lambda () (bmkp-make-desktop-record df))))
         (current-prefix-arg             99)) ; Use all bookmarks for completion, for `bmkp-set'.
     (call-interactively #'bmkp-set)))
@@ -9875,7 +9875,7 @@ Each entry in KMACROS thus has the form (MACRO COUNTER FORMAT)."
 Interactively, read the variables to save, using
 `bmkp-read-variables-completing'."
   (interactive (list (bmkp-read-variables-completing)))
-  (let ((bookmark-make-record-function  (bmkp-lexlet ((vars  variables))
+  (let ((bookmark-make-record-function  (let ((vars  variables))
                                           (lambda () (bmkp-make-variable-list-record vars)))))
     (call-interactively #'bmkp-set)))
 
@@ -9888,7 +9888,7 @@ Optional arg BUFFER-NAME is the buffer name to use for the bookmark (a
 string).  This is useful if some of the variables are buffer-local.
 If BUFFER-NAME is nil, the current buffer name is recorded."
   (eval `(cl-multiple-value-bind ,vars ',vals
-           (let ((bookmark-make-record-function  (bmkp-lexlet ((vs   ',vars)
+           (let ((bookmark-make-record-function  (let ((vs   ',vars)
                                                                (buf  ,buffer-name))
                                                    (lambda () (bmkp-make-variable-list-record vs buf)))))
              (bmkp-set ,bookmark-name)))))
@@ -11828,11 +11828,11 @@ candidate.
 By default, the tag choices for completion are NOT refreshed, to save
 time.  Use a prefix argument if you want to refresh them."
     (interactive (list (bmkp-read-tags-completing nil nil current-prefix-arg)))
-    (bmkp-lexlet* ((tgs              tags)
+    (let* ((tgs              tags)
                    (use-file-dialog  nil)
                    (pred
                     (lambda (ff)
-                      (bmkp-lexlet* ((bmk   (bmkp-get-autofile-bookmark ff))
+                      (let* ((bmk   (bmkp-get-autofile-bookmark ff))
                                      (btgs  (and bmk  (bmkp-get-tags bmk))))
                         (and btgs  (bmkp-every (lambda (tag) (bmkp-has-tag-p bmk tag))  tgs)))))
                    (fil                                         (or (and file  (funcall pred file)  file)
@@ -11846,11 +11846,11 @@ time.  Use a prefix argument if you want to refresh them."
   (defun bmkp-find-file-all-tags-other-window (tags &optional file) ; `C-x 4 j t C-f *'
     "`bmkp-find-file-all-tags', but in another window."
     (interactive (list (bmkp-read-tags-completing nil nil current-prefix-arg)))
-    (bmkp-lexlet* ((tgs              tags)
+    (let* ((tgs              tags)
                    (use-file-dialog  nil)
                    (pred
                     (lambda (ff)
-                      (bmkp-lexlet* ((bk    (bmkp-get-autofile-bookmark ff))
+                      (let* ((bk    (bmkp-get-autofile-bookmark ff))
                                      (btgs  (and bk  (bmkp-get-tags bk))))
                         (and btgs  (bmkp-every (lambda (tag) (bmkp-has-tag-p bk tag))  tgs)))))
                    (fil                                         (or (and file  (funcall pred file)  file)
@@ -11865,7 +11865,7 @@ time.  Use a prefix argument if you want to refresh them."
     "Visit a file or directory that has each tag matching REGEXP.
 You are prompted for the REGEXP."
     (interactive (list (bmkp-read-regexp "Regexp for tags: ")))
-    (bmkp-lexlet* ((rg               regexp)
+    (let* ((rg               regexp)
                    (use-file-dialog  nil)
                    (pred
                     (lambda (ff)
@@ -11885,7 +11885,7 @@ You are prompted for the REGEXP."
   (defun bmkp-find-file-all-tags-regexp-other-window (regexp &optional file) ; `C-x 4 j t C-f % *'
     "`bmkp-find-file-all-tags-regexp', but in another window."
     (interactive (list (bmkp-read-regexp "Regexp for tags: ")))
-    (bmkp-lexlet* ((rg               regexp)
+    (let* ((rg               regexp)
                    (use-file-dialog  nil)
                    (pred
                     (lambda (ff)
@@ -11917,11 +11917,11 @@ However, only files that are bookmarked as autofiles are candidates.
 By default, the tag choices for completion are NOT refreshed, to save
 time.  Use a prefix argument if you want to refresh them."
     (interactive (list (bmkp-read-tags-completing nil nil current-prefix-arg)))
-    (bmkp-lexlet* ((tgs              tags)
+    (let* ((tgs              tags)
                    (use-file-dialog  nil)
                    (pred
                     (lambda (ff)
-                      (bmkp-lexlet* ((bk    (bmkp-get-autofile-bookmark ff))
+                      (let* ((bk    (bmkp-get-autofile-bookmark ff))
                                      (btgs  (and bk  (bmkp-get-tags bk))))
                         (and btgs  (bmkp-some (lambda (tag) (bmkp-has-tag-p bk tag))  tgs)))))
                    (fil                                         (or (and file  (funcall pred file)  file)
@@ -11936,11 +11936,11 @@ time.  Use a prefix argument if you want to refresh them."
   (defun bmkp-find-file-some-tags-other-window (tags &optional file) ; `C-x 4 j t C-f +'
     "`bmkp-find-file-some-tags', but in another window."
     (interactive (list (bmkp-read-tags-completing nil nil current-prefix-arg)))
-    (bmkp-lexlet* ((tgs              tags)
+    (let* ((tgs              tags)
                    (use-file-dialog  nil)
                    (pred
                     (lambda (ff)
-                      (bmkp-lexlet* ((bk    (bmkp-get-autofile-bookmark ff))
+                      (let* ((bk    (bmkp-get-autofile-bookmark ff))
                                      (btgs  (and bk  (bmkp-get-tags bk))))
                         (and btgs  (bmkp-some (lambda (tag) (bmkp-has-tag-p bk tag))  tgs)))))
                    (fil                                         (or (and file  (funcall pred file)  file)
@@ -11956,7 +11956,7 @@ time.  Use a prefix argument if you want to refresh them."
     "Visit a file or directory that has a tag matching REGEXP.
 You are prompted for the REGEXP."
     (interactive (list (bmkp-read-regexp "Regexp for tags: ")))
-    (bmkp-lexlet* ((rg               regexp)
+    (let* ((rg               regexp)
                    (use-file-dialog  nil)
                    (pred
                     (lambda (ff)
@@ -11976,7 +11976,7 @@ You are prompted for the REGEXP."
   (defun bmkp-find-file-some-tags-regexp-other-window (regexp &optional file) ; `C-x 4 j t C-f % +'
     "`bmkp-find-file-some-tags-regexp', but in another window."
     (interactive (list (bmkp-read-regexp "Regexp for tags: ")))
-    (bmkp-lexlet* ((rg               regexp)
+    (let* ((rg               regexp)
                    (use-file-dialog  nil)
                    (pred
                     (lambda (ff)

@@ -568,13 +568,6 @@ If BOOKMARK has no location then use nil as `default-directory'."
                                (if (file-directory-p loc) loc (file-name-directory loc)))))
     ,@body))
 
-;; All files in this package use `lexical-binding: t', so these expand
-;; to plain `let' / `let*'.  Kept as macros only to avoid touching the
-;; many call sites in `bookmark+-1.el'.
-;;
-(defmacro bmkp-lexlet  (&rest all) `(let  ,@all))
-(defmacro bmkp-lexlet* (&rest all) `(let* ,@all))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'bookmark+-mac)
