@@ -1018,7 +1018,7 @@ This includes possibly omitted bookmarks, that is, bookmarks listed in
 
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Return t.  Value doesn't mean anything (didn't anyway), but must be non-nil for built-in Emacs.
 ;; 2. Do not count lines.  Just make sure we're on a bookmark line.
@@ -1035,7 +1035,7 @@ This includes possibly omitted bookmarks, that is, bookmarks listed in
   t)                                    ; Older built-in bookmark code depends on non-nil value.
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Don't use `tabulated-list-mode' (Emacs 28+).
 ;; 2 Add bookmark to `bmkp-bmenu-marked-bookmarks'.  Delete it from `bmkp-flagged-bookmarks'.
@@ -1084,7 +1084,7 @@ Non-interactively:
   (when (fboundp 'bmkp-bmenu-mode-line) (bmkp-bmenu-mode-line)))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;;  1. Don't use `tabulated-list-mode' (Emacs 28+).
 ;;  2. Remove bookmark from `bmkp-bmenu-marked-bookmarks' and `bmkp-flagged-bookmarks'.
@@ -1131,7 +1131,7 @@ Non-interactively:
   (when (fboundp 'bmkp-bmenu-mode-line) (bmkp-bmenu-mode-line)))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Don't use `tabulated-list-mode' (Emacs 28+).
 ;; 2. Do not use `bmkp-list-ensure-position' as a test - it always returns non-nil anyway.
@@ -1167,7 +1167,7 @@ the deletions."
   (when (fboundp 'bmkp-bmenu-mode-line) (bmkp-bmenu-mode-line)))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; Do not move forward another line at end.  Leave point above flagged bookmark.
 ;;
@@ -1184,7 +1184,7 @@ To carry out the deletions that you've marked, use \\<bmkp-list-mode-map>\
   (bmkp-list-ensure-position))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Added optional arg NO-MSG-P.
 ;; 2. Rebuild the menu list using the last filtered alist in use, `bmkp-latest-bookmark-alist'.
@@ -1200,7 +1200,7 @@ Non-nil optional arg NO-MSG-P means do not show progress messages."
     (unless no-msg-p (message "Updating bookmark-list display...done"))))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Added arg FILTEREDP.
 ;; 2. Handles also region bookmarks and buffer (non-file) bookmarks.
@@ -1419,7 +1419,7 @@ window), add an entry for buffer name `*Bmkp List*' to
   (when (and interactivep  bmkp-sort-comparer) (bmkp-msg-about-sort-order (bmkp-current-sort-order))))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; Redefined.
 ;; 1. Don't use `tabulated-list-mode' (Emacs 28+).
@@ -1438,7 +1438,7 @@ Non-nil optional FULL means return the bookmark record, not the name."
     (error nil)))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Mode-line major-mode name is different, and indicates whether in temporary bookmarking minor mode.
 ;; 2. Don't derive from `tabulated-list-mode' (Emacs 28+).
@@ -1972,7 +1972,7 @@ Other Options
     (setq mode-name  "TEMPORARY Bookmarking")))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Corrected (rewrote).  Toggle var first (unless SHOW).  Call fn according to the var (& to SHOW).
 ;; 2. Added optional arg NO-MSG-P.
@@ -2070,7 +2070,7 @@ WIDTH is a positive integer, or nil (or 0) to mean automatic
   (message "Name column width: %s" (or bmkp-bmenu-name-column-width "auto")))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Put `mouse-face' on whole line, with the same help-echo as for the bookmark name.
 ;; 2. Correct FORCE behavior.
@@ -2112,7 +2112,7 @@ Non-nil optional arg NO-MSG-P means do not show progress messages."
     (bmkp-fit-bmenu-frame)))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Add text properties when hiding filenames.
 ;; 2. Do not set or use `bookmark-bmenu-bookmark-column' - use `bmkp-bmenu-marks-width' always.
@@ -2156,7 +2156,7 @@ Non-nil optional arg NO-MSG-P means do not show progress messages."
     (bmkp-fit-bmenu-frame)))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Prefix arg reverses `bmkp-use-region'.
 ;; 2. Raise error if not in buffer `*Bmkp List*'.
@@ -2173,7 +2173,7 @@ See `bmkp-jump' for info about the prefix arg."
   (delete-other-windows))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Prefix arg reverses `bmkp-use-region'.
 ;; 2. Raise error if not in buffer `*Bmkp List*'.
@@ -2195,7 +2195,7 @@ See `bmkp-jump' for info about the prefix arg."
     (bury-buffer menu)))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Prefix arg reverses `bmkp-use-region'.
 ;; 2. Raise error if not in buffer `*Bmkp List*'.
@@ -2211,7 +2211,7 @@ See `bmkp-jump' for info about the prefix arg."
     (bmkp-jump-1 bookmark-name 'bmkp--pop-to-buffer-same-window flip-use-region-p)))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Use `pop-to-buffer', not `switch-to-buffer-other-window'.
 ;; 2. Prefix arg reverses `bmkp-use-region'.
@@ -2229,7 +2229,7 @@ See `bmkp-jump' for info about the prefix arg."
     (bmkp-jump-other-window bookmark-name flip-use-region-p)))
 
 
-;; REPLACES ORIGINAL in `bookmark.el' (Emacs 27+).
+;; Differences from built-in `bookmark.el' (Emacs 27+):
 ;;
 ;; 1. Use `pop-to-buffer', not `view-buffer-other-frame'.
 ;; 2. Prefix arg reverses `bmkp-use-region'.
@@ -2247,7 +2247,7 @@ See `bmkp-jump' for info about the prefix arg."
     (bmkp-jump-other-frame bookmark-name flip-use-region-p)))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Prefix arg reverses `bmkp-use-region'.
 ;; 2. Raise error if not in buffer `*Bmkp List*'.
@@ -2272,7 +2272,7 @@ See `bmkp-jump' for info about the prefix arg."
       (bmkp-jump-1 bookmark-name #'display-buffer flip-use-region-p))))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Prefix arg reverses `bmkp-use-region'.
 ;; 2. Raise error if not in buffer `*Bmkp List*'.
@@ -2287,7 +2287,7 @@ See `bmkp-jump' for info about the prefix arg."
                     (bmkp-list-other-window flip-use-region-p))))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Added optional arg MSG-P.
 ;; 2. Call `bmkp-show-annotation' with arg MSG-P.
@@ -2307,7 +2307,7 @@ Non-interactively, non-nil MSG-P means display messages."
     (bmkp-show-annotation bmk msg-p)))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;;  1. Don't use progress-reporter.
 ;;  2. Added optional arg MARKEDP: handle bookmarks marked `>', not just those flagged `D'.

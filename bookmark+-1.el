@@ -1859,9 +1859,8 @@ Use that function to update the value.")
   "Non-nil means some bookmarks have been loaded during this Emacs session.")
 
 
-;; REPLACES ORIGINAL DOC STRING in `bookmark.el'.
-;;
-;; Doc string reflects `Bookmark+' enhancements.
+;; Override the built-in `bookmark-alist' doc string to reflect
+;; `Bookmark+' enhancements.
 ;;
 (put 'bookmark-alist 'variable-documentation
      "Current list of bookmarks (bookmark records).
@@ -2056,7 +2055,7 @@ ignored."
         (t (and (not noerror) (error "Invalid bookmark: `%s'" bookmark)))))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; Use option `bmkp-new-bookmark-default-names' to obtain the default name.
 ;;
@@ -2084,7 +2083,7 @@ provide it.  If that does not provide it then use
       record)))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Added optional args NO-REFRESH-P and NO-MSG-P.
 ;; 2. Update the bookmark name also, not just the data, for an existing bookmark.
@@ -2143,7 +2142,7 @@ bookmark file.  Saving the file depends on `bookmark-save-flag'."
     bmk))                               ; Return the bookmark.
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; Mention `C-c C-M-c', not `C-c C-c'.
 ;;
@@ -2160,7 +2159,7 @@ annotations."
           "#  Date:    " (current-time-string) "\n"))
 
 
-;; REPLACES ORIGINAL in `bookmark.el' (Emacs 24.4+).
+;; Differences from built-in `bookmark.el' (Emacs 24.4+):
 ;;
 ;; Usable for older Emacs versions also.
 ;;
@@ -2177,7 +2176,7 @@ BOOKMARK is a bookmark name or a bookmark record."
     (when (and annotation  (not (string-equal annotation ""))) (insert annotation))))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Derive from value of option `bmkp-annotation-modes-inherit-from'.
 ;; 2. First, remove parent map from `bmkp-edit-annotation-mode-map', so it is derived anew.
@@ -2211,7 +2210,7 @@ When you have finished composing, use `C-c C-M-c'.
   (define-key bmkp-show-annotation-mode-map "\C-x\C-q" 'bmkp-edit-this-annotation))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Record an empty annotation as nil, not "".
 ;; 2. BUG fix: Put point back where it was (on the bookmark just annotated).
@@ -2241,7 +2240,7 @@ Lines beginning with `#' are ignored."
       (kill-buffer annotation-buf))))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Make it a command (added `interactive' spec).  Prefix arg means add or edit (choose any bookmark).
 ;; 2. Manage buffer-modified-p.
@@ -2278,7 +2277,7 @@ Calls `bmkp-maybe-load-default-file' first.  Like the built-in
   (mapcar #'bmkp-bookmark-name-from-record (or alist  bookmark-alist)))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Added optional args ALIST, PRED, and HIST.
 ;; 2. Use helper function `bmkp-completing-read-1', which does this:
@@ -2312,7 +2311,7 @@ completion."
   (bmkp-completing-read-1 prompt default alist pred hist nil use-nil-alist-p))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Handles also regions and non-file buffers.
 ;; 2. Do not use NO-CONTEXT or POSN if < Emacs 24.
@@ -2366,7 +2365,7 @@ Non-nil NO-REGION means do not include the region end, `end-position'."
       ,@(when (and regionp  (not no-region)) `((end-position . ,end))))))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 (defun bmkp-alist-from-buffer ()
   "Read and return a bookmark list (in any format) from the current buffer.
 Point is irrelevant and unaffected."
@@ -2392,7 +2391,7 @@ Point is irrelevant and unaffected."
     bmks))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;;  1. Use `bmkp-make-record'.
 ;;  2. Use special default prompts for active region, EWW, W3M, and Gnus.
@@ -2601,7 +2600,7 @@ stripped out."
     (insert string)))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Separate renaming of obsolete default bookmark name (do it even if not loading the default file).
 ;; 2. Load `bmkp-last-as-first-bookmark-file' if it is non-nil.
@@ -2623,7 +2622,7 @@ Otherwise, load `bookmark-default-file'."
          (setq bmkp-bookmarks-already-loaded  t))))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Save DISPLAY-FUNCTION to `bmkp-jump-display-function' before calling `bmkp-handle-bookmark'.
 ;; 2. Update the name and position of an autonamed bookmark, in case it moved.
@@ -2704,7 +2703,7 @@ same-named bookmarks via a text property."
       (setq bmkp-modified-bookmarks  (cons bmk bmkp-modified-bookmarks)))))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Added optional arg FLIP-USE-REGION-P.
 ;; 2. Use `bmkp-default-bookmark-name' as default when interactive.
@@ -2739,7 +2738,7 @@ Non-nil FLIP-USE-REGION-P flips the value of `bmkp-use-region'."
   (bmkp-jump-1 bookmark (or display-function  'bmkp--pop-to-buffer-same-window) flip-use-region-p))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Added optional arg FLIP-USE-REGION-P.
 ;; 2. Use `bmkp-default-bookmark-name' as default when interactive.
@@ -2756,7 +2755,7 @@ See `bmkp-jump', in particular for info about using a prefix arg."
   (bmkp-jump-1 bookmark 'bmkp-select-buffer-other-window flip-use-region-p))
 
 
-;; REPLACES ORIGINAL in `bookmark.el' (Emacs 27+)
+;; Differences from built-in `bookmark.el' (Emacs 27+):
 ;;
 ;; 1. Added optional arg FLIP-USE-REGION-P.
 ;; 2. Use `bmkp-default-bookmark-name' as default when interactive.
@@ -2772,7 +2771,7 @@ See `bmkp-jump', in particular for info about using a prefix arg."
   (let ((pop-up-frames  t)) (bmkp-jump-other-window bookmark flip-use-region-p)))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Invoke MS Windows `Open' action if `bmkp-use-w32-browser-p' and if `w32-browser' is defined.
 ;; 2. Favor entry `file-handler' over entry `handler'.  If the former is available, apply it to the file.
@@ -2855,7 +2854,7 @@ is handled as follows:
 (put 'bookmark-error-no-filename 'error-message "Bookmark has no associated file (or directory)")
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Use `bmkp-get-bookmark' instead of `bookmark-get-bookmark', so we can get the right bookmark if
 ;;    it has a name with property `bmkp-full-record'.
@@ -2924,7 +2923,7 @@ Otherwise, call `bmkp-goto-position' to go to the recorded position."
     nil))                               ; Return nil if no file error.
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Added optional arg NO-REFRESH-P.
 ;; 2. Added bookmark default for interactive use.
@@ -2978,7 +2977,7 @@ insert that; otherwise insert the buffer's file name."
     (insert str)))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Added bookmark default for interactive use.
 ;; 2. Do not add any text properties here.  That's done in `bmkp-bmenu-propertize-item'.
@@ -3000,7 +2999,7 @@ Optional arg NO-HISTORY means do not record BOOKMARK-NAME in
   (insert (bmkp-location bookmark-name))) ; Return the line inserted.
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. The different `bookmark-get-bookmark' behavior from built-in Emacs means we can get the right bookmark
 ;;    if it has a name with property `bmkp-full-record', without looking it up in `bookmark-alist'.
@@ -3041,7 +3040,7 @@ Unknown location --\"."
       "-- Unknown location --"))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Added BATCHP arg.  Return OLD if BATCHP is non-nil and NEW is nil.
 ;; 2. Use `bmkp-completing-read-lax', not `read-from-minibuffer', for new name.
@@ -3100,7 +3099,7 @@ with completion (default: `bmkp-default-bookmark-name')."
   (bookmark-insert bookmark-name))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Accept a bookmark or a bookmark name as arg.
 ;; 2. Use `bmkp-default-bookmark-name' as default when interactive.
@@ -3151,7 +3150,7 @@ In this way, you can delete multiple bookmarks."
       (bmkp-maybe-save-bookmarks))))    ; Increments `bookmark-alist-modification-count'.
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Use `bmkp-current-bookmark-file', not `bookmark-default-file'.
 ;; 2. Update `bmkp-last-as-first-bookmark-file' if it is non-nil.
@@ -3211,7 +3210,7 @@ operations such as `find-coding-systems-region'."
          (apply #'set-coding-system-priority ,current))))))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;;  1. Use `write-file', not `write-region', so backup files are made.
 ;;  2. Do not save temporary bookmarks (`bmkp-temporary-bookmark-p').
@@ -3339,7 +3338,7 @@ contain a `%s' construct, so that it can be passed along with FILE to
         (unless errorp (message (concat msg "done") file))))))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Added optional arg DUPLICATES-OK.
 ;;
@@ -3377,7 +3376,7 @@ returned)."
         (when return-bmks (push full-bmk bmks-added))))
     (list nb-renamed nb-added bmks-added)))
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; Return non-nil iff bookmark was renamed.
 ;;
@@ -3396,7 +3395,7 @@ Return non-nil if the bookmark was renamed, nil otherwise."
         (not (string= found-name new-name))))))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;;  1. Prefix arg means OVERWRITE.
 ;;  2. Return the list of bookmarks read from FILE.
@@ -3531,7 +3530,7 @@ bookmark files that were created using the bookmark functions."
     blist))                             ; Return the list of bookmarks read from FILE.
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;;  1. Make it a command (added `interactive' spec).
 ;;  2. Use `bmkp-get-bookmark' instead of `bookmark-get-bookmark', so we can get the right bookmark if
@@ -3601,7 +3600,7 @@ read-only and edit mode using `C-x C-q'."
             (select-frame-set-input-focus oframe)))))))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; 1. Make it a command (added `interactive' spec).
 ;; 2. Use `bmkp-maybe-load-default-file', to ensure bookmarks are loaded.
@@ -3643,7 +3642,7 @@ in the current sort order."
     (select-frame-set-input-focus oframe)))
 
 
-;; REPLACES ORIGINAL in `bookmark.el'.
+;; Differences from built-in `bookmark.el':
 ;;
 ;; Save menu-list state to `bmkp-bmenu-state-file'.
 ;;
@@ -9996,7 +9995,7 @@ BOOKMARK is a bookmark name or a bookmark record."
   )
 
 
-;; REPLACES ORIGINAL in `info.el':
+;; Differences from built-in `info.el':
 ;;
 ;; Respect `Info-bookmark-use-only-node-not-file-flag'.
 ;;
