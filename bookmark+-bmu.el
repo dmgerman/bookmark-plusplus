@@ -3801,6 +3801,16 @@ Interactively, you are required to confirm."
       (bmkp-bmenu-sort-tagged-before-untagged))
     nb-added))
 
+;;;###autoload (autoload 'bmkp-bmenu-edit-annotation "bookmark+")
+(defun bmkp-bmenu-edit-annotation ()    ; Bound to `a e' in bookmark list
+  "Pop up an annotation-edit buffer for the bookmark on this line.
+Like `bmkp-edit-annotation', but uses the bookmark at point in
+the `*Bmkp List*' buffer instead of prompting for a name."
+  (interactive)
+  (bmkp-bmenu-barf-if-not-in-menu-list)
+  (bmkp-list-ensure-position)
+  (bmkp-edit-annotation (bmkp-list-bookmark)))
+
 ;;;###autoload (autoload 'bmkp-bmenu-set-tag-value "bookmark+")
 (defun bmkp-bmenu-set-tag-value ()      ; Bound to `T v' in bookmark list
   "Set the value of one of this bookmark's tags."
@@ -5686,7 +5696,7 @@ are marked or ALLP is non-nil."
 ;; Here, those become `aa', `aA', `ae' so that `a' can be a prefix.
 (define-key bmkp-list-mode-map "aa"                   'bmkp-list-show-annotation)
 (define-key bmkp-list-mode-map "aA"                   'bmkp-show-all-annotations)
-(define-key bmkp-list-mode-map "ae"                   'bmkp-edit-annotation)
+(define-key bmkp-list-mode-map "ae"                   'bmkp-bmenu-edit-annotation)
 (define-key bmkp-list-mode-map "a>"                   'bmkp-bmenu-edit-annotations-for-marked)
 (define-key bmkp-list-mode-map "AM"                   'bmkp-bmenu-mark-autofile-bookmarks)
 (define-key bmkp-list-mode-map "AS"                   'bmkp-bmenu-show-only-autofile-bookmarks)

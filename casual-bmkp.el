@@ -78,7 +78,7 @@
 (declare-function bmkp-save                                      "bookmark+-1")
 (declare-function bmkp-load                                      "bookmark+-1")
 (declare-function bmkp-switch-bookmark-file-create               "bookmark+-1")
-(declare-function bmkp-edit-annotation                           "bookmark+-1")
+(declare-function bmkp-bmenu-edit-annotation                     "bookmark+-bmu")
 (declare-function bmkp-rename-tag                                "bookmark+-1")
 (declare-function bmkp-list-all-tags                             "bookmark+-1")
 (declare-function bmkp-bmenu-add-tags                            "bookmark+-bmu")
@@ -255,7 +255,9 @@ explicitly, \\`X' to kill the `*Bmkp List*' buffer."
     ("E"   "Edit marked"        bmkp-bmenu-edit-marked                :transient t)
     ("r"   "Rename"             bmkp-bmenu-edit-bookmark-name-and-location :transient t)
     ("a"   "Show annotation"    bmkp-list-show-annotation             :transient t)
-    ("A"   "Edit annotation"    bmkp-edit-annotation                  :transient t)]
+    ;; Edit pops up an annotation-compose buffer for the user to work
+    ;; in; close the menu so they can edit without it overlaying.
+    ("A"   "Edit annotation"    bmkp-bmenu-edit-annotation            :transient nil)]
    ["Files"
     ("S"   "Save"               bmkp-save                             :transient t)
     ("L"   "Switch bmk file"    bmkp-switch-bookmark-file-create      :transient t)
