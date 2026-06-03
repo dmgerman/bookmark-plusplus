@@ -5672,34 +5672,27 @@ are marked or ALLP is non-nil."
 (define-key bmkp-list-mode-map ">"                    'bmkp-bmenu-toggle-show-only-marked)
 (define-key bmkp-list-mode-map "<"                    'bmkp-bmenu-toggle-show-only-unmarked)
 (define-key bmkp-list-mode-map (kbd "M-<DEL>")        'bmkp-bmenu-unmark-all)
-(define-key bmkp-list-mode-map "-"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "->"                   'bmkp-bmenu-omit/unomit-marked)
 (define-key bmkp-list-mode-map "-S"                   'bmkp-bmenu-show-only-omitted-bookmarks)
 (define-key bmkp-list-mode-map "-U"                   'bmkp-unomit-all)
-(define-key bmkp-list-mode-map "="                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "=bM"                  'bmkp-bmenu-mark-specific-buffer-bookmarks)
 (define-key bmkp-list-mode-map "=fM"                  'bmkp-bmenu-mark-specific-file-bookmarks)
 (define-key bmkp-list-mode-map "=bS"                  'bmkp-bmenu-show-only-specific-buffer-bookmarks)
 (define-key bmkp-list-mode-map "=fS"                  'bmkp-bmenu-show-only-specific-file-bookmarks)
-(define-key bmkp-list-mode-map "%"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "%m"                   'bmkp-bmenu-regexp-mark)
 (define-key bmkp-list-mode-map "*"                    nil) ; Free `*' as a prefix key
 (define-key bmkp-list-mode-map "*m"                   'bmkp-list-mark)
-(define-key bmkp-list-mode-map "#"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "#M"                   'bmkp-bmenu-mark-autonamed-bookmarks)
 (define-key bmkp-list-mode-map "#S"                   'bmkp-bmenu-show-only-autonamed-bookmarks)
 ;; In the built-in `bookmark.el', `a' shows the current annotation,
 ;; `A' shows all annotations, and `e' edits the current annotation.
 ;; Here, those become `aa', `aA', `ae' so that `a' can be a prefix.
-(define-key bmkp-list-mode-map "a"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "aa"                   'bmkp-list-show-annotation)
 (define-key bmkp-list-mode-map "aA"                   'bmkp-show-all-annotations)
 (define-key bmkp-list-mode-map "ae"                   'bmkp-edit-annotation)
 (define-key bmkp-list-mode-map "a>"                   'bmkp-bmenu-edit-annotations-for-marked)
-(define-key bmkp-list-mode-map "A"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "AM"                   'bmkp-bmenu-mark-autofile-bookmarks)
 (define-key bmkp-list-mode-map "AS"                   'bmkp-bmenu-show-only-autofile-bookmarks)
-(define-key bmkp-list-mode-map "B"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "BM"                   'bmkp-bmenu-mark-non-file-bookmarks)
 (define-key bmkp-list-mode-map "BS"                   'bmkp-bmenu-show-only-non-file-bookmarks)
 (define-key bmkp-list-mode-map (kbd "M-n")            'bmkp-bmenu-clone-bookmark)
@@ -5709,18 +5702,15 @@ are marked or ALLP is non-nil."
 (define-key bmkp-list-mode-map "d"                    'bmkp-bmenu-flag-for-deletion)
 (define-key bmkp-list-mode-map "D"                    'bmkp-bmenu-delete-marked)
 (define-key bmkp-list-mode-map "\C-d"                 'bmkp-bmenu-flag-for-deletion-backwards)
-(define-key bmkp-list-mode-map "\M-d"                 nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "\M-d>"                'bmkp-bmenu-dired-marked)
 (define-key bmkp-list-mode-map "\M-d\M-m"             'bmkp-bmenu-mark-dired-bookmarks)
 (define-key bmkp-list-mode-map "\M-d\M-s"             'bmkp-bmenu-show-only-dired-bookmarks)
 ;; `e' is `bookmark-bmenu-edit-annotation' in built-in Emacs.
 (define-key bmkp-list-mode-map "e"                    'bmkp-bmenu-edit-bookmark-record)
 (define-key bmkp-list-mode-map "E"                    'bmkp-bmenu-edit-marked)
-(define-key bmkp-list-mode-map "F"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "FM"                   'bmkp-bmenu-mark-file-bookmarks)
 (define-key bmkp-list-mode-map "FS"                   'bmkp-bmenu-show-only-file-bookmarks)
 (define-key bmkp-list-mode-map "g"                    'bmkp-bmenu-refresh-menu-list)
-(define-key bmkp-list-mode-map "G"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "GM"                   'bmkp-bmenu-mark-gnus-bookmarks)
 (define-key bmkp-list-mode-map "GS"                   'bmkp-bmenu-show-only-gnus-bookmarks)
 (define-key bmkp-list-mode-map [remap describe-mode] 'bmkp-bmenu-mode-status-help)
@@ -5734,7 +5724,6 @@ are marked or ALLP is non-nil."
 (define-key bmkp-list-mode-map (kbd "M-<return>")     'bmkp-bmenu-w32-open)
 (define-key bmkp-list-mode-map [M-mouse-2]            'bmkp-bmenu-w32-open-with-mouse)
 (when (featurep 'bookmark+-lit)
-  (define-key bmkp-list-mode-map "H"                  nil) ; For Emacs 20
   (define-key bmkp-list-mode-map "H+"                 'bmkp-bmenu-set-lighting)
   (define-key bmkp-list-mode-map "H>+"                'bmkp-bmenu-set-lighting-for-marked)
   (define-key bmkp-list-mode-map "H>H"                'bmkp-bmenu-light-marked)
@@ -5743,17 +5732,14 @@ are marked or ALLP is non-nil."
   (define-key bmkp-list-mode-map "HS"                 'bmkp-bmenu-show-only-lighted-bookmarks)
   (define-key bmkp-list-mode-map "H>U"                'bmkp-bmenu-unlight-marked)
   (define-key bmkp-list-mode-map "HU"                 'bmkp-bmenu-unlight))
-(define-key bmkp-list-mode-map "I"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "IM"                   'bmkp-bmenu-mark-info-bookmarks)
 (define-key bmkp-list-mode-map "IS"                   'bmkp-bmenu-show-only-info-bookmarks)
-(define-key bmkp-list-mode-map "\M-I"                 nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "\M-I\M-M"             'bmkp-bmenu-mark-image-bookmarks)
 (define-key bmkp-list-mode-map "\M-I\M-S"             'bmkp-bmenu-show-only-image-bookmarks)
 
 ;; Prefix `j' and `J' bindings are made in `bookmark+-key.el', by binding `bmkp-jump(-other-window)-map'.
 
 (define-key bmkp-list-mode-map "k"                    'bmkp-bmenu-flag-for-deletion)
-(define-key bmkp-list-mode-map "K"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "KM"                   'bmkp-bmenu-mark-desktop-bookmarks)
 (define-key bmkp-list-mode-map "KS"                   'bmkp-bmenu-show-only-desktop-bookmarks)
 (define-key bmkp-list-mode-map "l"                    'bmkp-load)
@@ -5761,34 +5747,27 @@ are marked or ALLP is non-nil."
 (define-key bmkp-list-mode-map [(control shift ?l)]   'bookmark-bmenu-locate) ; `C-L' (aka `C-S-l')
 (define-key bmkp-list-mode-map "\M-l"                 'bmkp-bmenu-load-marked-bookmark-file-bookmarks)
 (define-key bmkp-list-mode-map "\M-L"                 'bmkp-temporary-bookmarking-mode)
-(define-key bmkp-list-mode-map "M"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "MM"                   'bmkp-bmenu-mark-man-bookmarks)
 (define-key bmkp-list-mode-map "MS"                   'bmkp-bmenu-show-only-man-bookmarks)
 (define-key bmkp-list-mode-map "\M-m"                 'bmkp-bmenu-mark-all)
-(define-key bmkp-list-mode-map "N"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "NM"                   'bmkp-bmenu-mark-non-invokable-bookmarks)
 (define-key bmkp-list-mode-map "NS"                   'bmkp-bmenu-show-only-non-invokable-bookmarks)
-(define-key bmkp-list-mode-map "O"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "OM"                 'bmkp-bmenu-mark-orphaned-local-file-bookmarks)
 (define-key bmkp-list-mode-map "OS"                'bmkp-bmenu-show-only-orphaned-local-file-bookmarks)
-(define-key bmkp-list-mode-map "P"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "PA"                  'bmkp-bmenu-filter-annotation-incrementally)
 (define-key bmkp-list-mode-map "PB"                 'bmkp-bmenu-filter-bookmark-name-incrementally)
 (define-key bmkp-list-mode-map "PF"                   'bmkp-bmenu-filter-file-name-incrementally)
 (define-key bmkp-list-mode-map "PT"                   'bmkp-bmenu-filter-tags-incrementally)
 (define-key bmkp-list-mode-map "q"                    'bmkp-bmenu-quit)
 (define-key bmkp-list-mode-map "\M-q"                'bmkp-bmenu-query-replace-marked-bookmarks-regexp)
-(define-key bmkp-list-mode-map "Q"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "QM"                   'bmkp-bmenu-mark-function-bookmarks)
 (define-key bmkp-list-mode-map "QS"                   'bmkp-bmenu-show-only-function-bookmarks)
 (define-key bmkp-list-mode-map "r"                    'bmkp-bmenu-edit-bookmark-name-and-location)
-(define-key bmkp-list-mode-map "R"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "RM"                   'bmkp-bmenu-mark-region-bookmarks)
 (define-key bmkp-list-mode-map "RS"                   'bmkp-bmenu-show-only-region-bookmarks)
 (define-key bmkp-list-mode-map "\M-r"                 'bookmark-bmenu-relocate) ; `R' in Emacs
 (define-key bmkp-list-mode-map "\M-R"                 'bmkp-bmenu-relocate-marked)
 (define-key bmkp-list-mode-map "S"                    'bmkp-save) ; `s' in Emacs
-(define-key bmkp-list-mode-map "s"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "s>"                   'bmkp-bmenu-sort-marked-before-unmarked)
 (define-key bmkp-list-mode-map "s*"                   'bmkp-bmenu-sort-modified-before-unmodified)
 (define-key bmkp-list-mode-map "s0"                   'bmkp-bmenu-sort-by-creation-time)
@@ -5859,7 +5838,6 @@ are marked or ALLP is non-nil."
 (define-key bmkp-list-mode-map "\M-t"                 'bmkp-list-toggle-filenames) ; `t' in Emacs
 (define-key bmkp-list-mode-map "t"                    'bmkp-bmenu-toggle-marks)
 (define-key bmkp-list-mode-map "U"                    'bmkp-bmenu-unmark-all)
-(define-key bmkp-list-mode-map "\M-u"                 nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "\M-u\M-m"             'bmkp-bmenu-mark-url-bookmarks)
 (define-key bmkp-list-mode-map "\M-u\M-s"             'bmkp-bmenu-show-only-url-bookmarks)
 (define-key bmkp-list-mode-map "v"                    'bmkp-bmenu-w32-jump-to-marked)
@@ -5867,8 +5845,6 @@ are marked or ALLP is non-nil."
 (define-key bmkp-list-mode-map "VM"                   'bmkp-bmenu-mark-variable-list-bookmarks)
 (define-key bmkp-list-mode-map "VS"                   'bmkp-bmenu-show-only-variable-list-bookmarks)
 (define-key bmkp-list-mode-map "\M-o"                 'bmkp-bmenu-w32-jump-to-marked)
-(define-key bmkp-list-mode-map "W"                    nil) ; For Emacs 20
-(define-key bmkp-list-mode-map "W3"                   nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "W3M"                  'bmkp-bmenu-mark-w3m-bookmarks)
 (define-key bmkp-list-mode-map "W3S"                  'bmkp-bmenu-show-only-w3m-bookmarks)
 
@@ -5876,22 +5852,17 @@ are marked or ALLP is non-nil."
   (define-key bmkp-list-mode-map "WEM"                'bmkp-bmenu-mark-eww-bookmarks)
   (define-key bmkp-list-mode-map "WES"                'bmkp-bmenu-show-only-eww-bookmarks)
   )
-(define-key bmkp-list-mode-map "w"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "wM"                   'bmkp-bmenu-mark-snippet-bookmarks)
 (define-key bmkp-list-mode-map "wS"                   'bmkp-bmenu-show-only-snippet-bookmarks)
-(define-key bmkp-list-mode-map "X"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "XM"                   'bmkp-bmenu-mark-temporary-bookmarks)
 (define-key bmkp-list-mode-map "XS"                   'bmkp-bmenu-show-only-temporary-bookmarks)
 (define-key bmkp-list-mode-map "\M-X"                 'bmkp-bmenu-toggle-marked-temporary/savable)
 (define-key bmkp-list-mode-map "\C-\M-X"              'bmkp-bmenu-toggle-temporary)
-(define-key bmkp-list-mode-map "Y"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "YM"                   'bmkp-bmenu-mark-bookmark-file-bookmarks)
 (define-key bmkp-list-mode-map "YS"                   'bmkp-bmenu-show-only-bookmark-file-bookmarks)
-(define-key bmkp-list-mode-map "Y>"                   nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "Y>+"                  'bmkp-bmenu-copy-marked-to-bookmark-file)
 (define-key bmkp-list-mode-map "Y>-"                  'bmkp-bmenu-move-marked-to-bookmark-file)
 (define-key bmkp-list-mode-map "Y>0"                  'bmkp-bmenu-create-bookmark-file-from-marked)
-(define-key bmkp-list-mode-map "Z"                    nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "ZM"                   'bmkp-bmenu-mark-bookmark-list-bookmarks)
 (define-key bmkp-list-mode-map "ZS"                   'bmkp-bmenu-show-only-bookmark-list-bookmarks)
 

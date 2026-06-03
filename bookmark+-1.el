@@ -2433,9 +2433,8 @@ for prompting are as follows (in order of priority):
 
  * The value returned by function `bookmark-buffer-name'.
 
-For Emacs 23+, all of the names described above are available as
-default values, by repeating `M-n'.  For older Emacs versions, the
-first name provided is the only default value.
+All of the names described above are available as default values,
+by repeating `M-n'.
 
 While entering a bookmark name at the prompt:
 

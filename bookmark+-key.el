@@ -368,7 +368,6 @@ there are such bookmarks can take a little time."
 (define-key bookmark-map "t"  bmkp-tags-map)                                      ; `C-x x t' for tags
 
 (define-key bmkp-tags-map "0"    'bmkp-remove-all-tags)                           ; `C-x x t 0'
-(define-key bmkp-tags-map "+"    nil) ; For Emacs 20
 (define-key bmkp-tags-map "+b"   'bmkp-add-tags)                                  ; `C-x x t + b'
 (define-key bmkp-tags-map "-b"   'bmkp-remove-tags)                               ; `C-x x t - b'
 (define-key bmkp-tags-map "+a"   'bmkp-tag-a-file)                                ; `C-x x t + a'
@@ -397,23 +396,17 @@ there are such bookmarks can take a little time."
 (define-prefix-command 'bmkp-jump-other-window-map)
 ;; (define-key ctl-x-map   "j" bmkp-jump-map)
 ;; (define-key ctl-x-4-map "j" bmkp-jump-other-window-map)
-(define-key bmkp-list-mode-map "j"  nil) ; For Emacs 20
-(define-key bmkp-list-mode-map "J"  nil) ; For Emacs 20
 (define-key bmkp-list-mode-map "J"  bmkp-jump-map)
 (define-key bmkp-list-mode-map "j"  bmkp-jump-other-window-map)
 (define-key bmkp-list-mode-map "j>" 'bmkp-bmenu-jump-to-marked)                           ; `j >'
 
 (define-key ctl-x-5-map                "B"    'bmkp-jump-other-frame)       ; `C-x j 5', `C-x 5 B'
 (define-key bmkp-jump-map              "5"    'bmkp-jump-other-frame )                     ; `J 5'
-(define-key bmkp-jump-map              "."    nil) ; For Emacs 20
-(define-key bmkp-jump-other-window-map "."    nil) ; For Emacs 20
 (define-key bmkp-jump-map              ".d"   'bmkp-dired-this-dir-jump)                 ; `C-x j . d'
 (define-key bmkp-jump-other-window-map ".d"   'bmkp-dired-this-dir-jump-other-window)  ; `C-x 4 j . d'
 (define-key bmkp-jump-map              ".f"   'bmkp-file-this-dir-jump)                  ; `C-x j . f'
 (define-key bmkp-jump-other-window-map ".f"   'bmkp-file-this-dir-jump-other-window)   ; `C-x 4 j . f'
 
-(define-key bmkp-jump-map              ","    nil) ; For Emacs 20
-(define-key bmkp-jump-other-window-map ","    nil) ; For Emacs 20
 (define-key bmkp-jump-map              ",,"   'bmkp-this-buffer-jump)                    ; `C-x j , ,'
 (define-key bmkp-jump-other-window-map ",,"   'bmkp-this-buffer-jump-other-window)     ; `C-x 4 j , ,'
 (define-key bmkp-jump-map              ",#"   'bmkp-autonamed-this-buffer-jump)          ; `C-x j , #'
@@ -423,8 +416,6 @@ there are such bookmarks can take a little time."
 (define-key bmkp-jump-map              "#"    'bmkp-autonamed-jump)                        ; `C-x j #'
 (define-key bmkp-jump-other-window-map "#"    'bmkp-autonamed-jump-other-window)         ; `C-x 4 j #'
 
-(define-key bmkp-jump-map              "="    nil) ; For Emacs 20
-(define-key bmkp-jump-other-window-map "="    nil) ; For Emacs 20
 (define-key bmkp-jump-map              "=b"   'bmkp-specific-buffers-jump)                ; `C-x j = b'
 (define-key bmkp-jump-other-window-map "=b"   'bmkp-specific-buffers-jump-other-window) ; `C-x 4 j = b'
 (define-key bmkp-jump-map              "=f"   'bmkp-specific-files-jump)                  ; `C-x j = f'
@@ -484,15 +475,11 @@ there are such bookmarks can take a little time."
 (define-key bmkp-jump-other-window-map "R"
   'bmkp-region-jump-narrow-indirect-other-window)                                         ; `C-x 4 j R'
 
-(define-key bmkp-jump-map              "t"    nil) ; For Emacs 20
-(define-key bmkp-jump-other-window-map "t"    nil) ; For Emacs 20
 (define-key bmkp-jump-map              "t*"   'bmkp-all-tags-jump)                        ; `C-x j t *'
 (define-key bmkp-jump-other-window-map "t*"   'bmkp-all-tags-jump-other-window)         ; `C-x 4 j t *'
 (define-key bmkp-jump-map              "t+"   'bmkp-some-tags-jump)                       ; `C-x j t +'
 (define-key bmkp-jump-other-window-map "t+"   'bmkp-some-tags-jump-other-window)        ; `C-x 4 j t +'
 
-(define-key bmkp-jump-map              "t%"   nil) ; For Emacs 20
-(define-key bmkp-jump-other-window-map "t%"   nil) ; For Emacs 20
 (define-key bmkp-jump-map              "t%*"  'bmkp-all-tags-regexp-jump)               ; `C-x j t % *'
 (define-key bmkp-jump-other-window-map "t%*"
   'bmkp-all-tags-regexp-jump-other-window)                                            ; `C-x 4 j t % *'
@@ -500,8 +487,6 @@ there are such bookmarks can take a little time."
 (define-key bmkp-jump-other-window-map "t%+"
   'bmkp-some-tags-regexp-jump-other-window)                                           ; `C-x 4 j t % +'
 
-(define-key bmkp-jump-map              "t."   nil) ; For Emacs 20
-(define-key bmkp-jump-other-window-map "t."   nil) ; For Emacs 20
 (define-key bmkp-jump-map              "t.*" 'bmkp-file-this-dir-all-tags-jump)         ; `C-x j t . *'
 (define-key bmkp-jump-other-window-map "t.*"
   'bmkp-file-this-dir-all-tags-jump-other-window)                                     ; `C-x 4 j t . *'
@@ -509,8 +494,6 @@ there are such bookmarks can take a little time."
 (define-key bmkp-jump-other-window-map "t.+"
   'bmkp-file-this-dir-some-tags-jump-other-window)                                    ; `C-x 4 j t . +'
 
-(define-key bmkp-jump-map              "t.%" nil) ; For Emacs 20
-(define-key bmkp-jump-other-window-map "t.%" nil) ; For Emacs 20
 (define-key bmkp-jump-map              "t.%*"
   'bmkp-file-this-dir-all-tags-regexp-jump)                                           ; `C-x j t . % *'
 (define-key bmkp-jump-other-window-map "t.%*"
@@ -521,8 +504,6 @@ there are such bookmarks can take a little time."
   'bmkp-file-this-dir-some-tags-regexp-jump-other-window)                           ; `C-x 4 j t . % +'
 
 
-(define-key bmkp-jump-map              "ta"   nil) ; For Emacs 20
-(define-key bmkp-jump-other-window-map "ta"   nil) ; For Emacs 20
 (define-key bmkp-jump-map              "ta*"  'bmkp-autofile-all-tags-jump)             ; `C-x j t a *'
 (define-key bmkp-jump-other-window-map "ta*"
   'bmkp-autofile-all-tags-jump-other-window)                                          ; `C-x 4 j t a *'
@@ -530,8 +511,6 @@ there are such bookmarks can take a little time."
 (define-key bmkp-jump-other-window-map "ta+"
   'bmkp-autofile-some-tags-jump-other-window)                                         ; `C-x 4 j t a +'
 
-(define-key bmkp-jump-map              "ta%"  nil) ; For Emacs 20
-(define-key bmkp-jump-other-window-map "ta%"  nil) ; For Emacs 20
 (define-key bmkp-jump-map              "ta%*" 'bmkp-autofile-all-tags-regexp-jump)    ; `C-x j t a % *'
 (define-key bmkp-jump-other-window-map "ta%*"
   'bmkp-autofile-all-tags-regexp-jump-other-window)                                 ; `C-x 4 j t a % *'
@@ -539,15 +518,11 @@ there are such bookmarks can take a little time."
 (define-key bmkp-jump-other-window-map "ta%+"
   'bmkp-autofile-some-tags-regexp-jump-other-window)                                ; `C-x 4 j t a % +'
 
-(define-key bmkp-jump-map              "tf"   nil) ; For Emacs 20
-(define-key bmkp-jump-other-window-map "tf"   nil) ; For Emacs 20
 (define-key bmkp-jump-map              "tf*"  'bmkp-file-all-tags-jump)                 ; `C-x j t f *'
 (define-key bmkp-jump-other-window-map "tf*"  'bmkp-file-all-tags-jump-other-window)  ; `C-x 4 j t f *'
 (define-key bmkp-jump-map              "tf+"  'bmkp-file-some-tags-jump)                ; `C-x j t f +'
 (define-key bmkp-jump-other-window-map "tf+"  'bmkp-file-some-tags-jump-other-window) ; `C-x 4 j t f +'
 
-(define-key bmkp-jump-map              "tf%"  nil) ; For Emacs 20
-(define-key bmkp-jump-other-window-map "tf%"  nil) ; For Emacs 20
 (define-key bmkp-jump-map              "tf%*" 'bmkp-file-all-tags-regexp-jump)        ; `C-x j t f % *'
 (define-key bmkp-jump-other-window-map "tf%*"
   'bmkp-file-all-tags-regexp-jump-other-window)                                     ; `C-x 4 j t f % *'
